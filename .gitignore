@@ -1,0 +1,7 @@
+data/raw/
+checkpoints/
+outputs/
+__pycache__/
+*.pyc
+.env
+.DS_Store
