@@ -1,9 +1,6 @@
 import json
 from pathlib import Path
 
-PHRASES_PATH = Path(__file__).parents[3] / "data" / "processed" / "phrases.json"
-VOCAB_PATH = Path(__file__).parents[3] / "data" / "processed" / "chord_vocab.json"
-
 # Relative path anchors: this file is at src/tokenization/chord_tokenizer.py
 # parents[0] = src/tokenization, parents[1] = src, parents[2] = jazz_solo_generator (repo root)
 _REPO = Path(__file__).parents[2]
