@@ -7,8 +7,8 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 
-FEATURES_CSV = Path(__file__).parents[2] / "data" / "processed" / "phrase_features.csv"
-OUTPUT_CSV = Path(__file__).parents[2] / "data" / "processed" / "phrase_clusters.csv"
+FEATURES_CSV = Path(__file__).parents[2] / "data" / "processed" / "phrase_features_expanded.csv"
+OUTPUT_CSV = Path(__file__).parents[2] / "data" / "processed" / "phrase_clusters_expanded.csv"
 OUTPUTS_DIR = Path(__file__).parents[2] / "outputs"
 
 CLUSTER_FEATURES = [
@@ -58,6 +58,7 @@ def print_stats(df):
 
     parker_dom = comp[comp["parker_pct"] > 0.70]
     davis_dom = comp[comp["davis_pct"] > 0.70]
+    mixed = comp[(comp["parker_pct"] <= 0.70) & (comp["davis_pct"] <= 0.70)]
 
     print(f"Parker-dominant clusters (>70% Parker): {len(parker_dom)}")
     if not parker_dom.empty:
@@ -67,6 +68,9 @@ def print_stats(df):
     print(f"Davis-dominant clusters (>70% Davis): {len(davis_dom)}")
     if not davis_dom.empty:
         print(davis_dom[[parker_col, davis_col, "total", "davis_pct"]].to_string())
+    print()
+
+    print(f"Mixed clusters (neither Parker nor Davis >70%): {len(mixed)}")
 
 
 def save_plot(df):

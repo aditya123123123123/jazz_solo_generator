@@ -1,0 +1,70 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            lnxvjwqhxkv0n6uh33d2pmnynlzwqtg9:
+                apple:
+                    ecpuCores: 4
+                    gpuCores: 19
+                    macModel: Mac14,9
+                    memoryGb: 16
+                    name: Apple M2 Pro
+                    pcpuCores: 8
+                    ramTotalBytes: "17179869184"
+                    swapTotalBytes: "5368709120"
+                cpu_count: 12
+                cpu_count_logical: 12
+                disk:
+                    /:
+                        total: "994631127040"
+                        used: "404788019200"
+                email: adityajhalani43@gmail.com
+                executable: /Library/Frameworks/Python.framework/Versions/3.13/bin/python3
+                git:
+                    commit: fc8c18a83b698b8be138a187cb9b77fc63209a6f
+                    remote: https://github.com/aditya123123123123/jazz_solo_generator.git
+                host: Adityas-MacBook-Pro-5.local
+                memory:
+                    total: "17179869184"
+                os: macOS-26.5-arm64-arm-64bit-Mach-O
+                program: -m src.training.train_phrase_planner
+                python: CPython 3.13.4
+                root: /Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator
+                startedAt: "2026-05-09T23:19:20.720191Z"
+                writerId: lnxvjwqhxkv0n6uh33d2pmnynlzwqtg9
+        m: []
+        python_version: 3.13.4
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 2
+                - 13
+                - 16
+                - 61
+            "4": 3.13.4
+            "5": 0.26.1
+            "12": 0.26.1
+            "13": darwin-arm64
+batch_size:
+    value: 8
+d_model:
+    value: 128
+dropout:
+    value: 0.3
+epochs:
+    value: 60
+lr:
+    value: 0.001
+nhead:
+    value: 4
+num_layers:
+    value: 4
+train_solos:
+    value: 104
+val_solos:
+    value: 27
+weight_decay:
+    value: 0.0001

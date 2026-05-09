@@ -155,7 +155,7 @@ def main():
 
     wandb.init(
         project="jazz-solo-generator",
-        name="phrase-planner-v2-expanded",
+        name="phrase-planner-v3-reclustered",
         config={
             "d_model": 128, "nhead": 4, "num_layers": 4,
             "dropout": 0.3, "lr": LR, "weight_decay": WEIGHT_DECAY,

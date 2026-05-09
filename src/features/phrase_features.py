@@ -7,8 +7,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
-PHRASES_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrases.json"
-CSV_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrase_features.csv"
+PHRASES_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrases_expanded.json"
+CSV_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrase_features_expanded.csv"
 OUTPUTS_DIR = Path(__file__).parents[2] / "outputs"
 BEAT_DURATION = 0.5  # seconds per beat, assuming 120 BPM
 
