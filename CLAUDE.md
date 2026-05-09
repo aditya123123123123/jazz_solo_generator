@@ -30,3 +30,4 @@ Target artists: Charlie Parker and Miles Davis.
 
 ## Tech Stack
 Python, PyTorch, pandas, music21, pretty_midi, scikit-learn, numpy
+wandb — for experiment tracking in all training scripts (log loss, val_loss, and hyperparameters)
