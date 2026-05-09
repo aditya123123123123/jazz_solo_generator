@@ -13,7 +13,8 @@ from src.tokenization import ArtistTokenizer, ChordTokenizer, PhraseTokenizer
 _REPO = Path(__file__).parents[2]
 CHECKPOINT_DIR = _REPO / "checkpoints"
 
-EPOCHS = 150
+EPOCHS = 60
+PATIENCE = 15
 BATCH_SIZE = 8
 LR = 1e-3
 WEIGHT_DECAY = 1e-4
@@ -48,6 +49,7 @@ def _train_epoch(model, loader, optimizer, loss_fn, device):
 
         optimizer.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
         total += loss.item()
     return total / len(loader)
@@ -144,13 +146,16 @@ def main():
         val_ds, batch_size=BATCH_SIZE, shuffle=False, collate_fn=collate_phrase_planner
     )
 
-    model = PhrasePlanner().to(device)
+    model = PhrasePlanner(
+        chord_vocab_size=chord_tok.vocab_size,
+        artist_vocab_size=artist_tok.vocab_size,
+    ).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     loss_fn = nn.CrossEntropyLoss(ignore_index=0)
 
     wandb.init(
         project="jazz-solo-generator",
-        name="phrase-planner-v1",
+        name="phrase-planner-v2-expanded",
         config={
             "d_model": 128, "nhead": 4, "num_layers": 4,
             "dropout": 0.3, "lr": LR, "weight_decay": WEIGHT_DECAY,
@@ -161,6 +166,7 @@ def main():
 
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
     best_val_loss = float("inf")
+    epochs_no_improve = 0
 
     for epoch in range(1, EPOCHS + 1):
         train_loss = _train_epoch(model, train_loader, optimizer, loss_fn, device)
@@ -173,7 +179,13 @@ def main():
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
+            epochs_no_improve = 0
             torch.save(model.state_dict(), CHECKPOINT_DIR / "phrase_planner_best.pt")
+        else:
+            epochs_no_improve += 1
+            if epochs_no_improve >= PATIENCE:
+                print(f"Early stopping at epoch {epoch} (no improvement for {PATIENCE} epochs)")
+                break
 
     torch.save(model.state_dict(), CHECKPOINT_DIR / "phrase_planner_final.pt")
     print(f"\nBest val_loss: {best_val_loss:.4f}")

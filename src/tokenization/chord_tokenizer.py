@@ -4,7 +4,7 @@ from pathlib import Path
 # Relative path anchors: this file is at src/tokenization/chord_tokenizer.py
 # parents[0] = src/tokenization, parents[1] = src, parents[2] = jazz_solo_generator (repo root)
 _REPO = Path(__file__).parents[2]
-PHRASES_PATH = _REPO / "data" / "processed" / "phrases.json"
+PHRASES_PATH = _REPO / "data" / "processed" / "phrases_expanded.json"
 VOCAB_PATH = _REPO / "data" / "processed" / "chord_vocab.json"
 
 

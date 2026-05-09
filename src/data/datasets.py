@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import Dataset
 
 _REPO = Path(__file__).parents[2]
-_PHRASES_PATH = _REPO / "data" / "processed" / "phrases.json"
+_PHRASES_PATH = _REPO / "data" / "processed" / "phrases_expanded.json"
 _CLUSTERS_PATH = _REPO / "data" / "processed" / "phrase_clusters.csv"
 
 

@@ -1,0 +1,36 @@
+{
+  "os":  "macOS-26.5-arm64-arm-64bit-Mach-O",
+  "python":  "CPython 3.13.4",
+  "startedAt":  "2026-05-09T23:10:37.597370Z",
+  "program":  "-m src.training.train_phrase_planner",
+  "git":  {
+    "remote":  "https://github.com/aditya123123123123/jazz_solo_generator.git",
+    "commit":  "680a4f3f7ab92081d9e83434e2b6dcfc72b6552a"
+  },
+  "email":  "adityajhalani43@gmail.com",
+  "root":  "/Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator",
+  "host":  "Adityas-MacBook-Pro-5.local",
+  "executable":  "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+  "cpu_count":  12,
+  "cpu_count_logical":  12,
+  "disk":  {
+    "/":  {
+      "total":  "994631127040",
+      "used":  "404780556288"
+    }
+  },
+  "memory":  {
+    "total":  "17179869184"
+  },
+  "apple":  {
+    "name":  "Apple M2 Pro",
+    "ecpuCores":  4,
+    "pcpuCores":  8,
+    "gpuCores":  19,
+    "memoryGb":  16,
+    "swapTotalBytes":  "5368709120",
+    "ramTotalBytes":  "17179869184",
+    "macModel":  "Mac14,9"
+  },
+  "writerId":  "d6e3737xq7mcil7tagq10gmbbp8bznuf"
+}

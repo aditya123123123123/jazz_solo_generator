@@ -9,6 +9,25 @@ from src.data.load_wjazzd import load_db
 ARTISTS = ["Charlie Parker", "Miles Davis"]
 OUTPUT_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrases.json"
 
+TARGET_PERFORMERS = [
+    "Charlie Parker",
+    "Miles Davis",
+    "Dizzy Gillespie",
+    "Sonny Rollins",
+    "John Coltrane",
+    "Clifford Brown",
+    "Dexter Gordon",
+    "Hank Mobley",
+    "Lee Morgan",
+    "Kenny Dorham",
+    "Sonny Stitt",
+    "Cannonball Adderley",
+    "Fats Navarro",
+    "Johnny Hodges",
+    "Lester Young",
+]
+EXPANDED_OUTPUT_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrases_expanded.json"
+
 
 def assign_relative_idx(melody):
     melody = melody.sort_values(["melid", "eventid"]).copy()
@@ -16,8 +35,10 @@ def assign_relative_idx(melody):
     return melody
 
 
-def extract_phrases(melody, sections, solo_info, beats):
-    target_melids = set(solo_info.loc[solo_info["performer"].isin(ARTISTS), "melid"])
+def extract_phrases(melody, sections, solo_info, beats, performers=None):
+    if performers is None:
+        performers = ARTISTS
+    target_melids = set(solo_info.loc[solo_info["performer"].isin(performers), "melid"])
 
     melody = melody[melody["melid"].isin(target_melids)].copy()
     sections = sections[sections["melid"].isin(target_melids)].copy()
@@ -76,13 +97,24 @@ def extract_phrases(melody, sections, solo_info, beats):
 
 if __name__ == "__main__":
     melody, sections, solo_info, beats = load_db()
-    phrases = extract_phrases(melody, sections, solo_info, beats)
+    phrases = extract_phrases(melody, sections, solo_info, beats, performers=TARGET_PERFORMERS)
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_PATH, "w") as f:
+    EXPANDED_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(EXPANDED_OUTPUT_PATH, "w") as f:
         json.dump(phrases, f, indent=2)
 
-    counts = Counter(p["performer"] for p in phrases)
-    for artist in ARTISTS:
-        print(f"{artist}: {counts.get(artist, 0)} phrases")
-    print(f"Total: {len(phrases)} phrases saved to {OUTPUT_PATH}")
+    phrase_counts = Counter(p["performer"] for p in phrases)
+    solo_counts = Counter(p["solo_id"] for p in phrases)
+    solos_per_performer = {}
+    for p in phrases:
+        solos_per_performer.setdefault(p["performer"], set()).add(p["solo_id"])
+
+    print(f"{'Performer':<25} {'Phrases':>7}  {'Solos':>5}")
+    print("-" * 42)
+    for performer in TARGET_PERFORMERS:
+        n_phrases = phrase_counts.get(performer, 0)
+        n_solos = len(solos_per_performer.get(performer, set()))
+        print(f"{performer:<25} {n_phrases:>7}  {n_solos:>5}")
+    print("-" * 42)
+    print(f"{'Total':<25} {len(phrases):>7}")
+    print(f"\nSaved to {EXPANDED_OUTPUT_PATH}")

@@ -1,0 +1,15 @@
+{
+  "os":  "macOS-26.5-arm64-arm-64bit-Mach-O",
+  "python":  "CPython 3.13.4",
+  "startedAt":  "2026-05-09T23:16:48.854059Z",
+  "program":  "-m src.training.train_phrase_planner",
+  "git":  {
+    "remote":  "https://github.com/aditya123123123123/jazz_solo_generator.git",
+    "commit":  "680a4f3f7ab92081d9e83434e2b6dcfc72b6552a"
+  },
+  "email":  "adityajhalani43@gmail.com",
+  "root":  "/Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator",
+  "host":  "Adityas-MacBook-Pro-5.local",
+  "executable":  "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+  "writerId":  "cz862j39ff8t8kui4d2rf53tk9kzohoj"
+}

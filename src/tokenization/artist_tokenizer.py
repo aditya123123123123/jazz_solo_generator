@@ -3,6 +3,19 @@ class ArtistTokenizer:
     _VOCAB = {
         "Charlie Parker": 1,
         "Miles Davis": 2,
+        "Dizzy Gillespie": 3,
+        "Sonny Rollins": 4,
+        "John Coltrane": 5,
+        "Clifford Brown": 6,
+        "Dexter Gordon": 7,
+        "Hank Mobley": 8,
+        "Lee Morgan": 9,
+        "Kenny Dorham": 10,
+        "Sonny Stitt": 11,
+        "Cannonball Adderley": 12,
+        "Fats Navarro": 13,
+        "Johnny Hodges": 14,
+        "Lester Young": 15,
     }
     _INV = {v: k for k, v in _VOCAB.items()}
 
@@ -14,4 +27,4 @@ class ArtistTokenizer:
 
     @property
     def vocab_size(self) -> int:
-        return len(self._VOCAB) + 1  # 3 (PAD + 2 artists)
+        return len(self._VOCAB) + 1  # 16 (PAD + 15 artists)

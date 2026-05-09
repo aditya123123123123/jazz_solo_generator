@@ -8,7 +8,7 @@ class PhrasePlanner(nn.Module):
     def __init__(
         self,
         chord_vocab_size: int = 107,
-        artist_vocab_size: int = 3,
+        artist_vocab_size: int = 16,
         phrase_vocab_size: int = 67,
         d_model: int = 128,
         nhead: int = 4,
@@ -123,7 +123,7 @@ class PhrasePlanner(nn.Module):
             if next_token == eos:
                 break
 
-        return generated
+        return [t for t in generated if 3 <= t < 67]
 
 
 if __name__ == "__main__":

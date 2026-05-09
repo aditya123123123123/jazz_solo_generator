@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 
 _REPO = Path(__file__).parents[2]
-PHRASES_PATH = _REPO / "data" / "processed" / "phrases.json"
+PHRASES_PATH = _REPO / "data" / "processed" / "phrases_expanded.json"
 BINS_PATH = _REPO / "data" / "processed" / "duration_bins.json"
 
 N_DUR_BINS = 16
