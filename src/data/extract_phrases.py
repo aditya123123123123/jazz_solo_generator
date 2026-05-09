@@ -10,23 +10,64 @@ ARTISTS = ["Charlie Parker", "Miles Davis"]
 OUTPUT_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrases.json"
 
 TARGET_PERFORMERS = [
-    "Charlie Parker",
-    "Miles Davis",
-    "Dizzy Gillespie",
-    "Sonny Rollins",
     "John Coltrane",
+    "Miles Davis",
+    "Charlie Parker",
+    "Sonny Rollins",
+    "David Liebman",
+    "Wayne Shorter",
+    "Steve Coleman",
+    "Michael Brecker",
     "Clifford Brown",
-    "Dexter Gordon",
-    "Hank Mobley",
-    "Lee Morgan",
-    "Kenny Dorham",
-    "Sonny Stitt",
-    "Cannonball Adderley",
-    "Fats Navarro",
-    "Johnny Hodges",
+    "Woody Shaw",
+    "Paul Desmond",
+    "Louis Armstrong",
+    "Lee Konitz",
+    "Joe Lovano",
+    "Joe Henderson",
+    "J.J. Johnson",
+    "Don Byas",
+    "Chet Baker",
+    "Wynton Marsalis",
     "Lester Young",
+    "Kenny Dorham",
+    "Chris Potter",
+    "Bob Berg",
+    "Benny Goodman",
+    "Benny Carter",
+    "Zoot Sims",
+    "Steve Lacy",
+    "Stan Getz",
+    "Sonny Stitt",
+    "Roy Eldridge",
+    "Phil Woods",
+    "Milt Jackson",
+    "Lionel Hampton",
+    "Johnny Dodds",
+    "Gerry Mulligan",
+    "Freddie Hubbard",
+    "Fats Navarro",
+    "Eric Dolphy",
+    "Don Ellis",
+    "Dizzy Gillespie",
+    "Dickie Wells",
+    "Dexter Gordon",
+    "David Murray",
+    "Coleman Hawkins",
+    "Branford Marsalis",
+    "Art Pepper",
+    "Sidney Bechet",
+    "Pepper Adams",
+    "Ornette Coleman",
+    "Kid Ory",
+    "Joshua Redman",
+    "Herbie Hancock",
+    "Cannonball Adderley",
+    "Bix Beiderbecke",
+    "Ben Webster",
 ]
 EXPANDED_OUTPUT_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrases_expanded.json"
+ALL_OUTPUT_PATH = Path(__file__).parents[2] / "data" / "processed" / "phrases_all.json"
 
 
 def assign_relative_idx(melody):
@@ -99,15 +140,16 @@ if __name__ == "__main__":
     melody, sections, solo_info, beats = load_db()
     phrases = extract_phrases(melody, sections, solo_info, beats, performers=TARGET_PERFORMERS)
 
-    EXPANDED_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(EXPANDED_OUTPUT_PATH, "w") as f:
+    ALL_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(ALL_OUTPUT_PATH, "w") as f:
         json.dump(phrases, f, indent=2)
 
     phrase_counts = Counter(p["performer"] for p in phrases)
-    solo_counts = Counter(p["solo_id"] for p in phrases)
     solos_per_performer = {}
     for p in phrases:
         solos_per_performer.setdefault(p["performer"], set()).add(p["solo_id"])
+
+    total_solos = sum(len(v) for v in solos_per_performer.values())
 
     print(f"{'Performer':<25} {'Phrases':>7}  {'Solos':>5}")
     print("-" * 42)
@@ -116,5 +158,6 @@ if __name__ == "__main__":
         n_solos = len(solos_per_performer.get(performer, set()))
         print(f"{performer:<25} {n_phrases:>7}  {n_solos:>5}")
     print("-" * 42)
-    print(f"{'Total':<25} {len(phrases):>7}")
-    print(f"\nSaved to {EXPANDED_OUTPUT_PATH}")
+    print(f"{'Total':<25} {len(phrases):>7}  {total_solos:>5}")
+    print(f"\nPerformers included: {len(TARGET_PERFORMERS)}")
+    print(f"Saved to {ALL_OUTPUT_PATH}")

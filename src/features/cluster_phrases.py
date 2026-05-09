@@ -7,8 +7,8 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 
-FEATURES_CSV = Path(__file__).parents[2] / "data" / "processed" / "phrase_features_expanded.csv"
-OUTPUT_CSV = Path(__file__).parents[2] / "data" / "processed" / "phrase_clusters_expanded.csv"
+FEATURES_CSV = Path(__file__).parents[2] / "data" / "processed" / "phrase_features_all.csv"
+OUTPUT_CSV = Path(__file__).parents[2] / "data" / "processed" / "phrase_clusters_all.csv"
 OUTPUTS_DIR = Path(__file__).parents[2] / "outputs"
 
 CLUSTER_FEATURES = [
