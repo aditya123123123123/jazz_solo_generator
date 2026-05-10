@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 import torch
 import torch.nn as nn
@@ -27,7 +28,7 @@ class NoteExecutor(nn.Module):
         phrase_vocab_size:  int   = 67,
         artist_vocab_size:  int   = 16,
         pitch_vocab_size:   int   = 132,
-        dur_vocab_size:     int   = 19,
+        dur_vocab_size:     int   = 18,
         d_model:            int   = 256,
         nhead:              int   = 8,
         num_encoder_layers: int   = 4,
@@ -55,6 +56,11 @@ class NoteExecutor(nn.Module):
         self.pitch_embed   = nn.Embedding(pitch_vocab_size, d_model, padding_idx=0)
         self.dur_embed     = nn.Embedding(dur_vocab_size,   d_model, padding_idx=0)
         self.is_rest_embed = nn.Embedding(2, d_model)
+
+        # Tempo conditioning: scalar BPM → d_model bias added to every
+        # decoder position. Normalized by /200 (≈ corpus median tempo)
+        # so the input stays in a small range.
+        self.tempo_embed   = nn.Linear(1, d_model)
 
         enc_layer = nn.TransformerEncoderLayer(
             d_model, nhead, dim_feedforward, dropout, batch_first=True
@@ -96,6 +102,7 @@ class NoteExecutor(nn.Module):
         ctx_dur:       torch.Tensor,
         ctx_rest:      torch.Tensor,
         pos_in_phrase: torch.Tensor,           # (B,)  0-15
+        tempo_bpm:     Optional[torch.Tensor] = None,   # (B,) or (B,1) float
         src_key_padding_mask: torch.Tensor = None,
     ):
         memory = self.encode(chord_ids, artist_id, src_key_padding_mask)
@@ -109,6 +116,11 @@ class NoteExecutor(nn.Module):
         phrase_bias = self.phrase_embed(phrase_id).unsqueeze(1)     # (B, 1, D)
         pos_bias    = self.pos_embed(pos_in_phrase).unsqueeze(1)    # (B, 1, D)
         note_emb = note_emb + phrase_bias + pos_bias
+        if tempo_bpm is not None:
+            if tempo_bpm.dim() == 1:
+                tempo_bpm = tempo_bpm.unsqueeze(-1)                  # (B, 1)
+            tempo_bias = self.tempo_embed(tempo_bpm / 200.0).unsqueeze(1)  # (B, 1, D)
+            note_emb = note_emb + tempo_bias
         note_emb = self._sinusoidal_pe(note_emb)
 
         tgt_len  = note_emb.size(1)
@@ -130,6 +142,7 @@ class NoteExecutor(nn.Module):
         artist_id:   torch.Tensor,
         n_notes:     int  = 16,
         window:      int  = 8,
+        tempo_bpm:   float = 180.0,
         prefix_pitch: list = None,   # cross-chord context from previous section
         prefix_dur:   list = None,
         prefix_rest:  list = None,
@@ -142,6 +155,10 @@ class NoteExecutor(nn.Module):
         pitch_hist = list(prefix_pitch or [])
         dur_hist   = list(prefix_dur   or [])
         rest_hist  = list(prefix_rest  or [])
+
+        # Pre-compute the tempo bias once — it doesn't change across the loop.
+        tempo_t    = torch.tensor([[tempo_bpm / 200.0]], dtype=torch.float, device=device)
+        tempo_bias = self.tempo_embed(tempo_t).unsqueeze(1)   # (1, 1, D)
 
         generated = []
         for pos in range(n_notes):
@@ -166,7 +183,7 @@ class NoteExecutor(nn.Module):
             )
             phrase_bias = self.phrase_embed(phrase_id).unsqueeze(1)
             pos_bias    = self.pos_embed(pos_id).unsqueeze(1)
-            note_emb = note_emb + phrase_bias + pos_bias
+            note_emb = note_emb + phrase_bias + pos_bias + tempo_bias
             note_emb = self._sinusoidal_pe(note_emb)
 
             tgt_mask = nn.Transformer.generate_square_subsequent_mask(window, device=device)
@@ -204,7 +221,7 @@ if __name__ == "__main__":
     phrase_id     = torch.randint(3, 67,  (B,))
     artist_id     = torch.randint(1, 16,  (B,))
     ctx_pitch     = torch.randint(4, 132, (B, W))
-    ctx_dur       = torch.randint(3, 19,  (B, W))
+    ctx_dur       = torch.randint(3, 18,  (B, W))
     ctx_rest      = torch.randint(0, 2,   (B, W))
     pos_in_phrase = torch.randint(0, 16,  (B,))
 
@@ -220,6 +237,6 @@ if __name__ == "__main__":
     print(f"  dur_logits:   {d_logits.shape}")
     print(f"  rest_logits:  {r_logits.shape}")
     assert p_logits.shape == (B, 132)
-    assert d_logits.shape == (B, 19)
+    assert d_logits.shape == (B, 18)
     assert r_logits.shape == (B, 2)
     print("Shape assertions passed.")

@@ -3,3 +3,4 @@
 Epoch   5: train=6.5014  val=6.4570  lr=2.95e-04
 Epoch  10: train=6.4454  val=6.3987  lr=2.81e-04
 Epoch  15: train=6.4051  val=6.3692  lr=2.58e-04
+Epoch  20: train=6.3678  val=6.3372  lr=2.28e-04
