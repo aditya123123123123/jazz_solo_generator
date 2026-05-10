@@ -5,3 +5,15 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+data/processed/notes_v6_cache.pt
+data/processed/notes_v6_cache.pt
+data/processed/phrases_all_with_tempo.json
+checkpoints/*.pt
+checkpoints/*.pth
+*.pt
+data/processed/notes_v6_cache.pt
+data/processed/phrases_all_with_tempo.json
+checkpoints/*.pt
+checkpoints/*.pth
+*.pt
+data/processed/notes_v6_cache.pt
