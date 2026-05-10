@@ -49,6 +49,7 @@ CHECKPOINTS  = _REPO / "checkpoints"
 SOLOS_DIR    = _REPO / "outputs" / "solos"
 BEAT_DURATION = 0.5    # seconds per beat at 120 BPM
 N_NOTES      = 16      # notes generated per chord section
+WINDOW       = 8       # cross-chord context window size
 MIN_NOTE_DUR = 0.05    # seconds — clamp very short decoded durations
 
 PROGRESSIONS = {
@@ -102,20 +103,20 @@ def _plan_phrase(planner, chord_ids, artist_id, fallback=3):
     """Run PhrasePlanner and return the first generated phrase token integer."""
     with torch.no_grad():
         tokens = planner.generate(chord_ids, artist_id, max_len=8)
-    return tokens[0] if tokens else fallback  # PHRASE_00 if nothing generated
+    return tokens[0] if tokens else fallback
 
 
-def _generate_notes(executor, chord_ids, phrase_id, artist_id):
-    """Run NoteExecutor and return a list of (pitch_midi, dur_sec, is_rest)."""
+def _generate_notes(executor, chord_ids, phrase_id, artist_id,
+                    prefix_pitch=None, prefix_dur=None, prefix_rest=None):
+    """Run NoteExecutor with optional cross-chord prefix context."""
     with torch.no_grad():
-        raw = executor.generate(chord_ids, phrase_id, artist_id, n_notes=N_NOTES)
-
-    notes = []
-    for p_tok, d_tok, r_tok in raw:
-        pitch_midi = p_tok - 4               # PITCH_OFFSET = 4
-        dur_sec    = executor.dur_head        # will be decoded below
-        notes.append((p_tok, d_tok, r_tok))
-    return notes  # keep as token tuples; decode with note_tok outside
+        raw = executor.generate(
+            chord_ids, phrase_id, artist_id, n_notes=N_NOTES,
+            prefix_pitch=prefix_pitch,
+            prefix_dur=prefix_dur,
+            prefix_rest=prefix_rest,
+        )
+    return raw  # list of (pitch_tok, dur_tok, is_rest_int)
 
 
 # ---------------------------------------------------------------------------
@@ -135,31 +136,45 @@ def generate_solo(progression, artist_name="Charlie Parker",
     """
     artist_id = torch.tensor([artist_tok.encode(artist_name)], dtype=torch.long)
 
-    unknown_chords = []
-    note_events    = []   # (pitch_midi, dur_sec, is_rest)
+    unknown_chords  = []
+    note_events     = []
     chord_summaries = []
+
+    # Rolling cross-chord context: last WINDOW note tokens from previous section
+    ctx_pitch: list = []
+    ctx_dur:   list = []
+    ctx_rest:  list = []
 
     for chord_str, beats in progression:
         wjazz_str = normalize_chord(chord_str)
-        chord_id = chord_tok.encode(wjazz_str)
+        chord_id  = chord_tok.encode(wjazz_str)
         if chord_id == chord_tok.UNK:
             unknown_chords.append(chord_str)
 
-        # Chord ids: single token (one chord-change event per chord section)
         chord_ids = torch.tensor([[chord_id]], dtype=torch.long)
 
         # ---- PhrasePlanner ----
-        phrase_int  = _plan_phrase(planner, chord_ids, artist_id)
+        phrase_int   = _plan_phrase(planner, chord_ids, artist_id)
         phrase_label = phrase_tok.decode(phrase_int)
-        phrase_id   = torch.tensor([phrase_int], dtype=torch.long)
+        phrase_id    = torch.tensor([phrase_int], dtype=torch.long)
 
-        # ---- NoteExecutor ----
-        raw_notes = _generate_notes(executor, chord_ids, phrase_id, artist_id)
+        # ---- NoteExecutor (with cross-chord prefix) ----
+        pfx_p = ctx_pitch[-WINDOW:] or None
+        pfx_d = ctx_dur[-WINDOW:]   or None
+        pfx_r = ctx_rest[-WINDOW:]  or None
+        raw_notes = _generate_notes(
+            executor, chord_ids, phrase_id, artist_id,
+            prefix_pitch=pfx_p, prefix_dur=pfx_d, prefix_rest=pfx_r
+        )
 
         section_events = []
         pitches_midi   = []
         n_clamped      = 0
         for p_tok, d_tok, r_tok in raw_notes:
+            # Accumulate rolling token context for next chord section
+            ctx_pitch.append(p_tok)
+            ctx_dur.append(d_tok)
+            ctx_rest.append(r_tok)
             raw_pitch  = note_tok.decode_pitch(p_tok)
             pitch_midi = clamp_pitch(raw_pitch) if 0 <= raw_pitch <= 127 else raw_pitch
             if pitch_midi != raw_pitch:

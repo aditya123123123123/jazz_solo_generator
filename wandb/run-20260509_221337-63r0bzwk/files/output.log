@@ -1,0 +1,31 @@
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/nn/modules/transformer.py:482: UserWarning: The operator 'aten::_nested_tensor_from_mask_left_aligned' is not currently supported on the MPS backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/aten/src/ATen/mps/MPSFallback.mm:34.)
+  elif do_mask_check and not torch._nested_tensor_from_mask_left_aligned(
+Epoch   5: train=6.5248  val=6.5045  lr=2.97e-04
+Epoch  10: train=6.3353  val=6.4507  lr=2.89e-04
+Epoch  15: train=6.1986  val=6.4728  lr=2.76e-04
+Epoch  20: train=6.0463  val=6.4863  lr=2.58e-04
+Epoch  25: train=5.9127  val=6.5399  lr=2.36e-04
+Early stopping at epoch 29 (no improvement for 20 epochs)
+
+Best val_loss: 6.4424 at epoch 9
+Checkpoint: /Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator/checkpoints/note_executor_best.pt
+
+Sanity generation: chord='Cj7', phrase=PHRASE_18 (Parker style)
+
+   #  pitch     beats  rest
+   1     64      0.01     0
+   2     62      0.41     0
+   3     59      0.19     0
+   4     64      0.19     0
+   5     65      0.02     0
+   6     67      0.19     0
+   7     64      0.19     0
+   8     59      0.19     0
+   9     57      0.19     0
+  10     55      0.19     0
+  11     59      0.19     0
+  12     62      0.19     0
+  13     59      0.19     0
+  14     56      0.19     0
+  15     57      0.19     0
+  16     53      0.19     0

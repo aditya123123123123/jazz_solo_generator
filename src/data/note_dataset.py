@@ -1,4 +1,11 @@
+"""
+NoteWindowDataset with cross-phrase context and position-in-phrase tracking.
+
+Samples are grouped by solo so the context window can span across phrase
+boundaries within the same solo — giving the model continuity across chords.
+"""
 import json
+from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
@@ -10,7 +17,8 @@ _PHRASES_PATH = _REPO / "data" / "processed" / "phrases_expanded.json"
 _CLUSTERS_PATH = _REPO / "data" / "processed" / "phrase_clusters_expanded.csv"
 
 WINDOW = 8
-REST_GAP_THRESHOLD = 0.1  # seconds; gap > this between consecutive notes -> is_rest=1
+REST_GAP_THRESHOLD = 0.1   # seconds
+MAX_POS_IN_PHRASE  = 15    # position embedding vocabulary size - 1
 
 
 def _chord_changes(notes, chord_tok):
@@ -24,7 +32,11 @@ def _chord_changes(notes, chord_tok):
 
 
 class NoteWindowDataset(Dataset):
-    """One sample per note: (chord_context, phrase_id, artist_id, 8-note window) → next note."""
+    """
+    One sample per note.
+    Context window spans phrase boundaries within the same solo.
+    Each sample includes pos_in_phrase (0-15) for the TARGET note.
+    """
 
     def __init__(
         self,
@@ -45,65 +57,80 @@ class NoteWindowDataset(Dataset):
             for row in df.itertuples()
         }
 
-        PAD_P = note_tok.PITCH_PAD
-        PAD_D = note_tok.DUR_PAD
-        BOS_P = note_tok.PITCH_BOS
-        BOS_D = note_tok.DUR_BOS
+        PAD_P = note_tok.PITCH_PAD   # 0
+        PAD_D = note_tok.DUR_PAD     # 0
+
+        # Group phrases by solo, sort temporally
+        solos: dict = defaultdict(list)
+        for p in phrases:
+            solos[p["solo_id"]].append(p)
 
         self._samples = []
-        for p in phrases:
-            notes = sorted(p["notes"], key=lambda x: x["onset"])
-            if not notes:
-                continue
 
-            solo_id, phrase_number, performer = p["solo_id"], p["phrase_number"], p["performer"]
+        for solo_id, solo_phrases in solos.items():
+            solo_phrases.sort(key=lambda p: p["phrase_number"])
+            performer = solo_phrases[0]["performer"]
+            artist_id_val = artist_tok.encode(performer)
 
-            # Phrase-level chord context (shared across all notes in this phrase)
-            chord_ids = torch.tensor(_chord_changes(notes, chord_tok), dtype=torch.long)
+            # Build flat note sequence for this solo (across all phrases)
+            flat: list = []  # each entry is a dict of note data
 
-            pt = token_map.get((solo_id, phrase_number), "PHRASE_00")
-            phrase_id = torch.tensor(phrase_tok.encode(pt), dtype=torch.long)
-            artist_id = torch.tensor(artist_tok.encode(performer), dtype=torch.long)
+            for ph in solo_phrases:
+                notes = sorted(ph["notes"], key=lambda x: x["onset"])
+                if not notes:
+                    continue
 
-            # Encode every note
-            encoded = []  # list of (pitch_tok, dur_tok, is_rest)
-            for i, note in enumerate(notes):
-                pitch = note_tok.encode_pitch(note["pitch"])
-                dur = note_tok.encode_duration(note["duration"])
-                if i == 0:
-                    is_rest = 0
-                else:
-                    gap = notes[i]["onset"] - (notes[i - 1]["onset"] + notes[i - 1]["duration"])
-                    is_rest = 1 if gap > REST_GAP_THRESHOLD else 0
-                encoded.append((pitch, dur, is_rest))
+                phrase_int = phrase_tok.encode(
+                    token_map.get((solo_id, ph["phrase_number"]), "PHRASE_00")
+                )
+                chord_ids_t = torch.tensor(_chord_changes(notes, chord_tok), dtype=torch.long)
+                chord_len   = torch.tensor(len(chord_ids_t), dtype=torch.long)
 
-            chord_len = torch.tensor(len(chord_ids), dtype=torch.long)
+                for pos_in_phrase, note in enumerate(notes):
+                    pitch = note_tok.encode_pitch(note["pitch"])
+                    dur   = note_tok.encode_duration(note["duration"])
+                    if pos_in_phrase == 0:
+                        is_rest = 0
+                    else:
+                        gap = (note["onset"]
+                               - notes[pos_in_phrase - 1]["onset"]
+                               - notes[pos_in_phrase - 1]["duration"])
+                        is_rest = 1 if gap > REST_GAP_THRESHOLD else 0
 
-            for target_idx in range(len(encoded)):
-                # Build fixed-size context window: BOS + up to (window-1) previous notes
-                prev_start = max(0, target_idx - (window - 1))
-                ctx = [(BOS_P, BOS_D, 0)] + encoded[prev_start:target_idx]
+                    flat.append({
+                        "pitch":         pitch,
+                        "dur":           dur,
+                        "rest":          is_rest,
+                        "phrase_id":     torch.tensor(phrase_int,    dtype=torch.long),
+                        "artist_id":     torch.tensor(artist_id_val, dtype=torch.long),
+                        "chord_ids":     chord_ids_t,
+                        "chord_len":     chord_len,
+                        "pos_in_phrase": min(pos_in_phrase, MAX_POS_IN_PHRASE),
+                    })
 
-                # Left-pad to exactly `window` positions
-                pad = window - len(ctx)
-                ctx = [(PAD_P, PAD_D, 0)] * pad + ctx
+            # Create one dataset sample per note in this solo
+            for abs_idx, target in enumerate(flat):
+                # Context: up to `window` notes immediately before the target
+                ctx_start   = max(0, abs_idx - window)
+                ctx_entries = flat[ctx_start:abs_idx]
+                pad_len     = window - len(ctx_entries)
 
-                ctx_pitch = torch.tensor([t[0] for t in ctx], dtype=torch.long)
-                ctx_dur   = torch.tensor([t[1] for t in ctx], dtype=torch.long)
-                ctx_rest  = torch.tensor([t[2] for t in ctx], dtype=torch.long)
+                ctx_pitch = [PAD_P] * pad_len + [e["pitch"] for e in ctx_entries]
+                ctx_dur   = [PAD_D] * pad_len + [e["dur"]   for e in ctx_entries]
+                ctx_rest  = [0]     * pad_len + [e["rest"]  for e in ctx_entries]
 
-                t_pitch, t_dur, t_rest = encoded[target_idx]
                 self._samples.append({
-                    "chord_ids":    chord_ids,
-                    "phrase_id":    phrase_id,
-                    "artist_id":    artist_id,
-                    "ctx_pitch":    ctx_pitch,
-                    "ctx_dur":      ctx_dur,
-                    "ctx_rest":     ctx_rest,
-                    "target_pitch": torch.tensor(t_pitch, dtype=torch.long),
-                    "target_dur":   torch.tensor(t_dur,   dtype=torch.long),
-                    "target_rest":  torch.tensor(t_rest,  dtype=torch.long),
-                    "chord_len":    chord_len,
+                    "chord_ids":     target["chord_ids"],
+                    "chord_len":     target["chord_len"],
+                    "phrase_id":     target["phrase_id"],
+                    "artist_id":     target["artist_id"],
+                    "ctx_pitch":     torch.tensor(ctx_pitch, dtype=torch.long),
+                    "ctx_dur":       torch.tensor(ctx_dur,   dtype=torch.long),
+                    "ctx_rest":      torch.tensor(ctx_rest,  dtype=torch.long),
+                    "target_pitch":  torch.tensor(target["pitch"], dtype=torch.long),
+                    "target_dur":    torch.tensor(target["dur"],   dtype=torch.long),
+                    "target_rest":   torch.tensor(target["rest"],  dtype=torch.long),
+                    "pos_in_phrase": torch.tensor(target["pos_in_phrase"], dtype=torch.long),
                 })
 
     def __len__(self):
@@ -115,8 +142,8 @@ class NoteWindowDataset(Dataset):
 
 def collate_note_window(batch):
     chord_lens = [b["chord_len"].item() for b in batch]
-    max_chord = max(chord_lens)
-    B = len(batch)
+    max_chord  = max(chord_lens)
+    B          = len(batch)
 
     chord_ids = torch.zeros(B, max_chord, dtype=torch.long)
     chord_mask = torch.zeros(B, max_chord, dtype=torch.bool)
@@ -126,14 +153,15 @@ def collate_note_window(batch):
         chord_mask[i, :L] = True
 
     return {
-        "chord_ids":    chord_ids,
-        "chord_mask":   chord_mask,
-        "phrase_id":    torch.stack([b["phrase_id"]    for b in batch]),
-        "artist_id":    torch.stack([b["artist_id"]    for b in batch]),
-        "ctx_pitch":    torch.stack([b["ctx_pitch"]    for b in batch]),
-        "ctx_dur":      torch.stack([b["ctx_dur"]      for b in batch]),
-        "ctx_rest":     torch.stack([b["ctx_rest"]     for b in batch]),
-        "target_pitch": torch.stack([b["target_pitch"] for b in batch]),
-        "target_dur":   torch.stack([b["target_dur"]   for b in batch]),
-        "target_rest":  torch.stack([b["target_rest"]  for b in batch]),
+        "chord_ids":     chord_ids,
+        "chord_mask":    chord_mask,
+        "phrase_id":     torch.stack([b["phrase_id"]     for b in batch]),
+        "artist_id":     torch.stack([b["artist_id"]     for b in batch]),
+        "ctx_pitch":     torch.stack([b["ctx_pitch"]     for b in batch]),
+        "ctx_dur":       torch.stack([b["ctx_dur"]       for b in batch]),
+        "ctx_rest":      torch.stack([b["ctx_rest"]      for b in batch]),
+        "target_pitch":  torch.stack([b["target_pitch"]  for b in batch]),
+        "target_dur":    torch.stack([b["target_dur"]    for b in batch]),
+        "target_rest":   torch.stack([b["target_rest"]   for b in batch]),
+        "pos_in_phrase": torch.stack([b["pos_in_phrase"] for b in batch]),
     }
