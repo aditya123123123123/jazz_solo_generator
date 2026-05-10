@@ -17,3 +17,4 @@ checkpoints/*.pt
 checkpoints/*.pth
 *.pt
 data/processed/notes_v6_cache.pt
+wandb/
