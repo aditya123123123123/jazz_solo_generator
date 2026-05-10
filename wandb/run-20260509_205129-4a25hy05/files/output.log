@@ -1,0 +1,43 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator/src/training/train_note_executor.py", line 196, in <module>
+    main()
+    ~~~~^^
+  File "/Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator/src/training/train_note_executor.py", line 169, in main
+    val_loss   = _val_epoch(model, val_loader, pitch_fn, dur_fn, rest_fn, device)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+  File "/Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator/src/training/train_note_executor.py", line 71, in _val_epoch
+    p_logits, d_logits, r_logits = model(
+                                   ~~~~~^
+        chord_ids, phrase_id, artist_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        ctx_pitch, ctx_dur, ctx_rest,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        src_key_padding_mask=~chord_mask,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator/src/models/note_executor.py", line 91, in forward
+    memory = self.encode(chord_ids, artist_id, src_key_padding_mask)
+  File "/Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator/src/models/note_executor.py", line 78, in encode
+    memory = self.encoder(src, src_key_padding_mask=src_key_padding_mask)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/nn/modules/transformer.py", line 482, in forward
+    elif do_mask_check and not torch._nested_tensor_from_mask_left_aligned(
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        src, src_key_padding_mask.logical_not()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+NotImplementedError: The operator 'aten::_nested_tensor_from_mask_left_aligned' is not currently implemented for the MPS device. If you want this op to be considered for addition please comment on https://github.com/pytorch/pytorch/issues/141287 and mention use-case, that resulted in missing op as well as commit hash 70d99e998b4955e0049d13a98d77ae1b14db1f45. As a temporary fix, you can set the environment variable `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a fallback for this op. WARNING: this will be slower than running natively on MPS.

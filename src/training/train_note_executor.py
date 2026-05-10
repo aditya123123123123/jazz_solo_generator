@@ -14,9 +14,9 @@ CHECKPOINT_DIR = _REPO / "checkpoints"
 BEST_CHECKPOINT = CHECKPOINT_DIR / "note_executor_best.pt"
 
 EPOCHS = 60
-PATIENCE = 10
+PATIENCE = 15
 BATCH_SIZE = 64
-LR = 1e-3
+LR = 3e-4
 WEIGHT_DECAY = 1e-4
 SEED = 42
 BEAT_DURATION = 0.5  # seconds per beat at 120 BPM
@@ -105,7 +105,11 @@ def _sanity_generate(model, chord_tok, note_tok, phrase_tok, artist_tok, device)
 
 
 def main():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = (
+        torch.device("cuda") if torch.cuda.is_available()
+        else torch.device("mps") if torch.backends.mps.is_available()
+        else torch.device("cpu")
+    )
     print(f"Device: {device}")
 
     chord_tok  = ChordTokenizer.from_json()
@@ -135,20 +139,22 @@ def main():
     model = NoteExecutor(
         chord_vocab_size=chord_tok.vocab_size,
         artist_vocab_size=artist_tok.vocab_size,
+        dropout=0.2,
     ).to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
-    pitch_fn = nn.CrossEntropyLoss(ignore_index=0)
-    dur_fn   = nn.CrossEntropyLoss(ignore_index=0)
-    rest_fn  = nn.CrossEntropyLoss()
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=60, eta_min=1e-5)
+    pitch_fn = nn.CrossEntropyLoss(ignore_index=0, label_smoothing=0.1)
+    dur_fn   = nn.CrossEntropyLoss(ignore_index=0, label_smoothing=0.1)
+    rest_fn  = nn.CrossEntropyLoss(label_smoothing=0.1)
 
     wandb.init(
         project="jazz-solo-generator",
-        name="note-executor-v1",
+        name="note-executor-v3",
         config={
             "d_model": 256, "nhead": 8, "num_layers": 4,
-            "dim_feedforward": 512, "dropout": 0.1,
-            "lr": LR, "weight_decay": WEIGHT_DECAY,
+            "dim_feedforward": 512, "dropout": 0.2, "label_smoothing": 0.1,
+            "lr": LR, "scheduler": "cosine", "eta_min": 1e-5, "weight_decay": WEIGHT_DECAY,
             "batch_size": BATCH_SIZE, "epochs": EPOCHS, "patience": PATIENCE,
             "train_samples": n_train, "val_samples": n_val,
         },
@@ -163,10 +169,13 @@ def main():
                                   pitch_fn, dur_fn, rest_fn, device)
         val_loss   = _val_epoch(model, val_loader, pitch_fn, dur_fn, rest_fn, device)
 
-        wandb.log({"train_loss": train_loss, "val_loss": val_loss}, step=epoch)
+        scheduler.step()
+        current_lr = scheduler.get_last_lr()[0]
 
-        if epoch % 10 == 0:
-            print(f"Epoch {epoch:3d}: train_loss={train_loss:.4f}  val_loss={val_loss:.4f}")
+        wandb.log({"train_loss": train_loss, "val_loss": val_loss, "lr": current_lr}, step=epoch)
+
+        if epoch % 5 == 0:
+            print(f"Epoch {epoch:3d}: train_loss={train_loss:.4f}  val_loss={val_loss:.4f}  lr={current_lr:.2e}")
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss

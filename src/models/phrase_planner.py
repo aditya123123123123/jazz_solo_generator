@@ -55,12 +55,9 @@ class PhrasePlanner(nn.Module):
         src_key_padding_mask: torch.Tensor = None,
     ) -> torch.Tensor:
         src = self.chord_embed(chord_ids)
-        print(f"  [PhrasePlanner] chord_embed: {src.shape}")
         src[:, 0, :] = src[:, 0, :] + self.artist_embed(artist_id)
         src = self._sinusoidal_pe(src)
-        print(f"  [PhrasePlanner] after PE:    {src.shape}")
         memory = self.encoder(src, src_key_padding_mask=src_key_padding_mask)
-        print(f"  [PhrasePlanner] encoder out: {memory.shape}")
         return memory
 
     def forward(
@@ -75,7 +72,6 @@ class PhrasePlanner(nn.Module):
         memory = self.encode(chord_ids, artist_id, src_key_padding_mask)
 
         tgt = self.phrase_embed(phrase_ids)
-        print(f"  [PhrasePlanner] phrase_embed: {tgt.shape}")
         tgt = self._sinusoidal_pe(tgt)
 
         if tgt_mask is None:
@@ -90,10 +86,7 @@ class PhrasePlanner(nn.Module):
             tgt_key_padding_mask=tgt_key_padding_mask,
             memory_key_padding_mask=src_key_padding_mask,
         )
-        print(f"  [PhrasePlanner] decoder out: {out.shape}")
-
         logits = self.phrase_head(out)
-        print(f"  [PhrasePlanner] logits:      {logits.shape}")
         return logits
 
     @torch.no_grad()

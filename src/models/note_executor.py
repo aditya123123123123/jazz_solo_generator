@@ -73,12 +73,9 @@ class NoteExecutor(nn.Module):
         src_key_padding_mask: torch.Tensor = None,
     ) -> torch.Tensor:
         src = self.chord_embed(chord_ids)
-        print(f"  [NoteExecutor] chord_embed:  {src.shape}")
         src[:, 0, :] = src[:, 0, :] + self.artist_embed(artist_id)
         src = self._sinusoidal_pe(src)
-        print(f"  [NoteExecutor] after PE:     {src.shape}")
         memory = self.encoder(src, src_key_padding_mask=src_key_padding_mask)
-        print(f"  [NoteExecutor] encoder out:  {memory.shape}")
         return memory
 
     def forward(
@@ -99,7 +96,6 @@ class NoteExecutor(nn.Module):
             + self.dur_embed(ctx_dur)
             + self.is_rest_embed(ctx_rest)
         )
-        print(f"  [NoteExecutor] note_emb:     {note_emb.shape}")
         phrase_bias = self.phrase_embed(phrase_id).unsqueeze(1)  # (B, 1, d_model)
         note_emb = note_emb + phrase_bias                        # broadcast to all positions
         note_emb = self._sinusoidal_pe(note_emb)
@@ -111,15 +107,9 @@ class NoteExecutor(nn.Module):
             tgt_mask=tgt_mask,
             memory_key_padding_mask=src_key_padding_mask,
         )
-        print(f"  [NoteExecutor] decoder out:  {out.shape}")
 
-        # Predict next note from last context position
         last = out[:, -1, :]
-        pitch_logits  = self.pitch_head(last)
-        dur_logits    = self.dur_head(last)
-        rest_logits   = self.is_rest_head(last)
-        print(f"  [NoteExecutor] pitch_logits: {pitch_logits.shape}  dur: {dur_logits.shape}  rest: {rest_logits.shape}")
-        return pitch_logits, dur_logits, rest_logits
+        return self.pitch_head(last), self.dur_head(last), self.is_rest_head(last)
 
     @torch.no_grad()
     def generate(
@@ -167,9 +157,11 @@ class NoteExecutor(nn.Module):
             out = self.decoder(note_emb, memory, tgt_mask=tgt_mask)
             last = out[:, -1, :]
 
-            next_pitch = self.pitch_head(last).argmax(-1).item()
-            next_dur   = self.dur_head(last).argmax(-1).item()
-            next_rest  = self.is_rest_head(last).argmax(-1).item()
+            pitch_probs = torch.softmax(self.pitch_head(last) / 0.9, dim=-1)
+            next_pitch  = torch.multinomial(pitch_probs, num_samples=1).item()
+            dur_probs   = torch.softmax(self.dur_head(last) / 0.8, dim=-1)
+            next_dur    = torch.multinomial(dur_probs, num_samples=1).item()
+            next_rest   = self.is_rest_head(last).argmax(-1).item()
 
             generated.append((next_pitch, next_dur, next_rest))
             pitch_hist.append(next_pitch)

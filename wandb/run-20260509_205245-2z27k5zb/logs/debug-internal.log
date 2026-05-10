@@ -1,0 +1,20 @@
+{"time":"2026-05-09T20:52:46.095132-04:00","level":"INFO","msg":"wandb-core"}
+{"time":"2026-05-09T20:52:46.095352-04:00","level":"INFO","msg":"stream: starting","core version":"0.26.1"}
+{"time":"2026-05-09T20:52:46.30356-04:00","level":"INFO","msg":"stream: created new stream","id":"2z27k5zb"}
+{"time":"2026-05-09T20:52:46.303627-04:00","level":"INFO","msg":"handler: started"}
+{"time":"2026-05-09T20:52:46.304037-04:00","level":"INFO","msg":"stream: started"}
+{"time":"2026-05-09T20:52:46.304119-04:00","level":"INFO","msg":"writer: started","stream_id":"2z27k5zb"}
+{"time":"2026-05-09T20:52:46.304141-04:00","level":"INFO","msg":"sender: started"}
+{"time":"2026-05-09T20:52:52.084346-04:00","level":"INFO","msg":"filestream: sending request","total_files":0,"uploaded_len":1}
+{"time":"2026-05-09T20:52:52.246183-04:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-09T20:53:07.085342-04:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":0,"events_lines":2,"uploaded_len":1}
+{"time":"2026-05-09T20:53:07.23084-04:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-09T20:53:22.085438-04:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":2,"events_lines":2}
+{"time":"2026-05-09T20:53:22.210198-04:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-09T20:53:33.623836-04:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-05-09T20:53:33.624091-04:00","level":"INFO","msg":"filestream: sending request","total_files":3,"events_offset":4,"events_lines":2,"console_offset":0,"console_lines":43,"uploaded_len":3,"complete":true,"exit_code":1}
+{"time":"2026-05-09T20:53:33.776241-04:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-09T20:53:33.776353-04:00","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-05-09T20:53:33.776375-04:00","level":"INFO","msg":"handler: closed"}
+{"time":"2026-05-09T20:53:33.777263-04:00","level":"INFO","msg":"sender: closed"}
+{"time":"2026-05-09T20:53:33.777276-04:00","level":"INFO","msg":"stream: all finished"}

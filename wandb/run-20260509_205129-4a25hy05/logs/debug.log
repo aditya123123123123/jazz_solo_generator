@@ -1,0 +1,21 @@
+2026-05-09 20:51:29,670 INFO    MainThread:82059 [wandb_setup.py:_flush():81] Current SDK version is 0.26.1
+2026-05-09 20:51:29,671 INFO    MainThread:82059 [wandb_setup.py:_flush():81] Configure stats pid to 82059
+2026-05-09 20:51:29,671 INFO    MainThread:82059 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-05-09 20:51:29,671 INFO    MainThread:82059 [wandb_init.py:setup_run_log_directory():723] Logging user logs to /Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator/wandb/run-20260509_205129-4a25hy05/logs/debug.log
+2026-05-09 20:51:29,671 INFO    MainThread:82059 [wandb_init.py:setup_run_log_directory():724] Logging internal logs to /Users/ajthegreat/Documents/JazzMLProject/jazz_solo_generator/wandb/run-20260509_205129-4a25hy05/logs/debug-internal.log
+2026-05-09 20:51:29,671 INFO    MainThread:82059 [wandb_init.py:init():850] calling init triggers
+2026-05-09 20:51:29,671 INFO    MainThread:82059 [wandb_init.py:init():855] wandb.init called with sweep_config: {}
+config: {'d_model': 256, 'nhead': 8, 'num_layers': 4, 'dim_feedforward': 512, 'dropout': 0.2, 'label_smoothing': 0.1, 'lr': 0.001, 'weight_decay': 0.0001, 'batch_size': 64, 'epochs': 60, 'patience': 15, 'train_samples': 50492, 'val_samples': 12623, '_wandb': {}}
+2026-05-09 20:51:29,671 INFO    MainThread:82059 [wandb_init.py:init():898] starting backend
+2026-05-09 20:51:29,910 INFO    MainThread:82059 [wandb_init.py:init():913] sending inform_init request
+2026-05-09 20:51:30,232 INFO    MainThread:82059 [wandb_init.py:init():918] backend started and connected
+2026-05-09 20:51:30,249 INFO    MainThread:82059 [wandb_init.py:init():988] updated telemetry
+2026-05-09 20:51:30,282 INFO    MainThread:82059 [wandb_init.py:init():1011] communicating run to backend with 90.0 second timeout
+2026-05-09 20:51:30,779 INFO    MainThread:82059 [wandb_init.py:init():1056] starting run threads in backend
+2026-05-09 20:51:30,825 INFO    MainThread:82059 [wandb_run.py:_console_start():2554] atexit reg
+2026-05-09 20:51:30,825 INFO    MainThread:82059 [wandb_run.py:_redirect():2403] redirect: wrap_raw
+2026-05-09 20:51:30,825 INFO    MainThread:82059 [wandb_run.py:_redirect():2472] Wrapping output streams.
+2026-05-09 20:51:30,825 INFO    MainThread:82059 [wandb_run.py:_redirect():2495] Redirects installed.
+2026-05-09 20:51:30,829 INFO    MainThread:82059 [wandb_init.py:init():1094] run started, returning control to user process
+2026-05-09 20:52:18,789 INFO    wandb-AsyncioManager-main:82059 [service_client.py:_forward_responses():134] Reached EOF.
+2026-05-09 20:52:18,790 INFO    wandb-AsyncioManager-main:82059 [mailbox.py:close():155] Closing mailbox, abandoning 1 handles.
