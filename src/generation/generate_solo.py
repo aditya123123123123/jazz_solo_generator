@@ -45,12 +45,49 @@ def clamp_pitch(pitch: int, lo: int = PITCH_LO, hi: int = PITCH_HI) -> int:
     return pitch
 
 
-CHECKPOINTS  = _REPO / "checkpoints"
-SOLOS_DIR    = _REPO / "outputs" / "solos"
-BEAT_DURATION = 0.5    # seconds per beat at 120 BPM
-N_NOTES      = 16      # notes generated per chord section
-WINDOW       = 8       # cross-chord context window size
-MIN_NOTE_DUR = 0.05    # seconds — clamp very short decoded durations
+CHECKPOINTS      = _REPO / "checkpoints"
+SOLOS_DIR        = _REPO / "outputs" / "solos"
+BEAT_DURATION    = 0.5    # seconds per beat at 120 BPM
+N_NOTES          = 16     # notes generated per chord section
+WINDOW           = 8      # cross-chord context window size
+MIN_NOTE_DUR     = 0.05   # seconds — clamp very short decoded durations
+REST_THRESH_LONG = 0.8    # notes longer than this get a rest inserted after
+REST_SHORTEN     = 0.35   # how much to shorten a long note before the rest
+BOUNDARY_DUR_MIN = 0.3    # threshold for boundary rest insertion
+BOUNDARY_REST    = 0.25   # duration of injected boundary rest
+
+
+# ---------------------------------------------------------------------------
+# PHRASE_00 remapping — steers fallback phrase tokens toward family-appropriate ones
+# ---------------------------------------------------------------------------
+
+def remap_phrase_fallback(phrase_int: int, chord_wjazz: str, phrase_tok) -> int:
+    """Replace PHRASE_00 with a chord-family-appropriate phrase cluster."""
+    if phrase_tok.decode(phrase_int) != "PHRASE_00":
+        return phrase_int
+    if any(x in chord_wjazz for x in ("m7b5", "o7", "-7", "-6")):
+        return phrase_tok.encode("PHRASE_18")   # minor family
+    if any(x in chord_wjazz for x in ("j7", "maj")):
+        return phrase_tok.encode("PHRASE_52")   # major family
+    if chord_wjazz.endswith("7"):
+        return phrase_tok.encode("PHRASE_57")   # dominant family
+    return phrase_tok.encode("PHRASE_18")       # default
+
+
+# ---------------------------------------------------------------------------
+# Rest injection — musical breathing within and between sections
+# ---------------------------------------------------------------------------
+
+def _inject_rests(section_events: list) -> list:
+    """Insert rests after long notes (>0.8 s) to create musical breathing."""
+    result = []
+    for pitch, dur, is_rest in section_events:
+        if not is_rest and dur > REST_THRESH_LONG:
+            result.append((pitch, dur - REST_SHORTEN, False))
+            result.append((0, REST_SHORTEN, True))
+        else:
+            result.append((pitch, dur, is_rest))
+    return result
 
 PROGRESSIONS = {
     "ii_V_I_C": [
@@ -153,8 +190,10 @@ def generate_solo(progression, artist_name="Charlie Parker",
 
         chord_ids = torch.tensor([[chord_id]], dtype=torch.long)
 
-        # ---- PhrasePlanner ----
-        phrase_int   = _plan_phrase(planner, chord_ids, artist_id)
+        # ---- PhrasePlanner + PHRASE_00 remapping ----
+        phrase_int_raw = _plan_phrase(planner, chord_ids, artist_id)
+        phrase_int     = remap_phrase_fallback(phrase_int_raw, wjazz_str, phrase_tok)
+        phrase_remapped = phrase_int != phrase_int_raw
         phrase_label = phrase_tok.decode(phrase_int)
         phrase_id    = torch.tensor([phrase_int], dtype=torch.long)
 
@@ -185,16 +224,29 @@ def generate_solo(progression, artist_name="Charlie Parker",
             if 0 <= pitch_midi <= 127:
                 pitches_midi.append(pitch_midi)
 
+        # --- Rest injection (within section) ---
+        section_events = _inject_rests(section_events)
+
+        # --- Boundary rest (between sections) ---
+        if note_events and section_events:
+            last_p, last_d, last_r = section_events[-1]
+            if not last_r and last_d < BOUNDARY_DUR_MIN:
+                shortened = max(last_d - BOUNDARY_REST + 0.05, MIN_NOTE_DUR)
+                section_events[-1] = (last_p, shortened, last_r)
+                section_events.append((0, BOUNDARY_REST, True))
+
         note_events.extend(section_events)
         chord_summaries.append({
-            "chord":        chord_str,
-            "wjazz":        wjazz_str,
-            "beats":        beats,
-            "in_vocab":     chord_id != chord_tok.UNK,
-            "phrase_token": phrase_label,
-            "n_notes":      len(section_events),
-            "n_clamped":    n_clamped,
-            "pitches":      pitches_midi,
+            "chord":           chord_str,
+            "wjazz":           wjazz_str,
+            "beats":           beats,
+            "in_vocab":        chord_id != chord_tok.UNK,
+            "phrase_token":    phrase_label,
+            "phrase_remapped": phrase_remapped,
+            "phrase_original": phrase_tok.decode(phrase_int_raw) if phrase_remapped else None,
+            "n_notes":         16,           # always 16 model-generated notes
+            "n_clamped":       n_clamped,
+            "pitches":         pitches_midi,
         })
 
     return note_events, chord_summaries, unknown_chords

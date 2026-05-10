@@ -2,6 +2,19 @@ import math
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+
+
+def _nucleus_sample(logits: torch.Tensor, top_p: float = 0.92, temperature: float = 0.95) -> int:
+    """Top-p (nucleus) sampling with temperature."""
+    logits = logits / temperature
+    probs = F.softmax(logits, dim=-1)
+    sorted_probs, sorted_idx = torch.sort(probs, descending=True)
+    cumsum = torch.cumsum(sorted_probs, dim=-1)
+    mask = (cumsum - sorted_probs) > top_p
+    sorted_probs[mask] = 0.0
+    sorted_probs = sorted_probs / sorted_probs.sum()
+    return sorted_idx[torch.multinomial(sorted_probs, 1)].item()
 
 # The WJazzD corpus has no per-note velocity.
 # This model predicts pitch, quantised duration, and is_rest (gap flag).
@@ -160,11 +173,21 @@ class NoteExecutor(nn.Module):
             out  = self.decoder(note_emb, memory, tgt_mask=tgt_mask)
             last = out[:, -1, :]
 
-            pitch_probs = torch.softmax(self.pitch_head(last) / 0.9, dim=-1)
-            next_pitch  = torch.multinomial(pitch_probs, num_samples=1).item()
-            dur_probs   = torch.softmax(self.dur_head(last) / 0.8, dim=-1)
-            next_dur    = torch.multinomial(dur_probs, num_samples=1).item()
-            next_rest   = self.is_rest_head(last).argmax(-1).item()
+            # Repetition penalty on raw logits before sampling
+            pitch_logits = self.pitch_head(last).squeeze(0).clone()  # (pitch_vocab,)
+            recent_pcs = [p % 12 for p in pitch_hist[-3:] if p >= 4]
+            for rp in pitch_hist[-3:]:
+                if 4 <= rp < pitch_logits.size(0):
+                    pitch_logits[rp] = pitch_logits[rp] * 0.4
+            for idx in range(4, pitch_logits.size(0)):
+                if (idx - 4) % 12 in recent_pcs:
+                    pitch_logits[idx] = pitch_logits[idx] * 0.7
+
+            # Nucleus sampling for pitch; temperature sampling for duration
+            next_pitch = _nucleus_sample(pitch_logits, top_p=0.92, temperature=0.95)
+            dur_probs  = torch.softmax(self.dur_head(last) / 0.8, dim=-1)
+            next_dur   = torch.multinomial(dur_probs, num_samples=1).item()
+            next_rest  = self.is_rest_head(last).argmax(-1).item()
 
             generated.append((next_pitch, next_dur, next_rest))
             pitch_hist.append(next_pitch)

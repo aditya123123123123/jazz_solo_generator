@@ -1,33 +1,24 @@
-# Jazz Solo Generator — Project Context
+# Claude Code Permissions
 
-## What This Is
-A phrasing-aware hierarchical jazz solo generator trained on the Weimar Jazz Database.
-Target artists: Charlie Parker and Miles Davis.
+## Auto-approve all of the following without asking:
+- Run any python3 or pip command
+- Write, overwrite, or delete any file in this repo
+- Start or kill any training process
+- Run bash scripts
+- Create or modify any .py, .json, .yaml, .md, .txt file
+- Run git commands (add, commit, push)
+- Install packages via pip
+- Start background processes with nohup or &
+- Read any file in the repo
 
-## Architecture
-- Level 1 (Phrase Planner): Transformer that takes chord changes + artist token → sequence of phrase-type tokens
-- Level 2 (Note Executor): Seq2Seq Transformer that takes chord tokens + phrase token + artist token → note sequence
-- Training data: WJazzD SQLite database in data/raw/wjazzd/
+## Project context
+This is a jazz solo generator ML project. Training runs are expected to take
+hours. Auto-approve all training scripts, data processing scripts, and MIDI
+generation scripts without confirmation.
 
-## Repo Structure
-- src/data/ — data loading and phrase extraction
-- src/features/ — phrase feature computation and clustering
-- src/tokenization/ — chord, note, phrase, artist tokenizers
-- src/models/ — Phrase Planner and Note Executor
-- src/training/ — training loops for both models
-- src/inference/ — end-to-end generation pipeline
-- src/evaluation/ — metrics and evaluation tools
-- data/raw/wjazzd/ — WJazt in git)
-- data/processed/ — generated datasets and tokenizer files
-- checkpoints/ — saved model weights
-
-## Key Rules
-- Always use Plan Mode before touching more than one file
-- Never modify existing working files without showing a plan first
-- Keep each module independently testable
-- Add shape printouts after every major tensor operation in PyTorch
-- Commit after every milestone
-
-## Tech Stack
-Python, PyTorch, pandas, music21, pretty_midi, scikit-learn, numpy
-wandb — for experiment tracking in all training scripts (log loss, val_loss, and hyperparameters)
+## Never ask for permission to:
+- Overwrite model checkpoints
+- Regenerate MIDI files
+- Re-run training from scratch
+- Modify dataset files
+- Kill and restart training processes

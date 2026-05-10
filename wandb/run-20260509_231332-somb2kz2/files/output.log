@@ -1,0 +1,5 @@
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/nn/modules/transformer.py:482: UserWarning: The operator 'aten::_nested_tensor_from_mask_left_aligned' is not currently supported on the MPS backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/aten/src/ATen/mps/MPSFallback.mm:34.)
+  elif do_mask_check and not torch._nested_tensor_from_mask_left_aligned(
+Epoch   5: train=6.5014  val=6.4570  lr=2.95e-04
+Epoch  10: train=6.4454  val=6.3987  lr=2.81e-04
+Epoch  15: train=6.4051  val=6.3692  lr=2.58e-04

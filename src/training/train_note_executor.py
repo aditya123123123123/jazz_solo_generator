@@ -12,11 +12,11 @@ from src.tokenization import ArtistTokenizer, ChordTokenizer, NoteTokenizer, Phr
 
 _REPO = Path(__file__).parents[2]
 CHECKPOINT_DIR   = _REPO / "checkpoints"
-BEST_CHECKPOINT  = CHECKPOINT_DIR / "note_executor_best.pt"
+BEST_CHECKPOINT  = CHECKPOINT_DIR / "note-executor-v5-best.pt"
 
-EPOCHS          = 80
-PATIENCE        = 20
-BATCH_SIZE      = 64
+EPOCHS          = 60
+PATIENCE        = 15
+BATCH_SIZE      = 256
 LR              = 3e-4
 WEIGHT_DECAY    = 1e-4
 SEED            = 42
@@ -193,7 +193,7 @@ def main():
 
     chord_tone_tensor = build_chord_tone_tensor(chord_tok)
 
-    print("Building NoteWindowDataset (cross-phrase context) …")
+    print("Building NoteWindowDataset (12-key transposition augmentation) …")
     full_ds = NoteWindowDataset(chord_tok, note_tok, artist_tok, phrase_tok)
     print(f"Total samples: {len(full_ds):,}")
 
@@ -226,13 +226,14 @@ def main():
 
     wandb.init(
         project="jazz-solo-generator",
-        name="note-executor-v4",
+        name="note-executor-v5",
         config={
             "d_model": 256, "nhead": 8, "num_layers": 4, "dim_feedforward": 512,
             "dropout": 0.25, "label_smoothing": 0.1, "harmonic_weight": HARMONIC_WEIGHT,
             "lr": LR, "scheduler": "cosine", "T_max": EPOCHS, "eta_min": 1e-5,
             "weight_decay": WEIGHT_DECAY, "batch_size": BATCH_SIZE,
             "epochs": EPOCHS, "patience": PATIENCE,
+            "transposition_keys": 12, "dataset": "phrases_all.json",
             "cross_phrase_context": True, "pos_in_phrase_embed": True,
             "train_samples": n_train, "val_samples": n_val,
         },
