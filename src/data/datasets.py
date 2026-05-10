@@ -7,8 +7,8 @@ import torch
 from torch.utils.data import Dataset
 
 _REPO = Path(__file__).parents[2]
-_PHRASES_PATH = _REPO / "data" / "processed" / "phrases_expanded.json"
-_CLUSTERS_PATH = _REPO / "data" / "processed" / "phrase_clusters_expanded.csv"
+_PHRASES_PATH = _REPO / "data" / "processed" / "phrases_all_with_tempo.json"
+_CLUSTERS_PATH = _REPO / "data" / "processed" / "phrase_clusters_all.csv"
 
 
 def _chord_changes(notes, chord_tok):
@@ -88,8 +88,9 @@ class NoteExecutorDataset(Dataset):
             pt = token_map.get((solo_id, phrase_number), "PHRASE_00")
             chord_ids = _chord_changes(notes, chord_tok)
 
+            tempo = p["tempo_bpm"]  # raises KeyError if backfill missing
             pitch_ids = [note_tok.PITCH_BOS] + [note_tok.encode_pitch(n["pitch"]) for n in notes] + [note_tok.PITCH_EOS]
-            dur_ids = [note_tok.DUR_BOS] + [note_tok.encode_duration(n["duration"]) for n in notes] + [note_tok.DUR_EOS]
+            dur_ids = [note_tok.DUR_BOS] + [note_tok.encode_duration(n["duration"], tempo) for n in notes] + [note_tok.DUR_EOS]
 
             self._samples.append({
                 "phrase_id": torch.tensor(phrase_tok.encode(pt), dtype=torch.long),
