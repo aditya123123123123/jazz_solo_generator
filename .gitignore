@@ -18,3 +18,4 @@ checkpoints/*.pth
 *.pt
 data/processed/notes_v6_cache.pt
 wandb/
+!data/raw/wjazzd/WJazzD.sqlite
