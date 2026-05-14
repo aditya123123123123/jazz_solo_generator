@@ -1,0 +1,64 @@
+{
+  "note_events": [
+    {
+      "pitch_midi": 60,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch_midi": 62,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch_midi": 0,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch_midi": 64,
+      "duration_sec": 1.0,
+      "is_rest": false
+    },
+    {
+      "pitch_midi": -1,
+      "duration_sec": 0.5,
+      "is_rest": false
+    }
+  ],
+  "chord_summaries": [
+    {
+      "chord": "Dm7",
+      "wjazz": "D-7",
+      "beats": 4,
+      "in_vocab": true,
+      "phrase_token": "PHRASE_18",
+      "phrase_remapped": true,
+      "phrase_original": "PHRASE_00",
+      "n_notes": 16,
+      "n_clamped": 2,
+      "pitches": [
+        60,
+        62,
+        64
+      ]
+    },
+    {
+      "chord": "G7",
+      "wjazz": "G7",
+      "beats": 4,
+      "in_vocab": true,
+      "phrase_token": "PHRASE_57",
+      "phrase_remapped": false,
+      "phrase_original": null,
+      "n_notes": 16,
+      "n_clamped": 0,
+      "pitches": [
+        55,
+        59,
+        62,
+        65
+      ]
+    }
+  ]
+}
