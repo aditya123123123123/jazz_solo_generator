@@ -6,6 +6,7 @@ For each chord in a progression:
   2. NoteExecutor   (chord + phrase token → note sequence)
   3. Concatenate notes, export to MIDI.
 """
+import argparse
 import json
 import re
 from pathlib import Path
@@ -13,6 +14,7 @@ from pathlib import Path
 import pretty_midi
 import torch
 
+from src.generation.rhythm_section import generate_rhythm_section
 from src.models.note_executor import NoteExecutor
 from src.models.phrase_planner import PhrasePlanner
 from src.tokenization import ArtistTokenizer, ChordTokenizer, NoteTokenizer, PhraseTokenizer
@@ -256,8 +258,13 @@ def generate_solo(progression, artist_name="Charlie Parker",
 # MIDI export
 # ---------------------------------------------------------------------------
 
-def export_midi(note_events, output_path, tempo=120):
-    """Write note_events to a MIDI file. Returns total duration in seconds."""
+def export_midi(note_events, output_path, tempo=120, rhythm_instruments=None):
+    """Write note_events to a MIDI file. Returns total duration in seconds.
+
+    rhythm_instruments: optional list of pretty_midi.Instrument objects (piano,
+    bass, drums from generate_rhythm_section). When None, behavior matches the
+    original solo-only export exactly.
+    """
     pm    = pretty_midi.PrettyMIDI(initial_tempo=float(tempo))
     piano = pretty_midi.Instrument(program=0, name="Piano")
 
@@ -273,6 +280,8 @@ def export_midi(note_events, output_path, tempo=120):
         t += dur_sec
 
     pm.instruments.append(piano)
+    if rhythm_instruments:
+        pm.instruments.extend(rhythm_instruments)
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     pm.write(str(output_path))
@@ -349,7 +358,21 @@ def report(name, summaries, unknown_chords, path, total_dur, note_events):
 # Entrypoint
 # ---------------------------------------------------------------------------
 
-def main():
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description="Generate jazz solo MIDIs.")
+    parser.add_argument("--with-rhythm-section", action="store_true",
+                        help="Include rule-based piano/bass/drums tracks.")
+    parser.add_argument("--rhythm-style", default="swing",
+                        choices=["swing", "bossa", "ballad", "latin", "funk"],
+                        help="Rhythm-section style (default: swing).")
+    parser.add_argument("--rhythm-seed", type=int, default=42,
+                        help="Seed for rhythm-section humanization RNG.")
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    args = parse_args(argv)
+
     chord_tok  = ChordTokenizer.from_json()
     note_tok   = NoteTokenizer.from_json()
     phrase_tok = PhraseTokenizer()
@@ -362,6 +385,10 @@ def main():
     SOLOS_DIR.mkdir(parents=True, exist_ok=True)
     torch.manual_seed(42)
 
+    # Rhythm-section tempo is derived from the solo's own internal grid so
+    # the two streams cannot desync. BEAT_DURATION is seconds-per-beat.
+    tempo_bpm = 60.0 / BEAT_DURATION
+
     for name, progression in PROGRESSIONS.items():
         note_events, summaries, unknowns = generate_solo(
             progression,
@@ -371,7 +398,13 @@ def main():
         )
         midi_out = SOLOS_DIR / f"{name}.mid"
         json_out = SOLOS_DIR / f"{name}.json"
-        total_dur = export_midi(note_events, midi_out)
+        rhythm = None
+        if args.with_rhythm_section:
+            rhythm = generate_rhythm_section(
+                progression, tempo_bpm=tempo_bpm,
+                style=args.rhythm_style, seed=args.rhythm_seed,
+            )
+        total_dur = export_midi(note_events, midi_out, rhythm_instruments=rhythm)
         export_json(note_events, summaries, json_out)
         report(name, summaries, unknowns, midi_out, total_dur, note_events)
 
