@@ -8,6 +8,7 @@ For each chord in a progression:
 """
 import argparse
 import json
+import logging
 import re
 from pathlib import Path
 
@@ -18,6 +19,8 @@ from src.generation.rhythm_section import generate_rhythm_section
 from src.models.note_executor import NoteExecutor
 from src.models.phrase_planner import PhrasePlanner
 from src.tokenization import ArtistTokenizer, ChordTokenizer, NoteTokenizer, PhraseTokenizer
+
+logger = logging.getLogger(__name__)
 
 _REPO = Path(__file__).parents[2]
 
@@ -111,7 +114,62 @@ PROGRESSIONS = {
 # Model loading
 # ---------------------------------------------------------------------------
 
-def load_models(chord_tok, artist_tok):
+def _load_note_executor_with_compat(path, chord_tok, artist_tok, note_tok, dropout=0.2):
+    import math
+    state = torch.load(path, map_location="cpu")
+    ckpt_dur_vocab = state["dur_embed.weight"].shape[0]
+    has_tempo = "tempo_embed.weight" in state
+
+    if ckpt_dur_vocab == 19 and not has_tempo:
+        logger.info("note_executor checkpoint: legacy v5 detected "
+                    "(dur_vocab=19, no tempo_embed) — using compat path")
+        executor = NoteExecutor(
+            chord_vocab_size=chord_tok.vocab_size,
+            artist_vocab_size=artist_tok.vocab_size,
+            dur_vocab_size=19,
+            dropout=dropout,
+        )
+        result = executor.load_state_dict(state, strict=False)
+        expected_missing = {"tempo_embed.weight", "tempo_embed.bias"}
+        missing = set(result.missing_keys)
+        unexpected = set(result.unexpected_keys)
+        if missing != expected_missing or unexpected:
+            raise RuntimeError(
+                f"compat load: unexpected key mismatch — missing={missing}, "
+                f"unexpected={unexpected}"
+            )
+        with torch.no_grad():
+            executor.tempo_embed.weight.zero_()
+            executor.tempo_embed.bias.zero_()
+        executor.eval()
+
+        legacy_bins_path = _REPO / "data" / "processed" / "duration_bins.v5.legacy.json"
+        with open(legacy_bins_path) as f:
+            edges = json.load(f)["bin_edges"]
+        DUR_OFFSET = 4
+        def decode_dur(token, tempo_bpm):
+            idx = int(token) - DUR_OFFSET
+            if 0 <= idx < len(edges) - 1:
+                return math.sqrt(edges[idx] * edges[idx + 1])
+            return MIN_NOTE_DUR
+        return executor, decode_dur
+
+    logger.info("note_executor checkpoint: current v6 (dur_vocab=%d, tempo_embed=%s)",
+                ckpt_dur_vocab, has_tempo)
+    executor = NoteExecutor(
+        chord_vocab_size=chord_tok.vocab_size,
+        artist_vocab_size=artist_tok.vocab_size,
+        dur_vocab_size=ckpt_dur_vocab,
+        dropout=dropout,
+    )
+    executor.load_state_dict(state, strict=True)
+    executor.eval()
+    def decode_dur(token, tempo_bpm):
+        return note_tok.decode_duration(int(token), tempo_bpm=tempo_bpm)
+    return executor, decode_dur
+
+
+def load_models(chord_tok, artist_tok, note_tok):
     planner = PhrasePlanner(
         chord_vocab_size=chord_tok.vocab_size,
         artist_vocab_size=artist_tok.vocab_size,
@@ -121,17 +179,10 @@ def load_models(chord_tok, artist_tok):
     )
     planner.eval()
 
-    executor = NoteExecutor(
-        chord_vocab_size=chord_tok.vocab_size,
-        artist_vocab_size=artist_tok.vocab_size,
-        dropout=0.2,
+    executor, decode_dur = _load_note_executor_with_compat(
+        CHECKPOINTS / "note_executor_best.pt", chord_tok, artist_tok, note_tok, dropout=0.2,
     )
-    executor.load_state_dict(
-        torch.load(CHECKPOINTS / "note_executor_best.pt", map_location="cpu")
-    )
-    executor.eval()
-
-    return planner, executor
+    return planner, executor, decode_dur
 
 
 # ---------------------------------------------------------------------------
@@ -165,7 +216,8 @@ def _generate_notes(executor, chord_ids, phrase_id, artist_id,
 def generate_solo(progression, artist_name="Charlie Parker",
                   chord_tok=None, note_tok=None,
                   phrase_tok=None, artist_tok=None,
-                  planner=None, executor=None):
+                  planner=None, executor=None,
+                  decode_dur=None, tempo_bpm=120.0):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -220,7 +272,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
             pitch_midi = clamp_pitch(raw_pitch) if 0 <= raw_pitch <= 127 else raw_pitch
             if pitch_midi != raw_pitch:
                 n_clamped += 1
-            dur_sec  = max(note_tok.decode_duration(d_tok), MIN_NOTE_DUR)
+            dur_sec  = max(decode_dur(d_tok, tempo_bpm), MIN_NOTE_DUR)
             is_rest  = bool(r_tok)
             section_events.append((pitch_midi, dur_sec, is_rest))
             if 0 <= pitch_midi <= 127:
@@ -372,6 +424,7 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
     chord_tok  = ChordTokenizer.from_json()
     note_tok   = NoteTokenizer.from_json()
@@ -379,7 +432,7 @@ def main(argv=None):
     artist_tok = ArtistTokenizer()
 
     print("Loading models …")
-    planner, executor = load_models(chord_tok, artist_tok)
+    planner, executor, decode_dur = load_models(chord_tok, artist_tok, note_tok)
     print("Models loaded.")
 
     SOLOS_DIR.mkdir(parents=True, exist_ok=True)
@@ -395,6 +448,7 @@ def main(argv=None):
             chord_tok=chord_tok, note_tok=note_tok,
             phrase_tok=phrase_tok, artist_tok=artist_tok,
             planner=planner, executor=executor,
+            decode_dur=decode_dur, tempo_bpm=tempo_bpm,
         )
         midi_out = SOLOS_DIR / f"{name}.mid"
         json_out = SOLOS_DIR / f"{name}.json"
