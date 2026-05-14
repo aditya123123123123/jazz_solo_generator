@@ -137,7 +137,7 @@ def load_models(chord_tok, artist_tok):
 # Per-chord generation helpers
 # ---------------------------------------------------------------------------
 
-def _plan_phrase(planner, chord_ids, artist_id, fallback=3, temperature=1.0):
+def _plan_phrase(planner, chord_ids, artist_id, fallback=3, temperature=0.8):
     with torch.no_grad():
         tokens = planner.generate(chord_ids, artist_id, max_len=8, temperature=temperature)
     return tokens[0] if tokens else fallback
@@ -145,7 +145,7 @@ def _plan_phrase(planner, chord_ids, artist_id, fallback=3, temperature=1.0):
 
 def _generate_notes(executor, chord_ids, phrase_id, artist_id,
                     prefix_pitch=None, prefix_dur=None, prefix_rest=None,
-                    temperature=1.0, window=8):
+                    temperature=0.8, window=8):
     with torch.no_grad():
         raw = executor.generate(
             chord_ids, phrase_id, artist_id, n_notes=N_NOTES,
@@ -166,7 +166,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   chord_tok=None, note_tok=None,
                   phrase_tok=None, artist_tok=None,
                   planner=None, executor=None,
-                  window=16, temperature=1.0):
+                  window=8, temperature=0.8):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -380,8 +380,8 @@ def report(name, summaries, unknown_chords, path, total_dur, note_events):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate jazz solos with chord progressions.")
-    parser.add_argument("--window", type=int, default=16)
-    parser.add_argument("--temperature", type=float, default=1.0)
+    parser.add_argument("--window", type=int, default=8)
+    parser.add_argument("--temperature", type=float, default=0.8)
     parser.add_argument("--out-dir", type=Path, default=SOLOS_DIR, dest="out_dir")
     args = parser.parse_args()
 

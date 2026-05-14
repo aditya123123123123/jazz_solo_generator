@@ -2,6 +2,7 @@ import math
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class PhrasePlanner(nn.Module):
@@ -97,6 +98,7 @@ class PhrasePlanner(nn.Module):
         max_len: int = 32,
         bos: int = 1,
         eos: int = 2,
+        temperature: float = 1.0,
     ) -> list:
         self.eval()
         device = chord_ids.device
@@ -111,7 +113,9 @@ class PhrasePlanner(nn.Module):
                 tgt.size(1), device=device
             )
             out = self.decoder(tgt_emb, memory, tgt_mask=tgt_mask)
-            next_token = self.phrase_head(out[:, -1, :]).argmax(-1).item()
+            logits = self.phrase_head(out[:, -1, :])
+            probs = F.softmax(logits / temperature, dim=-1).squeeze(0)
+            next_token = torch.multinomial(probs, 1).item()
             generated.append(next_token)
             if next_token == eos:
                 break
