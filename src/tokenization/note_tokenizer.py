@@ -41,7 +41,7 @@ class NoteTokenizer:
 
     def __init__(self, durations_beats=None):
         self._durations_beats = list(durations_beats or MUSICAL_DURATIONS_BEATS)
-        if len(self._durations_beats) != 14:
+        if len(self._durations_beats) not in (14, 15):
             raise ValueError(
                 f"Expected 14 musical durations, got {len(self._durations_beats)}"
             )

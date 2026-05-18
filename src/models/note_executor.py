@@ -146,6 +146,7 @@ class NoteExecutor(nn.Module):
         prefix_pitch: list = None,   # cross-chord context from previous section
         prefix_dur:   list = None,
         prefix_rest:  list = None,
+        temperature: float = 1.0,
     ) -> list:
         self.eval()
         device = chord_ids.device
@@ -192,6 +193,7 @@ class NoteExecutor(nn.Module):
 
             # Repetition penalty on raw logits before sampling
             pitch_logits = self.pitch_head(last).squeeze(0).clone()  # (pitch_vocab,)
+            pitch_logits[:4] = float('-inf')  # mask PAD, BOS, EOS, REST
             recent_pcs = [p % 12 for p in pitch_hist[-3:] if p >= 4]
             for rp in pitch_hist[-3:]:
                 if 4 <= rp < pitch_logits.size(0):
@@ -201,8 +203,10 @@ class NoteExecutor(nn.Module):
                     pitch_logits[idx] = pitch_logits[idx] * 0.7
 
             # Nucleus sampling for pitch; temperature sampling for duration
-            next_pitch = _nucleus_sample(pitch_logits, top_p=0.92, temperature=0.95)
-            dur_probs  = torch.softmax(self.dur_head(last) / 0.8, dim=-1)
+            next_pitch = _nucleus_sample(pitch_logits, top_p=0.92, temperature=0.95 * temperature)
+            dur_logits = self.dur_head(last).squeeze(0).clone()
+            dur_logits[:4] = float('-inf')  # mask PAD, BOS, EOS, REST (DUR_OFFSET=4)
+            dur_probs  = torch.softmax(dur_logits / (0.8 * temperature), dim=-1)
             next_dur   = torch.multinomial(dur_probs, num_samples=1).item()
             next_rest  = self.is_rest_head(last).argmax(-1).item()
 
