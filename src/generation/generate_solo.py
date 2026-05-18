@@ -385,6 +385,9 @@ def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
                 "clamped":        s.get("n_clamped", 0),
                 "distinct_pitches": len(set(s["pitches"])),
                 "dur_fallback":   s.get("dur_fallback", 0),
+                "pitches":         s.get("pitches", []),
+                "phrase_remapped": s.get("phrase_remapped", False),
+                "phrase_original": s.get("phrase_original", None),
             }
             for s in summaries
         ],
