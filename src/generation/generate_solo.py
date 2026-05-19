@@ -207,7 +207,8 @@ def _plan_phrase(planner, chord_ids, artist_id, fallback=3, temperature=0.8):
 
 def _generate_notes(executor, chord_ids, phrase_id, artist_id,
                     prefix_pitch=None, prefix_dur=None, prefix_rest=None,
-                    temperature=0.8, window=8):
+                    temperature=0.8, window=8,
+                    duration_temperature=1.6, rest_boost=1.8):
     with torch.no_grad():
         raw = executor.generate(
             chord_ids, phrase_id, artist_id, n_notes=N_NOTES,
@@ -216,6 +217,8 @@ def _generate_notes(executor, chord_ids, phrase_id, artist_id,
             prefix_rest=prefix_rest,
             temperature=temperature,
             window=window,
+            duration_temperature=duration_temperature,
+            rest_boost=rest_boost,
         )
     return raw
 
@@ -229,7 +232,8 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   phrase_tok=None, artist_tok=None,
                   planner=None, executor=None,
                   window=8, temperature=0.8,
-                  decode_dur=None, tempo_bpm=120.0):
+                  decode_dur=None, tempo_bpm=120.0,
+                  duration_temperature=1.6, rest_boost=1.8):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -272,6 +276,8 @@ def generate_solo(progression, artist_name="Charlie Parker",
             prefix_pitch=pfx_p, prefix_dur=pfx_d, prefix_rest=pfx_r,
             temperature=temperature,
             window=window,
+            duration_temperature=duration_temperature,
+            rest_boost=rest_boost,
         )
 
         section_events = []
@@ -463,6 +469,12 @@ def parse_args(argv=None):
                         help="Rhythm-section style (default: swing).")
     parser.add_argument("--rhythm-seed", type=int, default=42,
                         help="Seed for rhythm-section humanization RNG.")
+    parser.add_argument("--duration-temperature", type=float, default=1.6,
+                        dest="duration_temperature",
+                        help="Temperature for duration sampling (default 1.6).")
+    parser.add_argument("--rest-boost", type=float, default=1.8,
+                        dest="rest_boost",
+                        help="Additive logit boost on is_rest_head's rest class (default 1.8).")
     return parser.parse_args(argv)
 
 
@@ -495,6 +507,8 @@ def main(argv=None):
             planner=planner, executor=executor,
             window=args.window, temperature=args.temperature,
             decode_dur=decode_dur, tempo_bpm=tempo_bpm,
+            duration_temperature=args.duration_temperature,
+            rest_boost=args.rest_boost,
         )
 
         if args.with_rhythm_section:
@@ -503,6 +517,9 @@ def main(argv=None):
             stem = f"{name}__w{args.window}_t{args.temperature:.1f}"
         else:
             stem = name
+
+        if args.duration_temperature != 1.6 or args.rest_boost != 1.8:
+            stem += f"_dt{args.duration_temperature:.1f}_rb{args.rest_boost:.1f}"
 
         midi_out = args.out_dir / f"{stem}.mid"
         json_out = args.out_dir / f"{stem}.json"

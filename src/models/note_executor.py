@@ -140,14 +140,31 @@ class NoteExecutor(nn.Module):
         chord_ids:   torch.Tensor,
         phrase_id:   torch.Tensor,
         artist_id:   torch.Tensor,
-        n_notes:     int  = 16,
-        window:      int  = 8,
+        n_notes:     int   = 16,
+        window:      int   = 8,
         tempo_bpm:   float = 180.0,
         prefix_pitch: list = None,   # cross-chord context from previous section
         prefix_dur:   list = None,
         prefix_rest:  list = None,
-        temperature: float = 1.0,
+        temperature:           float = 1.0,
+        duration_temperature:  float = 1.0,
+        rest_boost:            float = 0.0,
     ) -> list:
+        """Autoregressive sampling loop.
+
+        `temperature` scales pitch sampling (multiplied by 0.95 inside the
+        nucleus sampler). `duration_temperature` scales duration sampling
+        independently — the prior code used `dur_logits / (0.8 * temperature)`
+        (effective temperature 0.64 with the default temperature=0.8). The
+        new code uses `dur_logits / duration_temperature` directly. With the
+        executor-side default duration_temperature=1.0, callers that do not
+        pass duration_temperature get effective temperature 1.0 instead of
+        0.64 — a deliberate behavior change to address duration mode-collapse.
+
+        `rest_boost` is added to the "rest" class logit of `is_rest_head`
+        before argmax. With rest_boost=0 behavior is identical to before;
+        positive values tip argmax toward rest in close-margin cases.
+        """
         self.eval()
         device = chord_ids.device
         memory = self.encode(chord_ids, artist_id, src_key_padding_mask=None)
@@ -206,9 +223,12 @@ class NoteExecutor(nn.Module):
             next_pitch = _nucleus_sample(pitch_logits, top_p=0.92, temperature=0.95 * temperature)
             dur_logits = self.dur_head(last).squeeze(0).clone()
             dur_logits[:4] = float('-inf')  # mask PAD, BOS, EOS, REST (DUR_OFFSET=4)
-            dur_probs  = torch.softmax(dur_logits / (0.8 * temperature), dim=-1)
+            dur_probs  = torch.softmax(dur_logits / duration_temperature, dim=-1)
             next_dur   = torch.multinomial(dur_probs, num_samples=1).item()
-            next_rest  = self.is_rest_head(last).argmax(-1).item()
+
+            is_rest_logits = self.is_rest_head(last).squeeze(0).clone()
+            is_rest_logits[1] += rest_boost   # boost "rest" class
+            next_rest  = is_rest_logits.argmax(-1).item()
 
             generated.append((next_pitch, next_dur, next_rest))
             pitch_hist.append(next_pitch)
