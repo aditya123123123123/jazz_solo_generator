@@ -31,11 +31,11 @@ def executor_dataset(tokenizers):
 # --- Length tests ---
 
 def test_phrase_planner_len(planner_dataset):
-    assert len(planner_dataset) == 36
+    assert len(planner_dataset) == 411
 
 
 def test_note_executor_len(executor_dataset):
-    assert len(executor_dataset) == 848
+    assert len(executor_dataset) == 10163
 
 
 # --- Key and dtype tests ---

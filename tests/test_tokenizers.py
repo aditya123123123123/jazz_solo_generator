@@ -6,7 +6,7 @@ import pytest
 REPO = Path(__file__).parents[1]
 PHRASES_PATH = REPO / "data" / "processed" / "phrases.json"
 CHORD_VOCAB_PATH = REPO / "data" / "processed" / "chord_vocab.json"
-DURATION_BINS_PATH = REPO / "data" / "processed" / "duration_bins.json"
+DURATION_CONFIG_PATH = REPO / "data" / "processed" / "duration_musical.json"
 
 
 @pytest.fixture(scope="module")
@@ -24,7 +24,7 @@ def chord_tok():
 @pytest.fixture(scope="module")
 def note_tok():
     from src.tokenization.note_tokenizer import NoteTokenizer
-    return NoteTokenizer.from_json(DURATION_BINS_PATH)
+    return NoteTokenizer.from_json(DURATION_CONFIG_PATH)
 
 
 @pytest.fixture(scope="module")
@@ -98,9 +98,10 @@ def test_duration_bin_roundtrip(note_tok, phrases):
         if len(durations) == 10:
             break
     for dur in durations:
-        token = note_tok.encode_duration(dur)
-        decoded = note_tok.decode_duration(token)
-        re_token = note_tok.encode_duration(decoded)
+        tempo = 120.0
+        token = note_tok.encode_duration(dur, tempo)
+        decoded = note_tok.decode_duration(token, tempo)
+        re_token = note_tok.encode_duration(decoded, tempo)
         assert re_token == token, (
             f"Duration bin round-trip failed: {dur:.6f}s -> token {token} "
             f"-> {decoded:.6f}s -> token {re_token}"
