@@ -21,3 +21,7 @@ wandb/
 !data/raw/wjazzd/WJazzD.sqlite
 .claude/
 .codex/
+
+# Local environment artifacts (Mac mini / pyenv) - never commit
+.venv/
+.python-version
