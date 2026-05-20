@@ -65,6 +65,14 @@ parser.add_argument("--run-name",         type=str, default=WANDB_NAME,
 # Utilities
 # ---------------------------------------------------------------------------
 
+def _select_device():
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+
 def collate_with_tempo(batch):
     out = collate_note_window(batch)
     out["tempo_bpm"] = torch.stack([b["tempo_bpm"] for b in batch])
@@ -340,7 +348,7 @@ def main():
     args   = parser.parse_args()
     epochs = args.epochs
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = _select_device()
     print(f"Device: {device}")
 
     chord_tok  = ChordTokenizer.from_json()

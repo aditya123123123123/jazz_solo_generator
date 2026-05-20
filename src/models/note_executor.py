@@ -65,7 +65,11 @@ class NoteExecutor(nn.Module):
         enc_layer = nn.TransformerEncoderLayer(
             d_model, nhead, dim_feedforward, dropout, batch_first=True
         )
-        self.encoder = nn.TransformerEncoder(enc_layer, num_layers=num_encoder_layers)
+        self.encoder = nn.TransformerEncoder(
+            enc_layer,
+            num_layers=num_encoder_layers,
+            enable_nested_tensor=False,
+        )
 
         dec_layer = nn.TransformerDecoderLayer(
             d_model, nhead, dim_feedforward, dropout, batch_first=True

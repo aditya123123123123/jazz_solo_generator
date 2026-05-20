@@ -25,6 +25,14 @@ EXPECTED_V6_PITCH_CE = {
 }
 
 
+def _select_device():
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+
 def collate_with_tempo(batch):
     out = collate_note_window(batch)
     out["tempo_bpm"] = torch.stack([b["tempo_bpm"] for b in batch])
@@ -176,7 +184,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = _select_device()
     print(f"Device: {device}")
 
     # Match the 2026-05-18 ablation ordering: seed, instantiate model, load
