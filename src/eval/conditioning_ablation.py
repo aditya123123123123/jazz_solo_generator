@@ -15,6 +15,15 @@ from src.models.note_executor import NoteExecutor
 from src.tokenization import ArtistTokenizer, ChordTokenizer
 
 
+CONDITIONS = [
+    "baseline",
+    "phrase_zeroed",
+    "chord_zeroed",
+    "artist_zeroed",
+    "chord_shuffled",
+    "phrase_shuffled",
+]
+
 EXPECTED_V6_PITCH_CE = {
     "baseline":        (4.9997, 5.0040),
     "phrase_zeroed":   (4.9658, 4.9740),
@@ -169,37 +178,14 @@ def _check_v6_baseline(rows):
         raise AssertionError(f"v6 baseline ablation reproduction failed:\n  {joined}")
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Run NoteExecutor conditioning ablations.")
-    parser.add_argument("--checkpoint", type=Path, required=True)
-    parser.add_argument("--cache", type=Path, default=_REPO / "data" / "processed" / "notes_v6_cache.pt")
-    parser.add_argument("--subset-size", type=int, default=100_000)
-    parser.add_argument("--batch-size", type=int, default=512)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--out-dir", type=Path, required=True)
-    parser.add_argument("--num-workers", type=int, default=4)
-    parser.add_argument("--check-v6-baseline", action="store_true")
-    return parser.parse_args()
-
-
-def main():
-    args = parse_args()
-    device = _select_device()
-    print(f"Device: {device}")
-
-    # Match the 2026-05-18 ablation ordering: seed, instantiate model, load
-    # weights, then random_split. The model init consumes RNG before splitting.
-    torch.manual_seed(args.seed)
-    print(f"Loading checkpoint: {args.checkpoint}")
-    model = _load_model(args.checkpoint, device)
-
+def _build_val_loader(args, device):
     print(f"Loading cache: {args.cache}")
     full_ds = NoteWindowDataset.from_cache(args.cache)
     n_train = int(0.8 * len(full_ds))
     n_val = len(full_ds) - n_train
     _, val_ds = random_split(full_ds, [n_train, n_val])
     val_subset = Subset(val_ds, range(min(args.subset_size, len(val_ds))))
-    loader = DataLoader(
+    return DataLoader(
         val_subset,
         batch_size=args.batch_size,
         shuffle=False,
@@ -208,18 +194,14 @@ def main():
         collate_fn=collate_with_tempo,
     )
 
-    conditions = [
-        "baseline",
-        "phrase_zeroed",
-        "chord_zeroed",
-        "artist_zeroed",
-        "chord_shuffled",
-        "phrase_shuffled",
-    ]
+
+def run_ablation(checkpoint_path, loader, device, seed):
+    print(f"Loading checkpoint: {checkpoint_path}")
+    model = _load_model(checkpoint_path, device)
     rows = []
     baseline_pitch = None
-    for i, condition in enumerate(conditions):
-        metrics = evaluate_condition(model, loader, condition, device, args.seed + i)
+    for i, condition in enumerate(CONDITIONS):
+        metrics = evaluate_condition(model, loader, condition, device, seed + i)
         if condition == "baseline":
             baseline_pitch = metrics["pitch_CE"]
             delta = None
@@ -239,14 +221,115 @@ def main():
             f"{condition:15s} pitch={row['pitch_CE']:.4f} dur={row['dur_CE']:.4f} "
             f"rest={row['rest_CE']:.4f} total={row['total']:.4f} delta={delta_s}"
         )
+    return rows
+
+
+def _build_comparison_rows(candidate_rows, baseline_rows):
+    candidate_by_cond = {row["condition"]: row for row in candidate_rows}
+    baseline_by_cond = {row["condition"]: row for row in baseline_rows}
+    candidate_baseline_pitch = candidate_by_cond["baseline"]["pitch_CE"]
+    rows = []
+    for condition in CONDITIONS:
+        candidate_pitch = candidate_by_cond[condition]["pitch_CE"]
+        baseline_pitch = baseline_by_cond[condition]["pitch_CE"]
+        delta_vs_candidate_baseline = None
+        if condition != "baseline":
+            delta_vs_candidate_baseline = candidate_pitch - candidate_baseline_pitch
+        rows.append(
+            {
+                "condition": condition,
+                "candidate_pitch_ce": candidate_pitch,
+                "baseline_pitch_ce": baseline_pitch,
+                "delta_candidate_minus_baseline": candidate_pitch - baseline_pitch,
+                "delta_vs_candidate_baseline": delta_vs_candidate_baseline,
+            }
+        )
+    return rows
+
+
+def _format_comparison_markdown(rows):
+    lines = [
+        "| condition | candidate_pitch_ce | baseline_pitch_ce | "
+        "delta_candidate_minus_baseline | delta_vs_candidate_baseline |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for row in rows:
+        delta_vs = row["delta_vs_candidate_baseline"]
+        delta_vs_s = "--" if delta_vs is None else f"{delta_vs:+.4f}"
+        lines.append(
+            f"| {row['condition']} | {row['candidate_pitch_ce']:.4f} | "
+            f"{row['baseline_pitch_ce']:.4f} | "
+            f"{row['delta_candidate_minus_baseline']:+.4f} | {delta_vs_s} |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _write_comparison_outputs(rows, out_dir):
+    out_dir.mkdir(parents=True, exist_ok=True)
+    csv_path = out_dir / "conditioning_ablation_comparison.csv"
+    md_path = out_dir / "conditioning_ablation_comparison.md"
+    with csv_path.open("w", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "condition",
+                "candidate_pitch_ce",
+                "baseline_pitch_ce",
+                "delta_candidate_minus_baseline",
+                "delta_vs_candidate_baseline",
+            ],
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+    md_path.write_text(_format_comparison_markdown(rows))
+    return csv_path, md_path
+
+
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description="Run NoteExecutor conditioning ablations.")
+    parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument(
+        "--baseline-checkpoint",
+        type=Path,
+        default=None,
+        help="Optional reference checkpoint for side-by-side comparison output.",
+    )
+    parser.add_argument("--cache", type=Path, default=_REPO / "data" / "processed" / "notes_v6_cache.pt")
+    parser.add_argument("--subset-size", type=int, default=100_000)
+    parser.add_argument("--batch-size", type=int, default=512)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--num-workers", type=int, default=4)
+    parser.add_argument("--check-v6-baseline", action="store_true")
+    return parser.parse_args(argv)
+
+
+def main():
+    args = parse_args()
+    device = _select_device()
+    print(f"Device: {device}")
+
+    # Match the 2026-05-18 ablation ordering: seed, instantiate model, load
+    # weights, then random_split. The model init consumes RNG before splitting.
+    torch.manual_seed(args.seed)
+    loader = _build_val_loader(args, device)
+
+    candidate_rows = run_ablation(args.checkpoint, loader, device, args.seed)
 
     if args.check_v6_baseline:
-        _check_v6_baseline(rows)
+        _check_v6_baseline(candidate_rows)
         print("v6 baseline ablation reproduction passed.")
 
-    csv_path, md_path = _write_outputs(rows, args.out_dir)
+    csv_path, md_path = _write_outputs(candidate_rows, args.out_dir)
     print(f"Wrote {csv_path}")
     print(f"Wrote {md_path}")
+
+    if args.baseline_checkpoint is not None:
+        baseline_rows = run_ablation(args.baseline_checkpoint, loader, device, args.seed)
+        comparison_rows = _build_comparison_rows(candidate_rows, baseline_rows)
+        cmp_csv, cmp_md = _write_comparison_outputs(comparison_rows, args.out_dir)
+        print(f"Wrote {cmp_csv}")
+        print(f"Wrote {cmp_md}")
 
 
 if __name__ == "__main__":
