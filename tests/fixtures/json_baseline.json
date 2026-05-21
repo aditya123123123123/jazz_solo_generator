@@ -32,6 +32,8 @@
   "sections": [
     {
       "chord": "Dm7",
+      "model_chord": "Dm7",
+      "chord_condition": "normal",
       "beats": 4,
       "phrase": "PHRASE_18",
       "n_notes": 16,
@@ -48,6 +50,8 @@
     },
     {
       "chord": "G7",
+      "model_chord": "G7",
+      "chord_condition": "normal",
       "beats": 4,
       "phrase": "PHRASE_57",
       "n_notes": 16,
