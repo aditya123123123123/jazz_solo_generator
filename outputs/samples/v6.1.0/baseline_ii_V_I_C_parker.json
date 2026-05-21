@@ -1,686 +1,36 @@
 {
   "name": "baseline_ii_V_I_C_parker",
-  "checkpoint": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/checkpoints/v6.1.0_best.pt",
-  "checkpoint_file": "checkpoints/v6.1.0_best.pt",
-  "artist": "Charlie Parker",
-  "progression": "ii_V_I_C",
   "tempo_bpm": 120.0,
-  "style": "swing",
-  "rhythm_seed": 42,
-  "generation_method": "direct NoteExecutor.generate via generate_solo.py helpers; phrase planner unavailable",
-  "chord_perturbation": false,
-  "temperature": 0.8,
-  "duration_temperature": 1.6,
-  "rest_boost": 1.8,
-  "window": 8,
-  "total_duration_sec": 19.645833333333325,
-  "sections": [
-    {
-      "index": 0,
-      "intended_chord": "Dm7",
-      "input_chord": "Dm7",
-      "input_wjazz": "D-7",
-      "chord_id": 87,
-      "beats": 4,
-      "phrase": "PHRASE_18",
-      "artist": "Charlie Parker",
-      "n_sounding": 16,
-      "distinct_pitches": 9,
-      "pitches": [
-        77,
-        79,
-        76,
-        75,
-        77,
-        78,
-        74,
-        76,
-        77,
-        79,
-        78,
-        74,
-        76,
-        73,
-        70,
-        71
-      ],
-      "tokens": [
-        {
-          "pitch_token": 81,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 77
-        },
-        {
-          "pitch_token": 83,
-          "dur_token": 14,
-          "rest_token": 0,
-          "pitch_midi": 79
-        },
-        {
-          "pitch_token": 80,
-          "dur_token": 10,
-          "rest_token": 0,
-          "pitch_midi": 76
-        },
-        {
-          "pitch_token": 79,
-          "dur_token": 11,
-          "rest_token": 0,
-          "pitch_midi": 75
-        },
-        {
-          "pitch_token": 81,
-          "dur_token": 16,
-          "rest_token": 0,
-          "pitch_midi": 77
-        },
-        {
-          "pitch_token": 82,
-          "dur_token": 10,
-          "rest_token": 0,
-          "pitch_midi": 78
-        },
-        {
-          "pitch_token": 78,
-          "dur_token": 9,
-          "rest_token": 0,
-          "pitch_midi": 74
-        },
-        {
-          "pitch_token": 80,
-          "dur_token": 13,
-          "rest_token": 0,
-          "pitch_midi": 76
-        },
-        {
-          "pitch_token": 81,
-          "dur_token": 11,
-          "rest_token": 0,
-          "pitch_midi": 77
-        },
-        {
-          "pitch_token": 83,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 79
-        },
-        {
-          "pitch_token": 82,
-          "dur_token": 12,
-          "rest_token": 0,
-          "pitch_midi": 78
-        },
-        {
-          "pitch_token": 78,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 74
-        },
-        {
-          "pitch_token": 80,
-          "dur_token": 7,
-          "rest_token": 0,
-          "pitch_midi": 76
-        },
-        {
-          "pitch_token": 77,
-          "dur_token": 11,
-          "rest_token": 0,
-          "pitch_midi": 73
-        },
-        {
-          "pitch_token": 74,
-          "dur_token": 11,
-          "rest_token": 0,
-          "pitch_midi": 70
-        },
-        {
-          "pitch_token": 75,
-          "dur_token": 10,
-          "rest_token": 0,
-          "pitch_midi": 71
-        }
-      ]
-    },
-    {
-      "index": 1,
-      "intended_chord": "G7",
-      "input_chord": "G7",
-      "input_wjazz": "G7",
-      "chord_id": 180,
-      "beats": 4,
-      "phrase": "PHRASE_57",
-      "artist": "Charlie Parker",
-      "n_sounding": 16,
-      "distinct_pitches": 11,
-      "pitches": [
-        84,
-        83,
-        80,
-        81,
-        77,
-        78,
-        74,
-        71,
-        79,
-        81,
-        78,
-        77,
-        74,
-        71,
-        67,
-        65
-      ],
-      "tokens": [
-        {
-          "pitch_token": 88,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 84
-        },
-        {
-          "pitch_token": 87,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 83
-        },
-        {
-          "pitch_token": 84,
-          "dur_token": 7,
-          "rest_token": 0,
-          "pitch_midi": 80
-        },
-        {
-          "pitch_token": 85,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 81
-        },
-        {
-          "pitch_token": 81,
-          "dur_token": 4,
-          "rest_token": 0,
-          "pitch_midi": 77
-        },
-        {
-          "pitch_token": 82,
-          "dur_token": 7,
-          "rest_token": 0,
-          "pitch_midi": 78
-        },
-        {
-          "pitch_token": 78,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 74
-        },
-        {
-          "pitch_token": 75,
-          "dur_token": 15,
-          "rest_token": 0,
-          "pitch_midi": 71
-        },
-        {
-          "pitch_token": 83,
-          "dur_token": 14,
-          "rest_token": 0,
-          "pitch_midi": 79
-        },
-        {
-          "pitch_token": 85,
-          "dur_token": 7,
-          "rest_token": 0,
-          "pitch_midi": 81
-        },
-        {
-          "pitch_token": 82,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 78
-        },
-        {
-          "pitch_token": 81,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 77
-        },
-        {
-          "pitch_token": 78,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 74
-        },
-        {
-          "pitch_token": 75,
-          "dur_token": 11,
-          "rest_token": 0,
-          "pitch_midi": 71
-        },
-        {
-          "pitch_token": 71,
-          "dur_token": 7,
-          "rest_token": 0,
-          "pitch_midi": 67
-        },
-        {
-          "pitch_token": 69,
-          "dur_token": 14,
-          "rest_token": 0,
-          "pitch_midi": 65
-        }
-      ]
-    },
-    {
-      "index": 2,
-      "intended_chord": "Cj7",
-      "input_chord": "Cj7",
-      "input_wjazz": "Cj7",
-      "chord_id": 79,
-      "beats": 8,
-      "phrase": "PHRASE_52",
-      "artist": "Charlie Parker",
-      "n_sounding": 15,
-      "distinct_pitches": 11,
-      "pitches": [
-        79,
-        76,
-        74,
-        72,
-        67,
-        71,
-        60,
-        57,
-        55,
-        52,
-        55,
-        60,
-        64,
-        67,
-        55
-      ],
-      "tokens": [
-        {
-          "pitch_token": 83,
-          "dur_token": 12,
-          "rest_token": 0,
-          "pitch_midi": 79
-        },
-        {
-          "pitch_token": 80,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 76
-        },
-        {
-          "pitch_token": 78,
-          "dur_token": 11,
-          "rest_token": 0,
-          "pitch_midi": 74
-        },
-        {
-          "pitch_token": 76,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 72
-        },
-        {
-          "pitch_token": 71,
-          "dur_token": 8,
-          "rest_token": 0,
-          "pitch_midi": 67
-        },
-        {
-          "pitch_token": 75,
-          "dur_token": 7,
-          "rest_token": 0,
-          "pitch_midi": 71
-        },
-        {
-          "pitch_token": 64,
-          "dur_token": 9,
-          "rest_token": 0,
-          "pitch_midi": 60
-        },
-        {
-          "pitch_token": 61,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 57
-        },
-        {
-          "pitch_token": 59,
-          "dur_token": 9,
-          "rest_token": 0,
-          "pitch_midi": 55
-        },
-        {
-          "pitch_token": 56,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 52
-        },
-        {
-          "pitch_token": 59,
-          "dur_token": 11,
-          "rest_token": 0,
-          "pitch_midi": 55
-        },
-        {
-          "pitch_token": 64,
-          "dur_token": 9,
-          "rest_token": 0,
-          "pitch_midi": 60
-        },
-        {
-          "pitch_token": 68,
-          "dur_token": 14,
-          "rest_token": 0,
-          "pitch_midi": 64
-        },
-        {
-          "pitch_token": 71,
-          "dur_token": 13,
-          "rest_token": 0,
-          "pitch_midi": 67
-        },
-        {
-          "pitch_token": 59,
-          "dur_token": 15,
-          "rest_token": 0,
-          "pitch_midi": 55
-        },
-        {
-          "pitch_token": 61,
-          "dur_token": 5,
-          "rest_token": 1,
-          "pitch_midi": 57
-        }
-      ]
-    },
-    {
-      "index": 3,
-      "intended_chord": "Cj7",
-      "input_chord": "Cj7",
-      "input_wjazz": "Cj7",
-      "chord_id": 79,
-      "beats": 8,
-      "phrase": "PHRASE_52",
-      "artist": "Charlie Parker",
-      "n_sounding": 16,
-      "distinct_pitches": 11,
-      "pitches": [
-        62,
-        64,
-        71,
-        67,
-        72,
-        74,
-        76,
-        79,
-        81,
-        76,
-        74,
-        72,
-        71,
-        69,
-        67,
-        66
-      ],
-      "tokens": [
-        {
-          "pitch_token": 66,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 62
-        },
-        {
-          "pitch_token": 68,
-          "dur_token": 7,
-          "rest_token": 0,
-          "pitch_midi": 64
-        },
-        {
-          "pitch_token": 75,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 71
-        },
-        {
-          "pitch_token": 71,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 67
-        },
-        {
-          "pitch_token": 76,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 72
-        },
-        {
-          "pitch_token": 78,
-          "dur_token": 4,
-          "rest_token": 0,
-          "pitch_midi": 74
-        },
-        {
-          "pitch_token": 80,
-          "dur_token": 6,
-          "rest_token": 0,
-          "pitch_midi": 76
-        },
-        {
-          "pitch_token": 83,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 79
-        },
-        {
-          "pitch_token": 85,
-          "dur_token": 15,
-          "rest_token": 0,
-          "pitch_midi": 81
-        },
-        {
-          "pitch_token": 80,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 76
-        },
-        {
-          "pitch_token": 78,
-          "dur_token": 4,
-          "rest_token": 0,
-          "pitch_midi": 74
-        },
-        {
-          "pitch_token": 76,
-          "dur_token": 4,
-          "rest_token": 0,
-          "pitch_midi": 72
-        },
-        {
-          "pitch_token": 75,
-          "dur_token": 13,
-          "rest_token": 0,
-          "pitch_midi": 71
-        },
-        {
-          "pitch_token": 73,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 69
-        },
-        {
-          "pitch_token": 71,
-          "dur_token": 5,
-          "rest_token": 0,
-          "pitch_midi": 67
-        },
-        {
-          "pitch_token": 70,
-          "dur_token": 10,
-          "rest_token": 0,
-          "pitch_midi": 66
-        }
-      ]
-    }
-  ],
+  "total_notes": 70,
   "notes": [
     {
-      "pitch": 77,
-      "duration_sec": 0.0833,
+      "pitch": 79,
+      "duration_sec": 0.65,
       "is_rest": false
     },
     {
-      "pitch": 79,
-      "duration_sec": 0.75,
-      "is_rest": false
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
     },
     {
       "pitch": 76,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 1.5,
-      "is_rest": false
-    },
-    {
-      "pitch": 78,
-      "duration_sec": 0.3333,
+      "duration_sec": 0.1667,
       "is_rest": false
     },
     {
       "pitch": 74,
+      "duration_sec": 1.15,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 69,
       "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 76,
-      "duration_sec": 0.6667,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 78,
-      "duration_sec": 0.5,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 76,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 73,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 71,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 84,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 83,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 80,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 78,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 71,
-      "duration_sec": 1.0,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.75,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 78,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 71,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 67,
-      "duration_sec": 0.1667,
       "is_rest": false
     },
     {
@@ -689,148 +39,73 @@
       "is_rest": false
     },
     {
-      "pitch": 79,
+      "pitch": 62,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 69,
       "duration_sec": 0.5,
       "is_rest": false
     },
     {
-      "pitch": 76,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
+      "pitch": 64,
       "duration_sec": 0.125,
       "is_rest": false
     },
     {
+      "pitch": 62,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
       "pitch": 67,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
       "duration_sec": 0.1875,
       "is_rest": false
     },
     {
-      "pitch": 71,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 60,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 57,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 55,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 52,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 55,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 60,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 64,
-      "duration_sec": 0.75,
+      "pitch": 65,
+      "duration_sec": 0.0625,
       "is_rest": false
     },
     {
       "pitch": 67,
-      "duration_sec": 0.6667,
-      "is_rest": false
-    },
-    {
-      "pitch": 55,
-      "duration_sec": 1.0,
-      "is_rest": false
-    },
-    {
-      "pitch": 57,
-      "duration_sec": 0.0833,
-      "is_rest": true
-    },
-    {
-      "pitch": 62,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 64,
       "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 71,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 67,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 76,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 1.0,
-      "is_rest": false
-    },
-    {
-      "pitch": 76,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 71,
-      "duration_sec": 0.6667,
       "is_rest": false
     },
     {
@@ -839,14 +114,400 @@
       "is_rest": false
     },
     {
-      "pitch": 67,
-      "duration_sec": 0.0833,
+      "pitch": 70,
+      "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 66,
+      "pitch": 72,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 73,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 75,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 70,
       "duration_sec": 0.3333,
       "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 68,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 70,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 70,
+      "duration_sec": 0.0833,
+      "is_rest": true
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.6667,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.6667,
+      "is_rest": true
+    },
+    {
+      "pitch": 61,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.6667,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.75,
+      "is_rest": false
     }
-  ]
+  ],
+  "sections": [
+    {
+      "chord": "Dm7",
+      "model_chord": "D-7",
+      "chord_condition": "normal",
+      "beats": 4,
+      "phrase": "PHRASE_42",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 8,
+      "dur_fallback": 0,
+      "pitches": [
+        79,
+        76,
+        74,
+        69,
+        65,
+        62,
+        74,
+        76,
+        67,
+        69,
+        64,
+        62,
+        67,
+        69,
+        64,
+        62
+      ],
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "G7",
+      "model_chord": "G7",
+      "chord_condition": "normal",
+      "beats": 4,
+      "phrase": "PHRASE_59",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 12,
+      "dur_fallback": 0,
+      "pitches": [
+        65,
+        67,
+        69,
+        70,
+        72,
+        73,
+        75,
+        74,
+        72,
+        70,
+        65,
+        67,
+        64,
+        62,
+        60,
+        55
+      ],
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "Cj7",
+      "model_chord": "Cj7",
+      "chord_condition": "normal",
+      "beats": 8,
+      "phrase": "PHRASE_36",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 12,
+      "dur_fallback": 0,
+      "pitches": [
+        59,
+        62,
+        60,
+        55,
+        53,
+        50,
+        52,
+        55,
+        60,
+        62,
+        65,
+        67,
+        68,
+        70,
+        65,
+        64
+      ],
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "Cj7",
+      "model_chord": "Cj7",
+      "chord_condition": "normal",
+      "beats": 8,
+      "phrase": "PHRASE_03",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 12,
+      "dur_fallback": 0,
+      "pitches": [
+        67,
+        70,
+        72,
+        69,
+        67,
+        65,
+        64,
+        60,
+        62,
+        65,
+        64,
+        61,
+        60,
+        59,
+        57,
+        55
+      ],
+      "phrase_remapped": false,
+      "phrase_original": null
+    }
+  ],
+  "checkpoint": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/checkpoints/v6.1.0_best.pt",
+  "checkpoint_file": "checkpoints/v6.1.0_best.pt",
+  "phrase_planner_checkpoint": "checkpoints/phrase_planner_best.pt",
+  "progression": "ii_V_I_C",
+  "artist": "Charlie Parker",
+  "style": "swing",
+  "rhythm_seed": 42,
+  "generation_method": "generate_solo.generate_solo with PhrasePlanner checkpoint",
+  "chord_shuffled": false,
+  "chord_zeroed": false,
+  "rhythm_section_chords": [
+    {
+      "chord": "Dm7",
+      "beats": 4
+    },
+    {
+      "chord": "G7",
+      "beats": 4
+    },
+    {
+      "chord": "Cj7",
+      "beats": 8
+    },
+    {
+      "chord": "Cj7",
+      "beats": 8
+    }
+  ],
+  "rhythm_section_uses_original_chords": true,
+  "total_duration_sec": 25.979166666666664
 }

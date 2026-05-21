@@ -1,391 +1,31 @@
 {
   "name": "chord_perturbed_blues_F_parker",
   "tempo_bpm": 120.0,
-  "total_notes": 202,
+  "total_notes": 204,
   "notes": [
     {
       "pitch": 72,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 78,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 80,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 78,
       "duration_sec": 0.3333,
       "is_rest": false
     },
     {
-      "pitch": 76,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
       "pitch": 75,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 69,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 67,
-      "duration_sec": 0.5,
-      "is_rest": false
-    },
-    {
-      "pitch": 62,
       "duration_sec": 0.75,
       "is_rest": false
     },
     {
-      "pitch": 60,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 65,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 68,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 67,
+      "pitch": 74,
       "duration_sec": 0.375,
       "is_rest": false
     },
     {
-      "pitch": 65,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 64,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 63,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 61,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 58,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 60,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 63,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 65,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 68,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.05,
-      "is_rest": false
-    },
-    {
-      "pitch": 0,
-      "duration_sec": 0.25,
-      "is_rest": true
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 80,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 82,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 78,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 73,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.75,
-      "is_rest": false
-    },
-    {
       "pitch": 69,
-      "duration_sec": 0.0833,
+      "duration_sec": 0.5,
       "is_rest": false
     },
     {
       "pitch": 71,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.65,
-      "is_rest": false
-    },
-    {
-      "pitch": 0,
-      "duration_sec": 0.35,
-      "is_rest": true
-    },
-    {
-      "pitch": 68,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 66,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 63,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 62,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 60,
-      "duration_sec": 0.05,
-      "is_rest": false
-    },
-    {
-      "pitch": 0,
-      "duration_sec": 0.25,
-      "is_rest": true
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 82,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 84,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 83,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.75,
-      "is_rest": false
-    },
-    {
-      "pitch": 76,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 78,
-      "duration_sec": 0.75,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 76,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.6667,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 69,
-      "duration_sec": 0.65,
-      "is_rest": false
-    },
-    {
-      "pitch": 0,
-      "duration_sec": 0.35,
-      "is_rest": true
-    },
-    {
-      "pitch": 67,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 64,
-      "duration_sec": 0.75,
-      "is_rest": false
-    },
-    {
-      "pitch": 76,
-      "duration_sec": 0.65,
+      "duration_sec": 1.15,
       "is_rest": false
     },
     {
@@ -395,347 +35,17 @@
     },
     {
       "pitch": 72,
-      "duration_sec": 0.1875,
-      "is_rest": false
+      "duration_sec": 2.0,
+      "is_rest": true
     },
     {
-      "pitch": 67,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 68,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 64,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 67,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 66,
+      "pitch": 74,
       "duration_sec": 0.75,
-      "is_rest": false
-    },
-    {
-      "pitch": 65,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 63,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 82,
-      "duration_sec": 0.6667,
-      "is_rest": false
-    },
-    {
-      "pitch": 84,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.5,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.5,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 82,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 83,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 84,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 76,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 67,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 66,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 69,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 68,
-      "duration_sec": 0.6667,
-      "is_rest": false
-    },
-    {
-      "pitch": 67,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 65,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 64,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 63,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 66,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 69,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 71,
-      "duration_sec": 0.25,
       "is_rest": false
     },
     {
       "pitch": 73,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 69,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 68,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 65,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 66,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 67,
-      "duration_sec": 0.6667,
-      "is_rest": false
-    },
-    {
-      "pitch": 63,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 58,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 60,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 65,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.125,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 82,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 80,
       "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 74,
-      "duration_sec": 0.25,
       "is_rest": false
     },
     {
@@ -744,132 +54,37 @@
       "is_rest": false
     },
     {
-      "pitch": 68,
-      "duration_sec": 0.65,
-      "is_rest": false
-    },
-    {
-      "pitch": 0,
-      "duration_sec": 0.35,
-      "is_rest": true
-    },
-    {
-      "pitch": 81,
-      "duration_sec": 0.0625,
-      "is_rest": false
-    },
-    {
-      "pitch": 82,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 77,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 72,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 69,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 65,
-      "duration_sec": 0.25,
-      "is_rest": false
-    },
-    {
-      "pitch": 63,
-      "duration_sec": 0.5,
-      "is_rest": false
-    },
-    {
-      "pitch": 60,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 57,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 65,
+      "pitch": 67,
       "duration_sec": 0.3333,
       "is_rest": false
     },
     {
+      "pitch": 66,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
       "pitch": 63,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 60,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 58,
-      "duration_sec": 0.05,
-      "is_rest": false
-    },
-    {
-      "pitch": 0,
-      "duration_sec": 0.25,
-      "is_rest": true
-    },
-    {
-      "pitch": 65,
-      "duration_sec": 0.1667,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
-      "duration_sec": 0.1875,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
       "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 77,
+      "pitch": 65,
       "duration_sec": 0.3333,
       "is_rest": false
     },
     {
-      "pitch": 80,
-      "duration_sec": 0.5,
+      "pitch": 62,
+      "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 82,
-      "duration_sec": 0.1875,
+      "pitch": 64,
+      "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 75,
+      "pitch": 63,
       "duration_sec": 1.65,
       "is_rest": false
     },
@@ -879,47 +94,172 @@
       "is_rest": true
     },
     {
-      "pitch": 77,
+      "pitch": 58,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
       "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 80,
-      "duration_sec": 0.0833,
+      "pitch": 61,
+      "duration_sec": 0.75,
       "is_rest": false
     },
     {
-      "pitch": 82,
-      "duration_sec": 0.0833,
-      "is_rest": false
-    },
-    {
-      "pitch": 79,
+      "pitch": 59,
       "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 77,
+      "pitch": 58,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 56,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 53,
       "duration_sec": 0.25,
       "is_rest": false
     },
     {
-      "pitch": 75,
+      "pitch": 55,
+      "duration_sec": 0.6667,
+      "is_rest": true
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
       "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 80,
-      "duration_sec": 0.375,
+      "pitch": 65,
+      "duration_sec": 0.6667,
       "is_rest": false
     },
     {
-      "pitch": 70,
+      "pitch": 56,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
       "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.25,
       "is_rest": false
     },
     {
-      "pitch": 66,
+      "pitch": 59,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 1.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
       "duration_sec": 0.05,
       "is_rest": false
     },
@@ -929,47 +269,477 @@
       "is_rest": true
     },
     {
-      "pitch": 75,
-      "duration_sec": 0.1667,
+      "pitch": 67,
+      "duration_sec": 0.5,
       "is_rest": false
     },
     {
-      "pitch": 77,
-      "duration_sec": 0.0833,
-      "is_rest": false
+      "pitch": 65,
+      "duration_sec": 0.125,
+      "is_rest": true
     },
     {
-      "pitch": 78,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 80,
-      "duration_sec": 0.6667,
-      "is_rest": false
-    },
-    {
-      "pitch": 75,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 73,
+      "pitch": 64,
       "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 74,
-      "duration_sec": 0.3333,
-      "is_rest": false
-    },
-    {
-      "pitch": 70,
+      "pitch": 62,
       "duration_sec": 0.1667,
       "is_rest": false
     },
     {
+      "pitch": 67,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 70,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
       "pitch": 69,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 2.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 66,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 70,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 1.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 75,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.1667,
+      "is_rest": true
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.6667,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 51,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 66,
+      "duration_sec": 0.0833,
+      "is_rest": true
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.0833,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 68,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 70,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 66,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 68,
+      "duration_sec": 0.6667,
+      "is_rest": true
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.0833,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.1667,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 2.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 2.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 61,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 54,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 61,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 54,
+      "duration_sec": 0.1667,
+      "is_rest": true
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.05,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 70,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 68,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 56,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 63,
       "duration_sec": 0.25,
       "is_rest": false
     },
@@ -979,23 +749,23 @@
       "is_rest": false
     },
     {
-      "pitch": 63,
+      "pitch": 68,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 70,
       "duration_sec": 0.3333,
       "is_rest": false
     },
     {
-      "pitch": 60,
-      "duration_sec": 0.375,
-      "is_rest": false
-    },
-    {
-      "pitch": 58,
+      "pitch": 75,
       "duration_sec": 0.125,
       "is_rest": false
     },
     {
-      "pitch": 61,
-      "duration_sec": 0.25,
+      "pitch": 73,
+      "duration_sec": 0.6667,
       "is_rest": false
     },
     {
@@ -1004,7 +774,167 @@
       "is_rest": false
     },
     {
-      "pitch": 64,
+      "pitch": 60,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 54,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 56,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 56,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.1667,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.1667,
+      "is_rest": true
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 56,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.1875,
+      "is_rest": true
+    },
+    {
+      "pitch": 56,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 53,
       "duration_sec": 0.05,
       "is_rest": false
     },
@@ -1012,6 +942,86 @@
       "pitch": 0,
       "duration_sec": 0.25,
       "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 58,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.1875,
+      "is_rest": true
+    },
+    {
+      "pitch": 61,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.0833,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 54,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 51,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 54,
+      "duration_sec": 0.375,
+      "is_rest": false
     }
   ],
   "sections": [
@@ -1020,193 +1030,162 @@
       "model_chord": "D7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_15",
       "n_notes": 16,
       "clamped": 0,
       "distinct_pitches": 13,
       "dur_fallback": 0,
       "pitches": [
         72,
-        74,
-        78,
-        81,
-        79,
-        80,
-        78,
-        76,
         75,
         74,
-        72,
         69,
+        71,
+        72,
+        74,
+        73,
+        70,
         67,
+        66,
+        63,
+        65,
         62,
-        60,
-        65
+        64,
+        63
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "Bb7",
       "model_chord": "Bb7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_37",
       "n_notes": 16,
       "clamped": 0,
-      "distinct_pitches": 12,
+      "distinct_pitches": 8,
       "dur_fallback": 0,
       "pitches": [
-        70,
-        68,
-        67,
-        65,
-        64,
-        63,
-        61,
         58,
         60,
-        63,
+        61,
+        59,
+        58,
+        56,
+        53,
+        55,
+        58,
+        60,
         65,
-        68,
-        70,
-        72,
-        75,
-        77
+        56,
+        53,
+        55,
+        58,
+        60
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "F7",
       "model_chord": "F7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_48",
       "n_notes": 16,
       "clamped": 0,
-      "distinct_pitches": 16,
+      "distinct_pitches": 9,
       "dur_fallback": 0,
       "pitches": [
-        79,
-        80,
-        82,
-        77,
-        78,
-        75,
-        73,
-        72,
-        69,
-        71,
-        70,
-        68,
-        66,
         63,
+        59,
+        57,
+        53,
+        60,
+        63,
+        65,
         62,
-        60
+        60,
+        63,
+        65,
+        62,
+        60,
+        58,
+        55,
+        57
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "F7",
       "model_chord": "G-7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_18",
+      "phrase": "PHRASE_03",
       "n_notes": 16,
       "clamped": 0,
       "distinct_pitches": 10,
       "dur_fallback": 0,
       "pitches": [
-        79,
-        81,
-        82,
-        84,
-        83,
-        81,
-        79,
-        77,
-        76,
-        74,
-        72,
-        77,
-        79,
-        78,
-        74,
-        72
+        67,
+        65,
+        64,
+        62,
+        67,
+        70,
+        69,
+        65,
+        60,
+        62,
+        58,
+        55,
+        60,
+        58,
+        63,
+        62
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "Bb7",
       "model_chord": "C7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_44",
       "n_notes": 16,
       "clamped": 0,
-      "distinct_pitches": 11,
+      "distinct_pitches": 12,
       "dur_fallback": 0,
       "pitches": [
-        81,
-        79,
-        76,
-        74,
+        60,
+        58,
+        55,
+        57,
+        60,
+        63,
+        64,
+        66,
+        67,
+        69,
         72,
+        70,
+        71,
         69,
         67,
-        64,
-        76,
-        72,
-        67,
-        70,
-        68,
-        64,
-        67,
-        66
+        64
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "Bb7",
       "model_chord": "F7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
-      "n_notes": 16,
-      "clamped": 0,
-      "distinct_pitches": 10,
-      "dur_fallback": 0,
-      "pitches": [
-        65,
-        63,
-        72,
-        75,
-        77,
-        82,
-        84,
-        79,
-        77,
-        72,
-        74,
-        75,
-        77,
-        82,
-        83,
-        84
-      ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
-    },
-    {
-      "chord": "F7",
-      "model_chord": "C7",
-      "chord_condition": "chord_shuffled",
-      "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_13",
       "n_notes": 16,
       "clamped": 0,
       "distinct_pitches": 13,
@@ -1214,187 +1193,219 @@
       "pitches": [
         72,
         74,
-        79,
-        81,
-        77,
+        75,
         76,
-        74,
         72,
-        67,
-        70,
-        66,
         69,
+        67,
+        63,
+        60,
+        57,
+        65,
+        63,
+        62,
+        60,
+        58,
+        51
+      ],
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "F7",
+      "model_chord": "C7",
+      "chord_condition": "chord_shuffled",
+      "beats": 4,
+      "phrase": "PHRASE_14",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 9,
+      "dur_fallback": 0,
+      "pitches": [
+        65,
+        66,
+        67,
+        62,
+        63,
+        65,
+        68,
+        70,
+        67,
+        63,
+        65,
+        66,
         68,
         67,
-        65,
+        69,
         64
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "D7",
       "model_chord": "F7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_37",
       "n_notes": 16,
       "clamped": 0,
-      "distinct_pitches": 11,
+      "distinct_pitches": 8,
       "dur_fallback": 0,
       "pitches": [
         63,
-        66,
-        69,
-        75,
-        77,
-        72,
-        71,
-        73,
-        75,
-        72,
-        69,
-        68,
+        62,
         65,
-        66,
-        67,
-        63
+        60,
+        63,
+        62,
+        61,
+        60,
+        57,
+        53,
+        54,
+        60,
+        61,
+        57,
+        54,
+        53
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "Gm7",
       "model_chord": "Bb7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_26",
       "n_notes": 16,
       "clamped": 0,
-      "distinct_pitches": 12,
+      "distinct_pitches": 11,
       "dur_fallback": 0,
       "pitches": [
-        58,
-        60,
+        62,
         65,
+        67,
+        70,
+        72,
+        68,
+        65,
+        62,
+        58,
+        56,
+        63,
+        65,
+        68,
         70,
         75,
-        74,
-        77,
-        81,
-        82,
-        80,
-        79,
-        77,
-        75,
-        74,
-        70,
-        68
+        73
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "C7",
       "model_chord": "F7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_22",
       "n_notes": 16,
       "clamped": 0,
-      "distinct_pitches": 13,
+      "distinct_pitches": 11,
       "dur_fallback": 0,
       "pitches": [
-        81,
-        82,
-        79,
-        77,
-        75,
-        72,
-        70,
-        69,
-        65,
         63,
         60,
         57,
         65,
-        63,
+        62,
         60,
+        59,
+        57,
+        55,
+        60,
+        53,
+        54,
+        56,
+        55,
+        57,
         58
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "F7",
       "model_chord": "Bb7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_20",
       "n_notes": 16,
       "clamped": 0,
       "distinct_pitches": 8,
       "dur_fallback": 0,
       "pitches": [
+        56,
+        59,
+        62,
         65,
-        70,
-        75,
-        77,
-        80,
-        82,
-        75,
-        77,
-        80,
-        82,
-        79,
-        77,
-        75,
-        80,
-        70,
-        66
+        58,
+        60,
+        55,
+        53,
+        58,
+        56,
+        55,
+        53,
+        58,
+        56,
+        55,
+        53
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     },
     {
       "chord": "C7",
       "model_chord": "F7",
       "chord_condition": "chord_shuffled",
       "beats": 4,
-      "phrase": "PHRASE_57",
+      "phrase": "PHRASE_04",
       "n_notes": 16,
       "clamped": 0,
-      "distinct_pitches": 14,
+      "distinct_pitches": 12,
       "dur_fallback": 0,
       "pitches": [
-        75,
-        77,
-        78,
-        80,
-        75,
-        73,
-        74,
-        70,
-        69,
+        60,
+        62,
         65,
+        58,
+        60,
+        61,
+        62,
         63,
         60,
-        58,
-        61,
-        63,
-        64
+        57,
+        53,
+        54,
+        55,
+        51,
+        48,
+        54
       ],
-      "phrase_remapped": true,
-      "phrase_original": "PHRASE_00"
+      "phrase_remapped": false,
+      "phrase_original": null
     }
   ],
   "checkpoint": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/checkpoints/v6.1.0_best.pt",
   "checkpoint_file": "checkpoints/v6.1.0_best.pt",
+  "phrase_planner_checkpoint": "checkpoints/phrase_planner_best.pt",
   "progression": "blues_F",
   "artist": "Charlie Parker",
   "style": "swing",
   "rhythm_seed": 42,
-  "generation_method": "generate_solo.generate_solo with chord perturbation flags; FallbackPlanner used because phrase_planner_best.pt is unavailable",
+  "generation_method": "generate_solo.generate_solo with PhrasePlanner checkpoint",
   "chord_shuffled": true,
   "chord_zeroed": false,
   "rhythm_section_chords": [
@@ -1448,5 +1459,5 @@
     }
   ],
   "rhythm_section_uses_original_chords": true,
-  "total_duration_sec": 51.083333333333364
+  "total_duration_sec": 83.02500000000008
 }
