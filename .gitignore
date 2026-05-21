@@ -1,6 +1,15 @@
 data/raw/
 checkpoints/
 outputs/
+!outputs/
+outputs/*
+!outputs/samples/
+outputs/samples/*
+!outputs/samples/v6.1.0/
+outputs/samples/v6.1.0/*
+!outputs/samples/v6.1.0/README.md
+outputs/samples/**/*.wav
+outputs/samples/**/*_with_rhythm.mid
 __pycache__/
 *.pyc
 .env
