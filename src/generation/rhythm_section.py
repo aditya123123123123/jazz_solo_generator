@@ -13,69 +13,11 @@ Public API:
 from __future__ import annotations
 
 import random
-import re
-from typing import List, Tuple
 
 import pretty_midi
 
-# ---------------------------------------------------------------------------
-# Chord parsing
-# ---------------------------------------------------------------------------
-
-_ROOT_PC = {
-    "C": 0, "C#": 1, "Db": 1,
-    "D": 2, "D#": 3, "Eb": 3,
-    "E": 4,
-    "F": 5, "F#": 6, "Gb": 6,
-    "G": 7, "G#": 8, "Ab": 8,
-    "A": 9, "A#": 10, "Bb": 10,
-    "B": 11,
-}
-
-# [root, 3rd, 5th, 7th] semitone offsets from root.
-_QUALITY_INTERVALS = {
-    "maj7":    (0, 4, 7, 11),
-    "min7":    (0, 3, 7, 10),
-    "dom7":    (0, 4, 7, 10),
-    "halfdim": (0, 3, 6, 10),
-    "dim7":    (0, 3, 6, 9),
-    "minmaj7": (0, 3, 7, 11),
-}
-
-_ROOT_RE = re.compile(r"^([A-G][#b]?)(.*)$")
-
-
-def _parse_chord(symbol: str) -> Tuple[int, str] | None:
-    """Return (root_pc, quality_key) or None if the symbol is unparseable."""
-    m = _ROOT_RE.match(symbol)
-    if not m:
-        return None
-    root_name, qual = m.group(1), m.group(2)
-    if root_name not in _ROOT_PC:
-        return None
-    root_pc = _ROOT_PC[root_name]
-
-    if "m7b5" in qual or "ø" in qual or "-7b5" in qual:
-        q = "halfdim"
-    elif "dim7" in qual or "o7" in qual:
-        q = "dim7"
-    elif qual.startswith("m") or qual.startswith("-"):
-        if "maj7" in qual or "M7" in qual or "j7" in qual:
-            q = "minmaj7"
-        else:
-            q = "min7"
-    elif "j7" in qual or "maj7" in qual or "M7" in qual or "Δ" in qual:
-        q = "maj7"
-    elif "7" in qual:
-        q = "dom7"
-    else:
-        q = "maj7"
-    return root_pc, q
-
-
-def _chord_tones(root_pc: int, quality: str) -> List[int]:
-    """Return [root, 3rd, 5th, 7th] absolute pitch classes (0-11)."""
-    return [(root_pc + iv) % 12 for iv in _QUALITY_INTERVALS[quality]]
+from src.generation.chord_utils import chord_tones as _chord_tones
+from src.generation.chord_utils import parse_chord as _parse_chord
 
 
 def _clamp(pitch: int, lo: int, hi: int) -> int:
