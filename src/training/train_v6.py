@@ -40,7 +40,7 @@ LATEST_PATH      = CKPT_DIR / "v6.1.0_latest.pt"
 WANDB_PROJECT    = "jazz-solo-generator"
 WANDB_NAME       = "note-executor-v6.1.0-literal-harmonic-finetune"
 HARMONIC_WEIGHT  = 0.15
-LAMBDA_INTERVAL  = 0.05
+LAMBDA_INTERVAL  = 0.0475
 STRONG_BEAT_POS  = frozenset({0, 4, 8, 12})
 DEFAULT_CACHE    = Path("data/processed/notes_v6_cache.pt")
 
