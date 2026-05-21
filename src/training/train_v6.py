@@ -53,7 +53,7 @@ parser.add_argument("--epochs",           type=int, default=EPOCHS,
                     help=f"Number of training epochs (default {EPOCHS})")
 parser.add_argument("--dry-run-batches",  type=int, default=0, dest="dry_run_batches",
                     help="Limit train+val to N batches per epoch (0 = no limit)")
-parser.add_argument("--resume",           type=Path, default=None,
+parser.add_argument("--resume", "--resume-from", type=Path, default=None,
                     help="Checkpoint to load model weights from before training")
 parser.add_argument("--lr",               type=float, default=LR,
                     help=f"Learning rate (default {LR})")
@@ -63,6 +63,12 @@ parser.add_argument("--run-name",         type=str, default=WANDB_NAME,
                     help=f"wandb run name (default {WANDB_NAME})")
 parser.add_argument("--lambda-interval",  type=float, default=LAMBDA_INTERVAL,
                     help=f"Interval-penalty weight (default {LAMBDA_INTERVAL}; 0 disables)")
+parser.add_argument("--output-dir",       type=Path, default=CKPT_DIR,
+                    help=f"Directory for latest checkpoints (default {CKPT_DIR})")
+parser.add_argument("--best-output",      type=Path, default=BEST_PATH,
+                    help=f"Best checkpoint path (default {BEST_PATH})")
+parser.add_argument("--latest-output",    type=Path, default=LATEST_PATH,
+                    help=f"Latest checkpoint path (default {LATEST_PATH})")
 
 
 # ---------------------------------------------------------------------------
@@ -474,7 +480,9 @@ def main():
     best_val          = float("inf")
     epochs_no_improve = 0
     global_step       = 0
-    CKPT_DIR.mkdir(parents=True, exist_ok=True)
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    args.best_output.parent.mkdir(parents=True, exist_ok=True)
+    args.latest_output.parent.mkdir(parents=True, exist_ok=True)
 
     for epoch in range(1, epochs + 1):
         global_step = _train_epoch(
@@ -504,12 +512,12 @@ def main():
             f"interval={val_metrics['interval']:.4f}"
         )
 
-        _save_checkpoint(LATEST_PATH, model, opt, epoch, val_metrics["loss"])
+        _save_checkpoint(args.latest_output, model, opt, epoch, val_metrics["loss"])
         if val_metrics["loss"] < best_val:
             best_val          = val_metrics["loss"]
             epochs_no_improve = 0
-            _save_checkpoint(BEST_PATH, model, opt, epoch, best_val)
-            print(f"  ↳ new best val={best_val:.4f}, saved to {BEST_PATH}")
+            _save_checkpoint(args.best_output, model, opt, epoch, best_val)
+            print(f"  ↳ new best val={best_val:.4f}, saved to {args.best_output}")
         else:
             epochs_no_improve += 1
             print(f"  no improvement ({epochs_no_improve}/{PATIENCE})")
