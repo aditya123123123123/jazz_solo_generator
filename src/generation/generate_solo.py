@@ -142,7 +142,11 @@ def _load_note_executor_with_compat(path, chord_tok, artist_tok, note_tok, dropo
             dropout=dropout,
         )
         result = executor.load_state_dict(state, strict=False)
-        expected_missing = {"tempo_embed.weight", "tempo_embed.bias"}
+        expected_missing = {
+            "tempo_embed.weight",
+            "tempo_embed.bias",
+            "phrase_pos_embed.weight",
+        }
         missing = set(result.missing_keys)
         unexpected = set(result.unexpected_keys)
         if missing != expected_missing or unexpected:
@@ -153,6 +157,8 @@ def _load_note_executor_with_compat(path, chord_tok, artist_tok, note_tok, dropo
         with torch.no_grad():
             executor.tempo_embed.weight.zero_()
             executor.tempo_embed.bias.zero_()
+            executor.phrase_pos_embed.weight.zero_()
+        logger.info("phrase_pos_embed: zero-initialized (legacy checkpoint)")
         executor.eval()
 
         legacy_bins_path = _REPO / "data" / "processed" / "duration_bins.v5.legacy.json"
@@ -174,7 +180,20 @@ def _load_note_executor_with_compat(path, chord_tok, artist_tok, note_tok, dropo
         dur_vocab_size=ckpt_dur_vocab,
         dropout=dropout,
     )
-    executor.load_state_dict(state, strict=True)
+    if "phrase_pos_embed.weight" in state:
+        executor.load_state_dict(state, strict=True)
+    else:
+        result = executor.load_state_dict(state, strict=False)
+        missing = set(result.missing_keys)
+        unexpected = set(result.unexpected_keys)
+        if missing != {"phrase_pos_embed.weight"} or unexpected:
+            raise RuntimeError(
+                f"compat load: unexpected key mismatch — missing={missing}, "
+                f"unexpected={unexpected}"
+            )
+        with torch.no_grad():
+            executor.phrase_pos_embed.weight.zero_()
+        logger.info("phrase_pos_embed: zero-initialized (legacy checkpoint)")
     executor.eval()
     def decode_dur(token, tempo_bpm):
         return note_tok.decode_duration(int(token), tempo_bpm=tempo_bpm)

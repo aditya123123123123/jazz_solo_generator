@@ -58,7 +58,20 @@ def _load_model(checkpoint_path, device):
     ).to(device)
     ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
     state = ckpt.get("model_state", ckpt)
-    model.load_state_dict(state, strict=True)
+    if "phrase_pos_embed.weight" in state:
+        model.load_state_dict(state, strict=True)
+    else:
+        result = model.load_state_dict(state, strict=False)
+        missing = set(result.missing_keys)
+        unexpected = set(result.unexpected_keys)
+        if missing != {"phrase_pos_embed.weight"} or unexpected:
+            raise RuntimeError(
+                f"checkpoint load: unexpected key mismatch — missing={missing}, "
+                f"unexpected={unexpected}"
+            )
+        with torch.no_grad():
+            model.phrase_pos_embed.weight.zero_()
+        print("phrase_pos_embed: zero-initialized (legacy checkpoint)")
     model.eval()
     return model
 
@@ -103,12 +116,13 @@ def evaluate_condition(model, loader, condition, device, seed):
                 batch["chord_ids"],
                 batch["phrase_id"],
                 batch["artist_id"],
-                batch["ctx_pitch"],
-                batch["ctx_dur"],
-                batch["ctx_rest"],
-                batch["pos_in_phrase"],
-                tempo_bpm=batch["tempo_bpm"],
-                src_key_padding_mask=~batch["chord_mask"],
+                    batch["ctx_pitch"],
+                    batch["ctx_dur"],
+                    batch["ctx_rest"],
+                    batch["pos_in_phrase"],
+                    phrase_position=batch["phrase_position"],
+                    tempo_bpm=batch["tempo_bpm"],
+                    src_key_padding_mask=~batch["chord_mask"],
             )
             pitch_l = ce(p_logits, batch["target_pitch"])
             dur_l = ce(d_logits, batch["target_dur"])

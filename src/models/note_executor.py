@@ -7,6 +7,8 @@ import torch.nn.functional as F
 
 from src.generation.chord_utils import chord_tones, parse_chord
 
+N_NOTES = 16
+
 
 def _nucleus_sample(logits: torch.Tensor, top_p: float = 0.92, temperature: float = 0.95) -> int:
     """Top-p (nucleus) sampling with temperature."""
@@ -37,7 +39,7 @@ class NoteExecutor(nn.Module):
         num_decoder_layers: int   = 4,
         dim_feedforward:    int   = 512,
         dropout:            float = 0.1,
-        max_pos_in_phrase:  int   = 16,   # positions 0-15 within a phrase
+        max_pos_in_phrase:  int   = N_NOTES,   # positions 0-15 within a phrase
     ):
         super().__init__()
         self.d_model          = d_model
@@ -53,6 +55,11 @@ class NoteExecutor(nn.Module):
         self.phrase_embed = nn.Embedding(phrase_vocab_size, d_model)
         # Learned position-in-phrase (0-15) — tells the model WHERE in the phrase it is
         self.pos_embed    = nn.Embedding(max_pos_in_phrase, d_model)
+        # Context-token phrase positions. Zero initialization preserves legacy
+        # v6.1.0 behavior until the next finetune learns this table.
+        with torch.random.fork_rng(devices=[]):
+            self.phrase_pos_embed = nn.Embedding(N_NOTES, d_model)
+        nn.init.zeros_(self.phrase_pos_embed.weight)
 
         # ---- Decoder note embeddings ----
         self.pitch_embed   = nn.Embedding(pitch_vocab_size, d_model, padding_idx=0)
@@ -108,6 +115,7 @@ class NoteExecutor(nn.Module):
         ctx_dur:       torch.Tensor,
         ctx_rest:      torch.Tensor,
         pos_in_phrase: torch.Tensor,           # (B,)  0-15
+        phrase_position: Optional[torch.Tensor] = None,  # (B, W) context positions
         tempo_bpm:     Optional[torch.Tensor] = None,   # (B,) or (B,1) float
         src_key_padding_mask: torch.Tensor = None,
     ):
@@ -118,6 +126,10 @@ class NoteExecutor(nn.Module):
             + self.dur_embed(ctx_dur)
             + self.is_rest_embed(ctx_rest)
         )
+        if phrase_position is None:
+            phrase_position = pos_in_phrase.unsqueeze(1).expand_as(ctx_pitch)
+        phrase_position = phrase_position.clamp(0, N_NOTES - 1)
+        note_emb = note_emb + self.phrase_pos_embed(phrase_position)
         # Broadcast phrase token and position-in-phrase to every context position
         phrase_bias = self.phrase_embed(phrase_id).unsqueeze(1)     # (B, 1, D)
         pos_bias    = self.pos_embed(pos_in_phrase).unsqueeze(1)    # (B, 1, D)
@@ -213,11 +225,15 @@ class NoteExecutor(nn.Module):
             cd     = torch.tensor([ctx_d], dtype=torch.long, device=device)
             cr     = torch.tensor([ctx_r], dtype=torch.long, device=device)
             pos_id = torch.tensor([min(pos, 15)], dtype=torch.long, device=device)
+            phrase_position = torch.arange(
+                pos - window, pos, dtype=torch.long, device=device
+            ).clamp(0, N_NOTES - 1).unsqueeze(0)
 
             note_emb = (
                 self.pitch_embed(cp)
                 + self.dur_embed(cd)
                 + self.is_rest_embed(cr)
+                + self.phrase_pos_embed(phrase_position)
             )
             phrase_bias = self.phrase_embed(phrase_id).unsqueeze(1)
             pos_bias    = self.pos_embed(pos_id).unsqueeze(1)
