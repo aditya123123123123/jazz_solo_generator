@@ -8,8 +8,8 @@ outputs/samples/*
 !outputs/samples/v6.1.0/
 outputs/samples/v6.1.0/*
 !outputs/samples/v6.1.0/README.md
+!outputs/samples/v6.1.0/*.mid
 outputs/samples/**/*.wav
-outputs/samples/**/*_with_rhythm.mid
 __pycache__/
 *.pyc
 .env
