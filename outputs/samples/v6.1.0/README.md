@@ -10,33 +10,37 @@ Checkpoint SHA-256:
 61a06d7ebbad5d2f2416345ea12569a6f357dcca9376164960ff5f54a97f9061  checkpoints/v6.1.0_best.pt
 ```
 
-These samples were regenerated from the correct v6.1.0 checkpoint after discovering that the previous sample-pack handoff did not provide a traceable CLI path to `checkpoints/v6.1.0_best.pt`. The generation script now supports `--note-executor-checkpoint` for explicit checkpoint selection while preserving the old default behavior.
+These samples were regenerated from the correct v6.1.0 checkpoint. `generate_solo.py` now supports explicit checkpoint selection with `--note-executor-checkpoint` and qualitative chord perturbation with `--chord-shuffled` / `--chord-zeroed`.
 
-The public generation CLI still does not expose chord-zeroed/chord-shuffled perturbation flags, and `checkpoints/phrase_planner_best.pt` is not present on this Mac mini. For this pack, samples were generated through the existing `generate_solo.py` NoteExecutor loading/export helpers with fixed chord-family phrase IDs:
+The public CLI still expects `checkpoints/phrase_planner_best.pt`, which is not present on this Mac mini. For this pack, samples were generated through the existing `generate_solo.py` NoteExecutor loading/export helpers with fixed chord-family phrase IDs:
 
 - minor family: `PHRASE_18`
 - major family: `PHRASE_52`
 - dominant family: `PHRASE_57`
 
-Rhythm-section backing was added with the existing `src.generation.rhythm_section.generate_rhythm_section` API and `src.generation.midi_mixer.mix_to_midi`. No generation modules were duplicated.
+Rhythm-section backing was added with the existing `src.generation.rhythm_section.generate_rhythm_section` API and `src.generation.midi_mixer.mix_to_midi`. For perturbed samples, the solo model received shuffled or zeroed chord IDs, but the rhythm section always used the original unperturbed chord progression.
 
 WAV rendering was skipped because `fluidsynth` was not installed and `JAZZ_SOUNDFONT` was unset. The `_with_rhythm.mid` files are available for listening or later rendering.
 
 ## Files
 
-| sample | JSON metadata | solo MIDI | chords used for backing | tempo | style | with-rhythm MIDI |
-|---|---|---|---|---:|---|---|
-| `baseline_ii_V_I_C_parker` | `baseline_ii_V_I_C_parker.json` | `baseline_ii_V_I_C_parker.mid` | Dm7(4) G7(4) Cj7(8) Cj7(8) | 120.0 | swing | `baseline_ii_V_I_C_parker_with_rhythm.mid` |
-| `baseline_blues_F_parker` | `baseline_blues_F_parker.json` | `baseline_blues_F_parker.mid` | F7(4) Bb7(4) F7(4) F7(4) Bb7(4) Bb7(4) F7(4) D7(4) Gm7(4) C7(4) F7(4) C7(4) | 120.0 | swing | `baseline_blues_F_parker_with_rhythm.mid` |
-| `artist_miles_ii_V_I_C` | `artist_miles_ii_V_I_C.json` | `artist_miles_ii_V_I_C.mid` | Dm7(4) G7(4) Cj7(8) Cj7(8) | 120.0 | swing | `artist_miles_ii_V_I_C_with_rhythm.mid` |
-| `artist_coltrane_ii_V_I_C` | `artist_coltrane_ii_V_I_C.json` | `artist_coltrane_ii_V_I_C.mid` | Dm7(4) G7(4) Cj7(8) Cj7(8) | 120.0 | swing | `artist_coltrane_ii_V_I_C_with_rhythm.mid` |
+| sample | condition | JSON metadata | solo MIDI | chords used for backing | tempo | style | with-rhythm MIDI |
+|---|---|---|---|---|---:|---|---|
+| `baseline_ii_V_I_C_parker` | `normal` | `baseline_ii_V_I_C_parker.json` | `baseline_ii_V_I_C_parker.mid` | Dm7(4) G7(4) Cj7(8) Cj7(8) | 120.0 | swing | `baseline_ii_V_I_C_parker_with_rhythm.mid` |
+| `baseline_blues_F_parker` | `normal` | `baseline_blues_F_parker.json` | `baseline_blues_F_parker.mid` | F7(4) Bb7(4) F7(4) F7(4) Bb7(4) Bb7(4) F7(4) D7(4) Gm7(4) C7(4) F7(4) C7(4) | 120.0 | swing | `baseline_blues_F_parker_with_rhythm.mid` |
+| `artist_miles_ii_V_I_C` | `normal` | `artist_miles_ii_V_I_C.json` | `artist_miles_ii_V_I_C.mid` | Dm7(4) G7(4) Cj7(8) Cj7(8) | 120.0 | swing | `artist_miles_ii_V_I_C_with_rhythm.mid` |
+| `artist_coltrane_ii_V_I_C` | `normal` | `artist_coltrane_ii_V_I_C.json` | `artist_coltrane_ii_V_I_C.mid` | Dm7(4) G7(4) Cj7(8) Cj7(8) | 120.0 | swing | `artist_coltrane_ii_V_I_C_with_rhythm.mid` |
+| `chord_perturbed_ii_V_I_C_parker` | `chord_shuffled` | `chord_perturbed_ii_V_I_C_parker.json` | `chord_perturbed_ii_V_I_C_parker.mid` | Dm7(4) G7(4) Cj7(8) Cj7(8) | 120.0 | swing | `chord_perturbed_ii_V_I_C_parker_with_rhythm.mid` |
+| `chord_perturbed_blues_F_parker` | `chord_shuffled` | `chord_perturbed_blues_F_parker.json` | `chord_perturbed_blues_F_parker.mid` | F7(4) Bb7(4) F7(4) F7(4) Bb7(4) Bb7(4) F7(4) D7(4) Gm7(4) C7(4) F7(4) C7(4) | 120.0 | swing | `chord_perturbed_blues_F_parker_with_rhythm.mid` |
+| `chord_zeroed_ii_V_I_C_parker` | `chord_zeroed` | `chord_zeroed_ii_V_I_C_parker.json` | `chord_zeroed_ii_V_I_C_parker.mid` | Dm7(4) G7(4) Cj7(8) Cj7(8) | 120.0 | swing | `chord_zeroed_ii_V_I_C_parker_with_rhythm.mid` |
 
-## What to listen for
+## Listening guide
 
-- Baseline samples should sound more harmonically grounded against the backing than the earlier v6 checkpoint, consistent with v6.1.0 recovering chord sensitivity.
-- Chord-shuffled qualitative samples are not included in this regenerated pack because `generate_solo.py` does not expose chord perturbation at inference. The quantitative ablation remains the source of truth for the chord-shuffled result: `+0.1685` pitch CE.
-- Artist-comparison samples may sound close to baseline. That is expected: artist conditioning remains weak in the ablation, with only `+0.0208` pitch CE when artist ID is zeroed.
-- Phrase coherence should be more audible than in v6: phrase-zeroed and phrase-shuffled conditions both hurt v6.1.0 pitch CE.
+- Baseline samples use normal chord conditioning and are the reference for v6.1.0 conditioned generation.
+- `artist_miles_ii_V_I_C` and `artist_coltrane_ii_V_I_C` test artist conditioning. Expect subtle or no obvious difference because the ablation found artist conditioning remains weak (`+0.0208` pitch CE when artist ID is zeroed).
+- `chord_perturbed_*` samples use `--chord-shuffled`: the model heard wrong chord IDs, while the rhythm section plays the correct chart. Listen for harmonic mismatch, weaker resolution, or tension landing in the wrong places.
+- `chord_zeroed_ii_V_I_C_parker` uses `--chord-zeroed`: the model heard no usable chord context while the rhythm section plays the correct ii-V-I. It should sound more random harmonically than the baseline.
+- The contrast between baseline and chord-perturbed samples is the qualitative version of the recovered chord sensitivity measured in the v6.1.0 ablation (`chord_shuffled` cost `+0.1685` pitch CE).
 
 ## Backup
 

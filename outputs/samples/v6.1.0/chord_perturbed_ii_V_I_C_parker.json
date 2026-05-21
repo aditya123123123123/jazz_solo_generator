@@ -1,0 +1,532 @@
+{
+  "name": "chord_perturbed_ii_V_I_C_parker",
+  "tempo_bpm": 120.0,
+  "total_notes": 74,
+  "notes": [
+    {
+      "pitch": 60,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 1.15,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 68,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 81,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 79,
+      "duration_sec": 1.15,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 78,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 77,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 79,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 75,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.05,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 84,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 81,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 78,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 77,
+      "duration_sec": 1.15,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 75,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 73,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 75,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 73,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 75,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 73,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    }
+  ],
+  "sections": [
+    {
+      "chord": "Dm7",
+      "model_chord": "Cj7",
+      "chord_condition": "chord_shuffled",
+      "beats": 4,
+      "phrase": "PHRASE_52",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 9,
+      "dur_fallback": 0,
+      "pitches": [
+        60,
+        64,
+        67,
+        71,
+        72,
+        68,
+        64,
+        67,
+        55,
+        59,
+        64,
+        62,
+        60,
+        59,
+        64,
+        71
+      ],
+      "phrase_remapped": true,
+      "phrase_original": "PHRASE_00"
+    },
+    {
+      "chord": "G7",
+      "model_chord": "G7",
+      "chord_condition": "chord_shuffled",
+      "beats": 4,
+      "phrase": "PHRASE_57",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 14,
+      "dur_fallback": 0,
+      "pitches": [
+        74,
+        76,
+        81,
+        79,
+        78,
+        76,
+        74,
+        71,
+        69,
+        67,
+        64,
+        62,
+        59,
+        57,
+        55,
+        60
+      ],
+      "phrase_remapped": true,
+      "phrase_original": "PHRASE_00"
+    },
+    {
+      "chord": "Cj7",
+      "model_chord": "Cj7",
+      "chord_condition": "chord_shuffled",
+      "beats": 8,
+      "phrase": "PHRASE_52",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 12,
+      "dur_fallback": 0,
+      "pitches": [
+        67,
+        69,
+        72,
+        74,
+        76,
+        77,
+        79,
+        75,
+        76,
+        74,
+        72,
+        67,
+        64,
+        60,
+        55,
+        63
+      ],
+      "phrase_remapped": true,
+      "phrase_original": "PHRASE_00"
+    },
+    {
+      "chord": "Cj7",
+      "model_chord": "D-7",
+      "chord_condition": "chord_shuffled",
+      "beats": 8,
+      "phrase": "PHRASE_18",
+      "n_notes": 16,
+      "clamped": 0,
+      "distinct_pitches": 9,
+      "dur_fallback": 0,
+      "pitches": [
+        84,
+        81,
+        78,
+        77,
+        75,
+        72,
+        73,
+        74,
+        75,
+        72,
+        73,
+        74,
+        75,
+        76,
+        73,
+        72
+      ],
+      "phrase_remapped": true,
+      "phrase_original": "PHRASE_00"
+    }
+  ],
+  "checkpoint": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/checkpoints/v6.1.0_best.pt",
+  "checkpoint_file": "checkpoints/v6.1.0_best.pt",
+  "progression": "ii_V_I_C",
+  "artist": "Charlie Parker",
+  "style": "swing",
+  "rhythm_seed": 42,
+  "generation_method": "generate_solo.generate_solo with chord perturbation flags; FallbackPlanner used because phrase_planner_best.pt is unavailable",
+  "chord_shuffled": true,
+  "chord_zeroed": false,
+  "rhythm_section_chords": [
+    {
+      "chord": "Dm7",
+      "beats": 4
+    },
+    {
+      "chord": "G7",
+      "beats": 4
+    },
+    {
+      "chord": "Cj7",
+      "beats": 8
+    },
+    {
+      "chord": "Cj7",
+      "beats": 8
+    }
+  ],
+  "rhythm_section_uses_original_chords": true,
+  "total_duration_sec": 24.674999999999997
+}
