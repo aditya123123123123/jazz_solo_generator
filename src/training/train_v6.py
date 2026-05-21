@@ -15,6 +15,7 @@ sys.stdout.reconfigure(line_buffering=True)
 
 from src.data.note_dataset import NoteWindowDataset, collate_note_window
 from src.models.note_executor import NoteExecutor
+from src.training.losses import interval_penalty_from_logits
 from src.tokenization import ArtistTokenizer, ChordTokenizer, PhraseTokenizer
 
 # ---------------------------------------------------------------------------
@@ -39,6 +40,7 @@ LATEST_PATH      = CKPT_DIR / "v6.1.0_latest.pt"
 WANDB_PROJECT    = "jazz-solo-generator"
 WANDB_NAME       = "note-executor-v6.1.0-literal-harmonic-finetune"
 HARMONIC_WEIGHT  = 0.15
+LAMBDA_INTERVAL  = 0.05
 STRONG_BEAT_POS  = frozenset({0, 4, 8, 12})
 DEFAULT_CACHE    = Path("data/processed/notes_v6_cache.pt")
 
@@ -59,6 +61,8 @@ parser.add_argument("--cache",            type=Path, default=DEFAULT_CACHE,
                     help=f"NoteWindowDataset cache path (default {DEFAULT_CACHE})")
 parser.add_argument("--run-name",         type=str, default=WANDB_NAME,
                     help=f"wandb run name (default {WANDB_NAME})")
+parser.add_argument("--lambda-interval",  type=float, default=LAMBDA_INTERVAL,
+                    help=f"Interval-penalty weight (default {LAMBDA_INTERVAL}; 0 disables)")
 
 
 # ---------------------------------------------------------------------------
@@ -221,7 +225,8 @@ def _load_model_checkpoint(model, checkpoint_path, device):
 # ---------------------------------------------------------------------------
 
 def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
-                 chord_tone_tensor, epoch, global_step, dry_run_batches):
+                 chord_tone_tensor, epoch, global_step, dry_run_batches,
+                 lambda_interval):
     model.train()
     n_batches = len(loader)
 
@@ -251,7 +256,22 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
             harm_l  = harmonic_penalty(
                 p_logits, batch["pos_in_phrase"], batch["chord_ids"], chord_tone_tensor
             )
-            total   = pitch_l + dur_l + rest_l + HARMONIC_WEIGHT * harm_l
+            if lambda_interval == 0.0:
+                interval_l = p_logits.sum() * 0.0
+            else:
+                interval_l = interval_penalty_from_logits(
+                    p_logits,
+                    batch["ctx_pitch"],
+                    batch["ctx_rest"],
+                    batch["target_rest"],
+                )
+            total = (
+                pitch_l
+                + dur_l
+                + rest_l
+                + HARMONIC_WEIGHT * harm_l
+                + lambda_interval * interval_l
+            )
 
         scaler.scale(total).backward()
         scaler.unscale_(opt)
@@ -272,6 +292,8 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
             "train/dur_loss":           dur_l.item(),
             "train/rest_loss":          rest_l.item(),
             "train/harmonic_loss":      harm_l.item(),
+            "train/interval_loss":      interval_l.item(),
+            "train/lambda_interval":    lambda_interval,
             "train/lr":                 cur_lr,
             "train/dur_token_entropy":  h_dur,
             "train/pitch_token_entropy": h_pitch,
@@ -280,7 +302,7 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
             f"epoch {epoch:3d} batch {batch_idx:5d}/{n_batches} "
             f"loss={total.item():.4f} pitch={pitch_l.item():.4f} "
             f"dur={dur_l.item():.4f} rest={rest_l.item():.4f} "
-            f"harm={harm_l.item():.4f} "
+            f"harm={harm_l.item():.4f} interval={interval_l.item():.4f} "
             f"lr={cur_lr:.2e} H_dur={h_dur:.3f} H_pitch={h_pitch:.3f}"
         )
 
@@ -291,9 +313,17 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
 # Validation
 # ---------------------------------------------------------------------------
 
-def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches):
+def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches,
+              lambda_interval):
     model.eval()
-    sums = {"loss": 0.0, "pitch": 0.0, "dur": 0.0, "rest": 0.0, "harmonic": 0.0}
+    sums = {
+        "loss": 0.0,
+        "pitch": 0.0,
+        "dur": 0.0,
+        "rest": 0.0,
+        "harmonic": 0.0,
+        "interval": 0.0,
+    }
     n = 0
     with torch.no_grad():
         for i, batch in enumerate(loader):
@@ -318,12 +348,22 @@ def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches):
                 dl = ce(d, batch["target_dur"])
                 rl = ce(r, batch["target_rest"])
                 hl = harmonic_penalty(p, batch["pos_in_phrase"], batch["chord_ids"], chord_tone_tensor)
-                tot = pl + dl + rl + HARMONIC_WEIGHT * hl
+                if lambda_interval == 0.0:
+                    il = p.sum() * 0.0
+                else:
+                    il = interval_penalty_from_logits(
+                        p,
+                        batch["ctx_pitch"],
+                        batch["ctx_rest"],
+                        batch["target_rest"],
+                    )
+                tot = pl + dl + rl + HARMONIC_WEIGHT * hl + lambda_interval * il
             sums["loss"]  += tot.item()
             sums["pitch"] += pl.item()
             sums["dur"]   += dl.item()
             sums["rest"]  += rl.item()
             sums["harmonic"] += hl.item()
+            sums["interval"] += il.item()
             n += 1
 
     return {k: v / max(1, n) for k, v in sums.items()}
@@ -419,6 +459,7 @@ def main():
             weight_decay=WEIGHT_DECAY, eta_min=ETA_MIN,
             warmup_frac=WARMUP_FRAC, label_smoothing=LABEL_SMOOTHING,
             harmonic_weight=HARMONIC_WEIGHT,
+            lambda_interval=args.lambda_interval,
             strong_beat_source="pos_in_phrase_literal_v5b",
             target_chord_source="chord_ids_col0_literal_v5b",
             patience=PATIENCE, grad_clip=GRAD_CLIP,
@@ -439,10 +480,12 @@ def main():
         global_step = _train_epoch(
             model, train_loader, opt, scheduler, scaler, ce, device,
             chord_tone_tensor, epoch, global_step, args.dry_run_batches,
+            args.lambda_interval,
         )
 
         val_metrics = _validate(
-            model, val_loader, device, ce, chord_tone_tensor, args.dry_run_batches
+            model, val_loader, device, ce, chord_tone_tensor, args.dry_run_batches,
+            args.lambda_interval,
         )
 
         val_log = {
@@ -451,12 +494,14 @@ def main():
             "val/dur_loss":   val_metrics["dur"],
             "val/rest_loss":  val_metrics["rest"],
             "val/harmonic_loss": val_metrics["harmonic"],
+            "val/interval_loss": val_metrics["interval"],
         }
         wandb.log(val_log, step=global_step)
         print(
             f"[epoch {epoch:3d}] val  loss={val_metrics['loss']:.4f} "
             f"pitch={val_metrics['pitch']:.4f} dur={val_metrics['dur']:.4f} "
-            f"rest={val_metrics['rest']:.4f} harm={val_metrics['harmonic']:.4f}"
+            f"rest={val_metrics['rest']:.4f} harm={val_metrics['harmonic']:.4f} "
+            f"interval={val_metrics['interval']:.4f}"
         )
 
         _save_checkpoint(LATEST_PATH, model, opt, epoch, val_metrics["loss"])
