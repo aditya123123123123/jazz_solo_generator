@@ -111,6 +111,7 @@ def _step(batch, model, device, chord_tone_tensor, pitch_fn, dur_fn, rest_fn):
     ctx_pitch     = batch["ctx_pitch"].to(device)
     ctx_dur       = batch["ctx_dur"].to(device)
     ctx_rest      = batch["ctx_rest"].to(device)
+    phrase_position = batch["phrase_position"].to(device)
     t_pitch       = batch["target_pitch"].to(device)
     t_dur         = batch["target_dur"].to(device)
     t_rest        = batch["target_rest"].to(device)
@@ -119,6 +120,7 @@ def _step(batch, model, device, chord_tone_tensor, pitch_fn, dur_fn, rest_fn):
     p_logits, d_logits, r_logits = model(
         chord_ids, phrase_id, artist_id,
         ctx_pitch, ctx_dur, ctx_rest, pos_in_phrase,
+        phrase_position=phrase_position,
         src_key_padding_mask=~chord_mask,
     )
     ce   = pitch_fn(p_logits, t_pitch) + dur_fn(d_logits, t_dur) + rest_fn(r_logits, t_rest)

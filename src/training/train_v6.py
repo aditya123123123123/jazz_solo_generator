@@ -193,7 +193,20 @@ def harmonic_penalty(
 def _load_model_checkpoint(model, checkpoint_path, device):
     ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
     state = ckpt.get("model_state", ckpt)
-    model.load_state_dict(state, strict=True)
+    if "phrase_pos_embed.weight" in state:
+        model.load_state_dict(state, strict=True)
+    else:
+        result = model.load_state_dict(state, strict=False)
+        missing = set(result.missing_keys)
+        unexpected = set(result.unexpected_keys)
+        if missing != {"phrase_pos_embed.weight"} or unexpected:
+            raise RuntimeError(
+                f"resume failed: unexpected key mismatch — missing={missing}, "
+                f"unexpected={unexpected}"
+            )
+        with torch.no_grad():
+            model.phrase_pos_embed.weight.zero_()
+        print("phrase_pos_embed: zero-initialized (legacy checkpoint)")
 
     src_chord_embed = state["chord_embed.weight"].detach().cpu()
     model_chord_embed = model.chord_embed.weight.detach().cpu()
@@ -228,6 +241,7 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
                 batch["ctx_dur"],
                 batch["ctx_rest"],
                 batch["pos_in_phrase"],
+                phrase_position=batch["phrase_position"],
                 tempo_bpm=batch["tempo_bpm"],
                 src_key_padding_mask=~batch["chord_mask"],
             )
@@ -296,6 +310,7 @@ def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches):
                     batch["ctx_dur"],
                     batch["ctx_rest"],
                     batch["pos_in_phrase"],
+                    phrase_position=batch["phrase_position"],
                     tempo_bpm=batch["tempo_bpm"],
                     src_key_padding_mask=~batch["chord_mask"],
                 )

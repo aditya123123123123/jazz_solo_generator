@@ -31,6 +31,12 @@ WINDOW             = 8
 REST_GAP_THRESHOLD = 0.1
 MAX_POS_IN_PHRASE  = 15
 
+
+def _derive_phrase_position(pos_in_phrase: torch.Tensor, window: int) -> torch.Tensor:
+    """Best-effort context positions for legacy caches without this tensor."""
+    end = int(pos_in_phrase.item())
+    return torch.arange(end - window, end, dtype=torch.long).clamp(0, MAX_POS_IN_PHRASE)
+
 # ---------------------------------------------------------------------------
 # 12-key transposition
 # ---------------------------------------------------------------------------
@@ -177,6 +183,7 @@ class NoteWindowDataset(Dataset):
                     ctx_pitch = [PAD_P] * pad_len + [e[0] for e in ctx_entries]
                     ctx_dur   = [PAD_D] * pad_len + [e[1] for e in ctx_entries]
                     ctx_rest  = [0]     * pad_len + [e[2] for e in ctx_entries]
+                    phrase_position = [0] * pad_len + [min(e[7], MAX_POS_IN_PHRASE) for e in ctx_entries]
 
                     self._samples.append({
                         "chord_ids":     c_ids,
@@ -186,6 +193,7 @@ class NoteWindowDataset(Dataset):
                         "ctx_pitch":     torch.tensor(ctx_pitch, dtype=torch.long),
                         "ctx_dur":       torch.tensor(ctx_dur,   dtype=torch.long),
                         "ctx_rest":      torch.tensor(ctx_rest,  dtype=torch.long),
+                        "phrase_position": torch.tensor(phrase_position, dtype=torch.long),
                         "target_pitch":  torch.tensor(t_pitch,   dtype=torch.long),
                         "target_dur":    torch.tensor(t_dur,     dtype=torch.long),
                         "target_rest":   torch.tensor(t_rest,    dtype=torch.long),
@@ -232,6 +240,7 @@ class NoteWindowDataset(Dataset):
             "ctx_pitch":     c["ctx_pitch"][idx],
             "ctx_dur":       c["ctx_dur"][idx],
             "ctx_rest":      c["ctx_rest"][idx],
+            "phrase_position": c["phrase_position"][idx] if "phrase_position" in c else _derive_phrase_position(c["pos_in_phrase"][idx], c["ctx_pitch"].size(1)),
             "target_pitch":  c["target_pitch"][idx],
             "target_dur":    c["target_dur"][idx],
             "target_rest":   c["target_rest"][idx],
@@ -260,6 +269,7 @@ def collate_note_window(batch):
         "ctx_pitch":     torch.stack([b["ctx_pitch"]     for b in batch]),
         "ctx_dur":       torch.stack([b["ctx_dur"]       for b in batch]),
         "ctx_rest":      torch.stack([b["ctx_rest"]      for b in batch]),
+        "phrase_position": torch.stack([b["phrase_position"] for b in batch]),
         "target_pitch":  torch.stack([b["target_pitch"]  for b in batch]),
         "target_dur":    torch.stack([b["target_dur"]    for b in batch]),
         "target_rest":   torch.stack([b["target_rest"]   for b in batch]),
