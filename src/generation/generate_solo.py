@@ -9,6 +9,7 @@ For each chord in a progression:
 import argparse
 import json
 import logging
+import random
 import re
 from pathlib import Path
 
@@ -235,7 +236,9 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   planner=None, executor=None,
                   window=8, temperature=0.8,
                   decode_dur=None, tempo_bpm=120.0,
-                  duration_temperature=1.6, rest_boost=1.8):
+                  duration_temperature=1.6, rest_boost=1.8,
+                  chord_shuffled=False, chord_zeroed=False,
+                  chord_perturb_seed=42):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -249,22 +252,38 @@ def generate_solo(progression, artist_name="Charlie Parker",
     note_events     = []
     chord_summaries = []
 
+    original_chord_ids = [
+        chord_tok.encode(normalize_chord(chord_str))
+        for chord_str, _ in progression
+    ]
+    model_chord_ids = list(original_chord_ids)
+    chord_condition = "normal"
+    if chord_shuffled:
+        rng = random.Random(chord_perturb_seed)
+        rng.shuffle(model_chord_ids)
+        chord_condition = "chord_shuffled"
+    elif chord_zeroed:
+        model_chord_ids = [getattr(chord_tok, "UNK", 0)] * len(model_chord_ids)
+        chord_condition = "chord_zeroed"
+
     # Rolling cross-chord context: last WINDOW note tokens from previous section
     ctx_pitch: list = []
     ctx_dur:   list = []
     ctx_rest:  list = []
 
-    for chord_str, beats in progression:
+    for section_idx, (chord_str, beats) in enumerate(progression):
         wjazz_str = normalize_chord(chord_str)
         chord_id  = chord_tok.encode(wjazz_str)
         if chord_id == chord_tok.UNK:
             unknown_chords.append(chord_str)
 
-        chord_ids = torch.tensor([[chord_id]], dtype=torch.long)
+        model_chord_id = model_chord_ids[section_idx]
+        model_chord_str = chord_tok.decode(model_chord_id)
+        chord_ids = torch.tensor([[model_chord_id]], dtype=torch.long)
 
         # ---- PhrasePlanner + PHRASE_00 remapping ----
         phrase_int_raw = _plan_phrase(planner, chord_ids, artist_id, temperature=temperature)
-        phrase_int     = remap_phrase_fallback(phrase_int_raw, wjazz_str, phrase_tok)
+        phrase_int     = remap_phrase_fallback(phrase_int_raw, model_chord_str, phrase_tok)
         phrase_remapped = phrase_int != phrase_int_raw
         phrase_label = phrase_tok.decode(phrase_int)
         phrase_id    = torch.tensor([phrase_int], dtype=torch.long)
@@ -321,6 +340,9 @@ def generate_solo(progression, artist_name="Charlie Parker",
         chord_summaries.append({
             "chord":           chord_str,
             "wjazz":           wjazz_str,
+            "model_chord":     model_chord_str,
+            "model_chord_id":  int(model_chord_id),
+            "chord_condition": chord_condition,
             "beats":           beats,
             "in_vocab":        chord_id != chord_tok.UNK,
             "phrase_token":    phrase_label,
@@ -387,6 +409,8 @@ def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
         "sections": [
             {
                 "chord":          s["chord"],
+                "model_chord":    s.get("model_chord", s["chord"]),
+                "chord_condition": s.get("chord_condition", "normal"),
                 "beats":          s["beats"],
                 "phrase":         s["phrase_token"],
                 "n_notes":        s["n_notes"],
@@ -466,6 +490,10 @@ def parse_args(argv=None):
     parser.add_argument("--out-dir", type=Path, default=SOLOS_DIR, dest="out_dir")
     parser.add_argument("--note-executor-checkpoint", type=Path, default=None,
                         help="Override NoteExecutor checkpoint path.")
+    parser.add_argument("--chord-shuffled", action="store_true",
+                        help="Shuffle chord token IDs before model conditioning.")
+    parser.add_argument("--chord-zeroed", action="store_true",
+                        help="Replace model chord token IDs with UNK before conditioning.")
     parser.add_argument("--with-rhythm-section", action="store_true",
                         help="Include rule-based piano/bass/drums tracks.")
     parser.add_argument("--rhythm-style", default="swing",
@@ -484,6 +512,8 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
+    if args.chord_shuffled and args.chord_zeroed:
+        raise SystemExit("--chord-shuffled and --chord-zeroed are mutually exclusive")
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
     chord_tok  = ChordTokenizer.from_json()
@@ -516,6 +546,9 @@ def main(argv=None):
             decode_dur=decode_dur, tempo_bpm=tempo_bpm,
             duration_temperature=args.duration_temperature,
             rest_boost=args.rest_boost,
+            chord_shuffled=args.chord_shuffled,
+            chord_zeroed=args.chord_zeroed,
+            chord_perturb_seed=args.rhythm_seed,
         )
 
         if args.with_rhythm_section:
@@ -527,6 +560,10 @@ def main(argv=None):
 
         if args.duration_temperature != 1.6 or args.rest_boost != 1.8:
             stem += f"_dt{args.duration_temperature:.1f}_rb{args.rest_boost:.1f}"
+        if args.chord_shuffled:
+            stem += "_chord_shuffled"
+        elif args.chord_zeroed:
+            stem += "_chord_zeroed"
 
         midi_out = args.out_dir / f"{stem}.mid"
         json_out = args.out_dir / f"{stem}.json"
