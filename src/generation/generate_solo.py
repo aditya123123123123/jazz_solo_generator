@@ -126,7 +126,8 @@ def _load_note_executor_with_compat(path, chord_tok, artist_tok, note_tok, dropo
             raise FileNotFoundError(
                 f"No note_executor checkpoint found at {path} or {legacy}"
             )
-    state = torch.load(path, map_location="cpu")
+    ckpt = torch.load(path, map_location="cpu")
+    state = ckpt.get("model_state", ckpt)
     ckpt_dur_vocab = state["dur_embed.weight"].shape[0]
     has_tempo = "tempo_embed.weight" in state
 
@@ -179,7 +180,7 @@ def _load_note_executor_with_compat(path, chord_tok, artist_tok, note_tok, dropo
     return executor, decode_dur
 
 
-def load_models(chord_tok, artist_tok, note_tok):
+def load_models(chord_tok, artist_tok, note_tok, note_executor_checkpoint=None):
     planner = PhrasePlanner(
         chord_vocab_size=chord_tok.vocab_size,
         artist_vocab_size=artist_tok.vocab_size,
@@ -189,8 +190,9 @@ def load_models(chord_tok, artist_tok, note_tok):
     )
     planner.eval()
 
+    executor_path = note_executor_checkpoint or CHECKPOINTS / "note_executor_best.pt"
     executor, decode_dur = _load_note_executor_with_compat(
-        CHECKPOINTS / "note_executor_best.pt", chord_tok, artist_tok, note_tok, dropout=0.2,
+        executor_path, chord_tok, artist_tok, note_tok, dropout=0.2,
     )
     return planner, executor, decode_dur
 
@@ -462,6 +464,8 @@ def parse_args(argv=None):
     parser.add_argument("--window", type=int, default=8)
     parser.add_argument("--temperature", type=float, default=0.8)
     parser.add_argument("--out-dir", type=Path, default=SOLOS_DIR, dest="out_dir")
+    parser.add_argument("--note-executor-checkpoint", type=Path, default=None,
+                        help="Override NoteExecutor checkpoint path.")
     parser.add_argument("--with-rhythm-section", action="store_true",
                         help="Include rule-based piano/bass/drums tracks.")
     parser.add_argument("--rhythm-style", default="swing",
@@ -488,7 +492,10 @@ def main(argv=None):
     artist_tok = ArtistTokenizer()
 
     print("Loading models …")
-    planner, executor, decode_dur = load_models(chord_tok, artist_tok, note_tok)
+    planner, executor, decode_dur = load_models(
+        chord_tok, artist_tok, note_tok,
+        note_executor_checkpoint=args.note_executor_checkpoint,
+    )
     print("Models loaded.")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
