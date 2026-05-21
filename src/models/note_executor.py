@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from src.generation.chord_utils import chord_tones, parse_chord
+
 
 def _nucleus_sample(logits: torch.Tensor, top_p: float = 0.92, temperature: float = 0.95) -> int:
     """Top-p (nucleus) sampling with temperature."""
@@ -153,6 +155,9 @@ class NoteExecutor(nn.Module):
         temperature:           float = 1.0,
         duration_temperature:  float = 1.0,
         rest_boost:            float = 0.0,
+        final_note_chord_tone_boost: float = 3.0,
+        is_final_segment:      bool = False,
+        active_chord_symbol:   Optional[str] = None,
     ) -> list:
         """Autoregressive sampling loop.
 
@@ -168,10 +173,21 @@ class NoteExecutor(nn.Module):
         `rest_boost` is added to the "rest" class logit of `is_rest_head`
         before argmax. With rest_boost=0 behavior is identical to before;
         positive values tip argmax toward rest in close-margin cases.
+
+        `final_note_chord_tone_boost` is an inference-only cadence helper.
+        When this is the final chord segment, it nudges the last sampled pitch
+        toward chord-tone pitch classes of `active_chord_symbol` and keeps that
+        final token sounding so the cadence is audible.
         """
         self.eval()
         device = chord_ids.device
         memory = self.encode(chord_ids, artist_id, src_key_padding_mask=None)
+
+        cadence_tones = None
+        if active_chord_symbol:
+            parsed = parse_chord(active_chord_symbol)
+            if parsed is not None:
+                cadence_tones = set(chord_tones(*parsed))
 
         # Seed history: use cross-chord prefix if provided, else empty
         pitch_hist = list(prefix_pitch or [])
@@ -222,6 +238,15 @@ class NoteExecutor(nn.Module):
             for idx in range(4, pitch_logits.size(0)):
                 if (idx - 4) % 12 in recent_pcs:
                     pitch_logits[idx] = pitch_logits[idx] * 0.7
+            if (
+                is_final_segment
+                and pos == n_notes - 1
+                and final_note_chord_tone_boost > 0.0
+                and cadence_tones
+            ):
+                for idx in range(4, pitch_logits.size(0)):
+                    if (idx - 4) % 12 in cadence_tones:
+                        pitch_logits[idx] = pitch_logits[idx] + final_note_chord_tone_boost
 
             # Nucleus sampling for pitch; temperature sampling for duration
             next_pitch = _nucleus_sample(pitch_logits, top_p=0.92, temperature=0.95 * temperature)
@@ -232,6 +257,9 @@ class NoteExecutor(nn.Module):
 
             is_rest_logits = self.is_rest_head(last).squeeze(0).clone()
             is_rest_logits[1] += rest_boost   # boost "rest" class
+            if is_final_segment and pos == n_notes - 1 and final_note_chord_tone_boost > 0.0:
+                is_rest_logits[0] = is_rest_logits[0] + final_note_chord_tone_boost
+                is_rest_logits[1] = float('-inf')
             next_rest  = is_rest_logits.argmax(-1).item()
 
             generated.append((next_pitch, next_dur, next_rest))

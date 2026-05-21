@@ -211,7 +211,10 @@ def _plan_phrase(planner, chord_ids, artist_id, fallback=3, temperature=0.8):
 def _generate_notes(executor, chord_ids, phrase_id, artist_id,
                     prefix_pitch=None, prefix_dur=None, prefix_rest=None,
                     temperature=0.8, window=8,
-                    duration_temperature=1.6, rest_boost=1.8):
+                    duration_temperature=1.6, rest_boost=1.8,
+                    final_note_chord_tone_boost=3.0,
+                    is_final_segment=False,
+                    active_chord_symbol=None):
     with torch.no_grad():
         raw = executor.generate(
             chord_ids, phrase_id, artist_id, n_notes=N_NOTES,
@@ -222,6 +225,9 @@ def _generate_notes(executor, chord_ids, phrase_id, artist_id,
             window=window,
             duration_temperature=duration_temperature,
             rest_boost=rest_boost,
+            final_note_chord_tone_boost=final_note_chord_tone_boost,
+            is_final_segment=is_final_segment,
+            active_chord_symbol=active_chord_symbol,
         )
     return raw
 
@@ -238,7 +244,8 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   decode_dur=None, tempo_bpm=120.0,
                   duration_temperature=1.6, rest_boost=1.8,
                   chord_shuffled=False, chord_zeroed=False,
-                  chord_perturb_seed=42):
+                  chord_perturb_seed=42,
+                  final_cadence_boost=3.0):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -299,6 +306,9 @@ def generate_solo(progression, artist_name="Charlie Parker",
             window=window,
             duration_temperature=duration_temperature,
             rest_boost=rest_boost,
+            final_note_chord_tone_boost=final_cadence_boost,
+            is_final_segment=section_idx == len(progression) - 1,
+            active_chord_symbol=chord_str,
         )
 
         section_events = []
@@ -507,6 +517,12 @@ def parse_args(argv=None):
     parser.add_argument("--rest-boost", type=float, default=1.8,
                         dest="rest_boost",
                         help="Additive logit boost on is_rest_head's rest class (default 1.8).")
+    parser.add_argument("--final-cadence-boost", type=float, default=3.0,
+                        dest="final_cadence_boost",
+                        help="Additive pitch-logit boost for final chord-tone cadence notes (default 3.0).")
+    parser.add_argument("--no-final-cadence-boost", action="store_const",
+                        const=0.0, dest="final_cadence_boost",
+                        help="Disable final cadence chord-tone boost.")
     return parser.parse_args(argv)
 
 
@@ -549,6 +565,7 @@ def main(argv=None):
             chord_shuffled=args.chord_shuffled,
             chord_zeroed=args.chord_zeroed,
             chord_perturb_seed=args.rhythm_seed,
+            final_cadence_boost=args.final_cadence_boost,
         )
 
         if args.with_rhythm_section:
