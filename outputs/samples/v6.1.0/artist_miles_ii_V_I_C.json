@@ -1,0 +1,811 @@
+{
+  "name": "artist_miles_ii_V_I_C",
+  "checkpoint": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/checkpoints/v6.1.0_best.pt",
+  "checkpoint_file": "checkpoints/v6.1.0_best.pt",
+  "artist": "Miles Davis",
+  "progression": "ii_V_I_C",
+  "tempo_bpm": 120.0,
+  "style": "swing",
+  "rhythm_seed": 42,
+  "generation_method": "direct NoteExecutor.generate via generate_solo.py helpers; phrase planner unavailable",
+  "chord_perturbation": false,
+  "temperature": 0.8,
+  "duration_temperature": 1.6,
+  "rest_boost": 1.8,
+  "window": 8,
+  "total_duration_sec": 31.47916666666666,
+  "sections": [
+    {
+      "index": 0,
+      "intended_chord": "Dm7",
+      "input_chord": "Dm7",
+      "input_wjazz": "D-7",
+      "chord_id": 87,
+      "beats": 4,
+      "phrase": "PHRASE_18",
+      "artist": "Miles Davis",
+      "n_sounding": 16,
+      "distinct_pitches": 10,
+      "pitches": [
+        79,
+        81,
+        80,
+        78,
+        76,
+        74,
+        69,
+        71,
+        72,
+        74,
+        73,
+        71,
+        72,
+        74,
+        69,
+        71
+      ],
+      "tokens": [
+        {
+          "pitch_token": 83,
+          "dur_token": 8,
+          "rest_token": 0,
+          "pitch_midi": 79
+        },
+        {
+          "pitch_token": 85,
+          "dur_token": 9,
+          "rest_token": 0,
+          "pitch_midi": 81
+        },
+        {
+          "pitch_token": 84,
+          "dur_token": 9,
+          "rest_token": 0,
+          "pitch_midi": 80
+        },
+        {
+          "pitch_token": 82,
+          "dur_token": 10,
+          "rest_token": 0,
+          "pitch_midi": 78
+        },
+        {
+          "pitch_token": 80,
+          "dur_token": 12,
+          "rest_token": 0,
+          "pitch_midi": 76
+        },
+        {
+          "pitch_token": 78,
+          "dur_token": 11,
+          "rest_token": 0,
+          "pitch_midi": 74
+        },
+        {
+          "pitch_token": 73,
+          "dur_token": 14,
+          "rest_token": 0,
+          "pitch_midi": 69
+        },
+        {
+          "pitch_token": 75,
+          "dur_token": 10,
+          "rest_token": 0,
+          "pitch_midi": 71
+        },
+        {
+          "pitch_token": 76,
+          "dur_token": 14,
+          "rest_token": 0,
+          "pitch_midi": 72
+        },
+        {
+          "pitch_token": 78,
+          "dur_token": 12,
+          "rest_token": 0,
+          "pitch_midi": 74
+        },
+        {
+          "pitch_token": 77,
+          "dur_token": 5,
+          "rest_token": 0,
+          "pitch_midi": 73
+        },
+        {
+          "pitch_token": 75,
+          "dur_token": 14,
+          "rest_token": 0,
+          "pitch_midi": 71
+        },
+        {
+          "pitch_token": 76,
+          "dur_token": 10,
+          "rest_token": 0,
+          "pitch_midi": 72
+        },
+        {
+          "pitch_token": 78,
+          "dur_token": 14,
+          "rest_token": 0,
+          "pitch_midi": 74
+        },
+        {
+          "pitch_token": 73,
+          "dur_token": 16,
+          "rest_token": 0,
+          "pitch_midi": 69
+        },
+        {
+          "pitch_token": 75,
+          "dur_token": 13,
+          "rest_token": 0,
+          "pitch_midi": 71
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "intended_chord": "G7",
+      "input_chord": "G7",
+      "input_wjazz": "G7",
+      "chord_id": 180,
+      "beats": 4,
+      "phrase": "PHRASE_57",
+      "artist": "Miles Davis",
+      "n_sounding": 4,
+      "distinct_pitches": 4,
+      "pitches": [
+        84,
+        83,
+        81,
+        79
+      ],
+      "tokens": [
+        {
+          "pitch_token": 88,
+          "dur_token": 14,
+          "rest_token": 0,
+          "pitch_midi": 84
+        },
+        {
+          "pitch_token": 87,
+          "dur_token": 4,
+          "rest_token": 0,
+          "pitch_midi": 83
+        },
+        {
+          "pitch_token": 85,
+          "dur_token": 12,
+          "rest_token": 0,
+          "pitch_midi": 81
+        },
+        {
+          "pitch_token": 83,
+          "dur_token": 6,
+          "rest_token": 0,
+          "pitch_midi": 79
+        },
+        {
+          "pitch_token": 78,
+          "dur_token": 6,
+          "rest_token": 1,
+          "pitch_midi": 74
+        },
+        {
+          "pitch_token": 80,
+          "dur_token": 6,
+          "rest_token": 1,
+          "pitch_midi": 76
+        },
+        {
+          "pitch_token": 73,
+          "dur_token": 7,
+          "rest_token": 1,
+          "pitch_midi": 69
+        },
+        {
+          "pitch_token": 71,
+          "dur_token": 14,
+          "rest_token": 1,
+          "pitch_midi": 67
+        },
+        {
+          "pitch_token": 66,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 62
+        },
+        {
+          "pitch_token": 69,
+          "dur_token": 11,
+          "rest_token": 1,
+          "pitch_midi": 65
+        },
+        {
+          "pitch_token": 65,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 61
+        },
+        {
+          "pitch_token": 64,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 60
+        },
+        {
+          "pitch_token": 66,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 62
+        },
+        {
+          "pitch_token": 61,
+          "dur_token": 16,
+          "rest_token": 1,
+          "pitch_midi": 57
+        },
+        {
+          "pitch_token": 59,
+          "dur_token": 6,
+          "rest_token": 1,
+          "pitch_midi": 55
+        },
+        {
+          "pitch_token": 57,
+          "dur_token": 13,
+          "rest_token": 1,
+          "pitch_midi": 53
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "intended_chord": "Cj7",
+      "input_chord": "Cj7",
+      "input_wjazz": "Cj7",
+      "chord_id": 79,
+      "beats": 8,
+      "phrase": "PHRASE_52",
+      "artist": "Miles Davis",
+      "n_sounding": 1,
+      "distinct_pitches": 1,
+      "pitches": [
+        48
+      ],
+      "tokens": [
+        {
+          "pitch_token": 52,
+          "dur_token": 4,
+          "rest_token": 0,
+          "pitch_midi": 48
+        },
+        {
+          "pitch_token": 54,
+          "dur_token": 9,
+          "rest_token": 1,
+          "pitch_midi": 50
+        },
+        {
+          "pitch_token": 59,
+          "dur_token": 8,
+          "rest_token": 1,
+          "pitch_midi": 55
+        },
+        {
+          "pitch_token": 57,
+          "dur_token": 11,
+          "rest_token": 1,
+          "pitch_midi": 53
+        },
+        {
+          "pitch_token": 56,
+          "dur_token": 10,
+          "rest_token": 1,
+          "pitch_midi": 52
+        },
+        {
+          "pitch_token": 52,
+          "dur_token": 15,
+          "rest_token": 1,
+          "pitch_midi": 48
+        },
+        {
+          "pitch_token": 54,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 50
+        },
+        {
+          "pitch_token": 59,
+          "dur_token": 11,
+          "rest_token": 1,
+          "pitch_midi": 55
+        },
+        {
+          "pitch_token": 64,
+          "dur_token": 15,
+          "rest_token": 1,
+          "pitch_midi": 60
+        },
+        {
+          "pitch_token": 61,
+          "dur_token": 14,
+          "rest_token": 1,
+          "pitch_midi": 57
+        },
+        {
+          "pitch_token": 63,
+          "dur_token": 10,
+          "rest_token": 1,
+          "pitch_midi": 59
+        },
+        {
+          "pitch_token": 59,
+          "dur_token": 15,
+          "rest_token": 1,
+          "pitch_midi": 55
+        },
+        {
+          "pitch_token": 52,
+          "dur_token": 9,
+          "rest_token": 1,
+          "pitch_midi": 48
+        },
+        {
+          "pitch_token": 54,
+          "dur_token": 14,
+          "rest_token": 1,
+          "pitch_midi": 50
+        },
+        {
+          "pitch_token": 57,
+          "dur_token": 9,
+          "rest_token": 1,
+          "pitch_midi": 53
+        },
+        {
+          "pitch_token": 59,
+          "dur_token": 8,
+          "rest_token": 1,
+          "pitch_midi": 55
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "intended_chord": "Cj7",
+      "input_chord": "Cj7",
+      "input_wjazz": "Cj7",
+      "chord_id": 79,
+      "beats": 8,
+      "phrase": "PHRASE_52",
+      "artist": "Miles Davis",
+      "n_sounding": 1,
+      "distinct_pitches": 1,
+      "pitches": [
+        67
+      ],
+      "tokens": [
+        {
+          "pitch_token": 71,
+          "dur_token": 13,
+          "rest_token": 0,
+          "pitch_midi": 67
+        },
+        {
+          "pitch_token": 68,
+          "dur_token": 5,
+          "rest_token": 1,
+          "pitch_midi": 64
+        },
+        {
+          "pitch_token": 70,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 66
+        },
+        {
+          "pitch_token": 67,
+          "dur_token": 14,
+          "rest_token": 1,
+          "pitch_midi": 63
+        },
+        {
+          "pitch_token": 66,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 62
+        },
+        {
+          "pitch_token": 63,
+          "dur_token": 14,
+          "rest_token": 1,
+          "pitch_midi": 59
+        },
+        {
+          "pitch_token": 57,
+          "dur_token": 13,
+          "rest_token": 1,
+          "pitch_midi": 53
+        },
+        {
+          "pitch_token": 59,
+          "dur_token": 11,
+          "rest_token": 1,
+          "pitch_midi": 55
+        },
+        {
+          "pitch_token": 56,
+          "dur_token": 11,
+          "rest_token": 1,
+          "pitch_midi": 52
+        },
+        {
+          "pitch_token": 54,
+          "dur_token": 14,
+          "rest_token": 1,
+          "pitch_midi": 50
+        },
+        {
+          "pitch_token": 52,
+          "dur_token": 8,
+          "rest_token": 1,
+          "pitch_midi": 48
+        },
+        {
+          "pitch_token": 63,
+          "dur_token": 14,
+          "rest_token": 1,
+          "pitch_midi": 59
+        },
+        {
+          "pitch_token": 59,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 55
+        },
+        {
+          "pitch_token": 58,
+          "dur_token": 8,
+          "rest_token": 1,
+          "pitch_midi": 54
+        },
+        {
+          "pitch_token": 52,
+          "dur_token": 14,
+          "rest_token": 1,
+          "pitch_midi": 48
+        },
+        {
+          "pitch_token": 54,
+          "dur_token": 12,
+          "rest_token": 1,
+          "pitch_midi": 50
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "pitch": 79,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 81,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 80,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 78,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 73,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 1.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 84,
+      "duration_sec": 0.75,
+      "is_rest": false
+    },
+    {
+      "pitch": 83,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 81,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 79,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 76,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.1667,
+      "is_rest": true
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 61,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 1.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.125,
+      "is_rest": true
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.6667,
+      "is_rest": true
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1875,
+      "is_rest": true
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 1.0,
+      "is_rest": true
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1875,
+      "is_rest": true
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.0833,
+      "is_rest": true
+    },
+    {
+      "pitch": 66,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.6667,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.375,
+      "is_rest": true
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.1875,
+      "is_rest": true
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.5,
+      "is_rest": true
+    },
+    {
+      "pitch": 54,
+      "duration_sec": 0.1875,
+      "is_rest": true
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.75,
+      "is_rest": true
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.5,
+      "is_rest": true
+    }
+  ]
+}

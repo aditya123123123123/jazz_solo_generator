@@ -9,6 +9,7 @@ outputs/samples/*
 outputs/samples/v6.1.0/*
 !outputs/samples/v6.1.0/README.md
 !outputs/samples/v6.1.0/*.mid
+!outputs/samples/v6.1.0/*.json
 outputs/samples/**/*.wav
 __pycache__/
 *.pyc
