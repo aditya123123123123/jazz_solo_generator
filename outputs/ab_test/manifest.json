@@ -26,7 +26,44 @@
       53,
       54
     ],
-    "unknowns": []
+    "unknowns": [],
+    "with_rhythm_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/ab_test/v6.1.0/temp_0.9_seed_42_with_rhythm.mid",
+    "rhythm_style": "swing",
+    "rhythm_seed": 42,
+    "rhythm_section_chords": [
+      {
+        "chord": "Cm7",
+        "beats": 4
+      },
+      {
+        "chord": "F7",
+        "beats": 4
+      },
+      {
+        "chord": "Bbj7",
+        "beats": 4
+      },
+      {
+        "chord": "Ebj7",
+        "beats": 4
+      },
+      {
+        "chord": "Am7b5",
+        "beats": 4
+      },
+      {
+        "chord": "D7",
+        "beats": 4
+      },
+      {
+        "chord": "Gm7",
+        "beats": 8
+      },
+      {
+        "chord": "Gm7",
+        "beats": 8
+      }
+    ]
   },
   {
     "version": "v6.1.0",
@@ -55,7 +92,44 @@
       58,
       54
     ],
-    "unknowns": []
+    "unknowns": [],
+    "with_rhythm_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/ab_test/v6.1.0/temp_1.1_seed_1337_with_rhythm.mid",
+    "rhythm_style": "swing",
+    "rhythm_seed": 42,
+    "rhythm_section_chords": [
+      {
+        "chord": "Cm7",
+        "beats": 4
+      },
+      {
+        "chord": "F7",
+        "beats": 4
+      },
+      {
+        "chord": "Bbj7",
+        "beats": 4
+      },
+      {
+        "chord": "Ebj7",
+        "beats": 4
+      },
+      {
+        "chord": "Am7b5",
+        "beats": 4
+      },
+      {
+        "chord": "D7",
+        "beats": 4
+      },
+      {
+        "chord": "Gm7",
+        "beats": 8
+      },
+      {
+        "chord": "Gm7",
+        "beats": 8
+      }
+    ]
   },
   {
     "version": "v6.2.0",
@@ -84,7 +158,44 @@
       58,
       53
     ],
-    "unknowns": []
+    "unknowns": [],
+    "with_rhythm_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/ab_test/v6.2.0/temp_0.9_seed_42_with_rhythm.mid",
+    "rhythm_style": "swing",
+    "rhythm_seed": 42,
+    "rhythm_section_chords": [
+      {
+        "chord": "Cm7",
+        "beats": 4
+      },
+      {
+        "chord": "F7",
+        "beats": 4
+      },
+      {
+        "chord": "Bbj7",
+        "beats": 4
+      },
+      {
+        "chord": "Ebj7",
+        "beats": 4
+      },
+      {
+        "chord": "Am7b5",
+        "beats": 4
+      },
+      {
+        "chord": "D7",
+        "beats": 4
+      },
+      {
+        "chord": "Gm7",
+        "beats": 8
+      },
+      {
+        "chord": "Gm7",
+        "beats": 8
+      }
+    ]
   },
   {
     "version": "v6.2.0",
@@ -113,6 +224,43 @@
       57,
       59
     ],
-    "unknowns": []
+    "unknowns": [],
+    "with_rhythm_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/ab_test/v6.2.0/temp_1.1_seed_1337_with_rhythm.mid",
+    "rhythm_style": "swing",
+    "rhythm_seed": 42,
+    "rhythm_section_chords": [
+      {
+        "chord": "Cm7",
+        "beats": 4
+      },
+      {
+        "chord": "F7",
+        "beats": 4
+      },
+      {
+        "chord": "Bbj7",
+        "beats": 4
+      },
+      {
+        "chord": "Ebj7",
+        "beats": 4
+      },
+      {
+        "chord": "Am7b5",
+        "beats": 4
+      },
+      {
+        "chord": "D7",
+        "beats": 4
+      },
+      {
+        "chord": "Gm7",
+        "beats": 8
+      },
+      {
+        "chord": "Gm7",
+        "beats": 8
+      }
+    ]
   }
 ]
