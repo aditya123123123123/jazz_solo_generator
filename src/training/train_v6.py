@@ -39,7 +39,16 @@ BEST_PATH        = CKPT_DIR / "v6.1.0_best.pt"
 LATEST_PATH      = CKPT_DIR / "v6.1.0_latest.pt"
 WANDB_PROJECT    = "jazz-solo-generator"
 WANDB_NAME       = "note-executor-v6.1.0-literal-harmonic-finetune"
-HARMONIC_WEIGHT  = 0.15
+# v6.3: raised from 0.15 → 0.30 so chord conditioning dominates pitch prediction.
+# At 0.15 the ablation showed chord_zeroed only caused +0.23 loss delta,
+# meaning the model treated chord info as equal-weight to phrasing.
+HARMONIC_WEIGHT  = 0.30
+# v6.3: lambda_interval is now a curriculum ramp target, not a flat constant.
+# The ramp is applied inside _train_epoch using global_step / total_steps.
+# This constant sets the MAXIMUM (end-of-training) value.
+LAMBDA_INTERVAL_MIN = 0.01
+LAMBDA_INTERVAL_MAX = 0.10
+# Legacy flat constant kept for CLI default / backward compat with --lambda-interval.
 LAMBDA_INTERVAL  = 0.0475
 STRONG_BEAT_POS  = frozenset({0, 4, 8, 12})
 DEFAULT_CACHE    = Path("data/processed/notes_v6_cache.pt")
@@ -61,8 +70,8 @@ parser.add_argument("--cache",            type=Path, default=DEFAULT_CACHE,
                     help=f"NoteWindowDataset cache path (default {DEFAULT_CACHE})")
 parser.add_argument("--run-name",         type=str, default=WANDB_NAME,
                     help=f"wandb run name (default {WANDB_NAME})")
-parser.add_argument("--lambda-interval",  type=float, default=LAMBDA_INTERVAL,
-                    help=f"Interval-penalty weight (default {LAMBDA_INTERVAL}; 0 disables)")
+parser.add_argument("--lambda-interval",  type=float, default=None,
+                    help="Override lambda_interval with a flat constant (disables curriculum ramp). 0 disables the penalty entirely.")
 parser.add_argument("--output-dir",       type=Path, default=CKPT_DIR,
                     help=f"Directory for latest checkpoints (default {CKPT_DIR})")
 parser.add_argument("--best-output",      type=Path, default=BEST_PATH,
@@ -232,13 +241,22 @@ def _load_model_checkpoint(model, checkpoint_path, device):
 
 def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
                  chord_tone_tensor, epoch, global_step, dry_run_batches,
-                 lambda_interval):
+                 lambda_interval_override, total_steps):
     model.train()
     n_batches = len(loader)
 
     for batch_idx, batch in enumerate(loader):
         if dry_run_batches and batch_idx >= dry_run_batches:
             break
+
+        # v6.3: curriculum ramp for lambda_interval.
+        # If --lambda-interval was passed explicitly, use that flat value.
+        # Otherwise ramp linearly from LAMBDA_INTERVAL_MIN to LAMBDA_INTERVAL_MAX.
+        if lambda_interval_override is not None:
+            lambda_interval = lambda_interval_override
+        else:
+            progress = min(1.0, global_step / max(1, total_steps))
+            lambda_interval = LAMBDA_INTERVAL_MIN + (LAMBDA_INTERVAL_MAX - LAMBDA_INTERVAL_MIN) * progress
 
         batch = {k: v.to(device) for k, v in batch.items()}
 
@@ -309,7 +327,8 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
             f"loss={total.item():.4f} pitch={pitch_l.item():.4f} "
             f"dur={dur_l.item():.4f} rest={rest_l.item():.4f} "
             f"harm={harm_l.item():.4f} interval={interval_l.item():.4f} "
-            f"lr={cur_lr:.2e} H_dur={h_dur:.3f} H_pitch={h_pitch:.3f}"
+            f"lr={cur_lr:.2e} lambda_i={lambda_interval:.4f} "
+            f"H_dur={h_dur:.3f} H_pitch={h_pitch:.3f}"
         )
 
     return global_step
@@ -453,9 +472,14 @@ def main():
     ce        = nn.CrossEntropyLoss(label_smoothing=LABEL_SMOOTHING)
     opt       = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=WEIGHT_DECAY)
     scheduler = _build_scheduler(opt, epochs, len(train_loader), args.lr)
-    scaler    = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
+    # v6.3: fixed deprecated torch.cuda.amp.GradScaler → torch.amp.GradScaler
+    scaler    = torch.amp.GradScaler('cuda', enabled=(device.type == "cuda"))
 
+    total_steps = epochs * len(train_loader)
     gen_tempo = float(full_ds[0]["tempo_bpm"].item())
+
+    # Resolve lambda_interval mode: None = curriculum ramp, float = flat override.
+    lambda_interval_override = args.lambda_interval  # None if not passed
 
     wandb.init(
         project = WANDB_PROJECT,
@@ -465,7 +489,10 @@ def main():
             weight_decay=WEIGHT_DECAY, eta_min=ETA_MIN,
             warmup_frac=WARMUP_FRAC, label_smoothing=LABEL_SMOOTHING,
             harmonic_weight=HARMONIC_WEIGHT,
-            lambda_interval=args.lambda_interval,
+            lambda_interval_mode="curriculum_ramp" if lambda_interval_override is None else "flat_override",
+            lambda_interval_min=LAMBDA_INTERVAL_MIN,
+            lambda_interval_max=LAMBDA_INTERVAL_MAX,
+            lambda_interval_override=lambda_interval_override,
             strong_beat_source="pos_in_phrase_literal_v5b",
             target_chord_source="chord_ids_col0_literal_v5b",
             patience=PATIENCE, grad_clip=GRAD_CLIP,
@@ -488,12 +515,18 @@ def main():
         global_step = _train_epoch(
             model, train_loader, opt, scheduler, scaler, ce, device,
             chord_tone_tensor, epoch, global_step, args.dry_run_batches,
-            args.lambda_interval,
+            lambda_interval_override, total_steps,
         )
 
+        # Use midpoint lambda for validation loss consistency across epochs.
+        val_lambda = (
+            lambda_interval_override
+            if lambda_interval_override is not None
+            else (LAMBDA_INTERVAL_MIN + LAMBDA_INTERVAL_MAX) / 2.0
+        )
         val_metrics = _validate(
             model, val_loader, device, ce, chord_tone_tensor, args.dry_run_batches,
-            args.lambda_interval,
+            val_lambda,
         )
 
         val_log = {
