@@ -11,6 +11,16 @@ outputs/samples/v6.1.0/*
 !outputs/samples/v6.1.0/*.mid
 !outputs/samples/v6.1.0/*.json
 outputs/samples/**/*.wav
+!outputs/ab_test/
+outputs/ab_test/*
+!outputs/ab_test/COMPARISON.md
+!outputs/ab_test/manifest.json
+!outputs/ab_test/v6.1.0/
+!outputs/ab_test/v6.1.0/*.mid
+!outputs/ab_test/v6.1.0/*.json
+!outputs/ab_test/v6.2.0/
+!outputs/ab_test/v6.2.0/*.mid
+!outputs/ab_test/v6.2.0/*.json
 __pycache__/
 *.pyc
 .env
