@@ -16,6 +16,15 @@ sys.stdout.reconfigure(line_buffering=True)
 from src.data.note_dataset import NoteWindowDataset, collate_note_window
 from src.models.note_executor import NoteExecutor
 from src.training.losses import interval_penalty_from_logits
+
+def _check_halt_conditions(harm_l, step, valid_strong_fraction, harm_l_step_1k):
+    if torch.isnan(harm_l) or torch.isinf(harm_l):
+        raise RuntimeError(f"HALT: harm_l is NaN/Inf at step {step}")
+    if step > 1000 and harm_l > 10 * harm_l_step_1k:
+        raise RuntimeError(f"HALT: harm_l exploded ({harm_l:.4f} > 10x baseline)")
+    if step > 500 and (valid_strong_fraction < 0.40 or valid_strong_fraction > 0.75):
+        raise RuntimeError(f"HALT: valid_strong_fraction out of range ({valid_strong_fraction:.4f})")
+
 from src.tokenization import ArtistTokenizer, ChordTokenizer, PhraseTokenizer
 
 # ---------------------------------------------------------------------------
