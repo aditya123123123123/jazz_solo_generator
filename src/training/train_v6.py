@@ -183,20 +183,22 @@ def build_chord_tone_tensor(chord_tok) -> torch.Tensor:
 def harmonic_penalty(
     pitch_logits:      torch.Tensor,
     pos_in_phrase:     torch.Tensor,
-    chord_ids:         torch.Tensor,
+    target_chord_id:   torch.Tensor,
     chord_tone_tensor: torch.Tensor,
 ) -> torch.Tensor:
-    # v6.1.0 literal port: v5b and v6 chord_ids/pos_in_phrase share semantics,
-    # so this is a true regression test.
-    """Penalty = -log P(chord tone) at v5b literal strong-position anchors."""
+    """Penalty = -log P(chord tone) using per-note target_chord_id. Only on valid chords."""
     strong = torch.zeros(pos_in_phrase.size(0), dtype=torch.bool, device=pos_in_phrase.device)
     for p in STRONG_BEAT_POS:
         strong |= (pos_in_phrase == p)
-    if not strong.any():
-        return pitch_logits.sum() * 0.0
 
-    logits = pitch_logits[strong]
-    c_ids = chord_ids[strong, 0]
+    # Mask out special tokens (PAD/UNK/BOS/EOS/empty = IDs < 5)
+    valid = strong & (target_chord_id >= 5)
+
+    if not valid.any():
+        return torch.tensor(0.0, device=pitch_logits.device)
+
+    logits = pitch_logits[valid]
+    c_ids = target_chord_id[valid]
     tone_pc = chord_tone_tensor[c_ids]
 
     pc_map = torch.zeros(logits.size(1), dtype=torch.long, device=logits.device)
@@ -207,8 +209,6 @@ def harmonic_penalty(
     probs = F.softmax(logits, dim=-1)
     chord_tone_prob = (probs * tone_tok).sum(dim=-1)
     return -chord_tone_prob.clamp(min=1e-8).log().mean()
-
-
 def _load_model_checkpoint(model, checkpoint_path, device):
     ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
     state = ckpt.get("model_state", ckpt)
@@ -278,7 +278,7 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
             dur_l   = ce(d_logits, batch["target_dur"])
             rest_l  = ce(r_logits, batch["target_rest"])
             harm_l  = harmonic_penalty(
-                p_logits, batch["pos_in_phrase"], batch["chord_ids"], chord_tone_tensor
+                p_logits, batch["pos_in_phrase"], batch["target_chord_id"], chord_tone_tensor
             )
             if lambda_interval == 0.0:
                 interval_l = p_logits.sum() * 0.0
@@ -372,7 +372,7 @@ def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches,
                 pl = ce(p, batch["target_pitch"])
                 dl = ce(d, batch["target_dur"])
                 rl = ce(r, batch["target_rest"])
-                hl = harmonic_penalty(p, batch["pos_in_phrase"], batch["chord_ids"], chord_tone_tensor)
+                hl = harmonic_penalty(p, batch["pos_in_phrase"], batch["target_chord_id"], chord_tone_tensor)
                 if lambda_interval == 0.0:
                     il = p.sum() * 0.0
                 else:
