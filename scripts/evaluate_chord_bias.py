@@ -12,7 +12,19 @@ import torch
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
-from src.generation.chord_utils import approach_tone_pitch_classes, chord_tone_pitch_classes
+from src.generation.chord_utils import chord_tones, parse_chord
+
+
+def chord_tone_pitch_classes(symbol: str) -> set[int]:
+    parsed = parse_chord(symbol)
+    if parsed is None:
+        return set()
+    return set(chord_tones(*parsed))
+
+
+def approach_tone_pitch_classes(symbol: str) -> set[int]:
+    tones = chord_tone_pitch_classes(symbol)
+    return {((pc - 1) % 12) for pc in tones} | {((pc + 1) % 12) for pc in tones}
 from src.generation.generate_solo import (
     BEAT_DURATION,
     CHECKPOINTS,

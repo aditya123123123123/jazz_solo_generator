@@ -166,16 +166,20 @@ class NoteWindowDataset(Dataset):
                     a_id_t = torch.tensor(artist_id_v,  dtype=torch.long)
                     tempo_t = torch.tensor(tempo, dtype=torch.float)
 
-                    for midi_pitch, dur_tok, is_rest, pos_in_ph in note_enc:
+                    for note, (midi_pitch, dur_tok, is_rest, pos_in_ph) in zip(notes, note_enc):
                         trans_midi = max(48, min(84, midi_pitch + semitones))
                         pitch_tok  = note_tok.encode_pitch(trans_midi)
+                        target_chord_id = torch.tensor(
+                            chord_tok.encode(transpose_chord_symbol(note["chord"], semitones)),
+                            dtype=torch.long,
+                        )
                         flat.append((pitch_tok, dur_tok, is_rest,
                                      p_id_t, a_id_t, chord_ids_t, chord_len,
-                                     pos_in_ph, tempo_t))
+                                     pos_in_ph, tempo_t, target_chord_id))
 
                 # Sliding window samples
                 for abs_idx, target in enumerate(flat):
-                    t_pitch, t_dur, t_rest, p_id, a_id, c_ids, c_len, pos, tempo_t = target
+                    t_pitch, t_dur, t_rest, p_id, a_id, c_ids, c_len, pos, tempo_t, target_chord_id = target
                     ctx_start   = max(0, abs_idx - window)
                     ctx_entries = flat[ctx_start:abs_idx]
                     pad_len     = window - len(ctx_entries)
@@ -197,6 +201,7 @@ class NoteWindowDataset(Dataset):
                         "target_pitch":  torch.tensor(t_pitch,   dtype=torch.long),
                         "target_dur":    torch.tensor(t_dur,     dtype=torch.long),
                         "target_rest":   torch.tensor(t_rest,    dtype=torch.long),
+                        "target_chord_id": target_chord_id,
                         "pos_in_phrase": torch.tensor(pos,        dtype=torch.long),
                         "tempo_bpm":     tempo_t,
                     })
@@ -244,6 +249,7 @@ class NoteWindowDataset(Dataset):
             "target_pitch":  c["target_pitch"][idx],
             "target_dur":    c["target_dur"][idx],
             "target_rest":   c["target_rest"][idx],
+            "target_chord_id": c["target_chord_id"][idx],
             "pos_in_phrase": c["pos_in_phrase"][idx],
             "tempo_bpm":     c["tempo_bpm"][idx],
         }
@@ -273,5 +279,6 @@ def collate_note_window(batch):
         "target_pitch":  torch.stack([b["target_pitch"]  for b in batch]),
         "target_dur":    torch.stack([b["target_dur"]    for b in batch]),
         "target_rest":   torch.stack([b["target_rest"]   for b in batch]),
+        "target_chord_id": torch.stack([b["target_chord_id"] for b in batch]),
         "pos_in_phrase": torch.stack([b["pos_in_phrase"] for b in batch]),
     }

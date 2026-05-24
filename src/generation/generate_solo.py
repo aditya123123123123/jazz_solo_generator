@@ -232,6 +232,10 @@ def _generate_notes(executor, chord_ids, phrase_id, artist_id,
                     temperature=0.8, window=8,
                     duration_temperature=1.6, rest_boost=1.8,
                     final_note_chord_tone_boost=3.0,
+                    chord_tone_bias=False,
+                    chord_tone_bias_strength=2.0,
+                    non_chord_penalty=0.0,
+                    strong_beat_only=True,
                     is_final_segment=False,
                     active_chord_symbol=None):
     with torch.no_grad():
@@ -245,6 +249,10 @@ def _generate_notes(executor, chord_ids, phrase_id, artist_id,
             duration_temperature=duration_temperature,
             rest_boost=rest_boost,
             final_note_chord_tone_boost=final_note_chord_tone_boost,
+            chord_tone_bias=chord_tone_bias,
+            chord_tone_bias_strength=chord_tone_bias_strength,
+            non_chord_penalty=non_chord_penalty,
+            strong_beat_only=strong_beat_only,
             is_final_segment=is_final_segment,
             active_chord_symbol=active_chord_symbol,
         )
@@ -264,7 +272,11 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   duration_temperature=1.6, rest_boost=1.8,
                   chord_shuffled=False, chord_zeroed=False,
                   chord_perturb_seed=42,
-                  final_cadence_boost=3.0):
+                  final_cadence_boost=3.0,
+                  chord_tone_bias=False,
+                  chord_tone_bias_strength=2.0,
+                  non_chord_penalty=0.0,
+                  strong_beat_only=True):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -326,6 +338,10 @@ def generate_solo(progression, artist_name="Charlie Parker",
             duration_temperature=duration_temperature,
             rest_boost=rest_boost,
             final_note_chord_tone_boost=final_cadence_boost,
+            chord_tone_bias=chord_tone_bias,
+            chord_tone_bias_strength=chord_tone_bias_strength,
+            non_chord_penalty=non_chord_penalty,
+            strong_beat_only=strong_beat_only,
             is_final_segment=section_idx == len(progression) - 1,
             active_chord_symbol=chord_str,
         )
@@ -542,6 +558,17 @@ def parse_args(argv=None):
     parser.add_argument("--no-final-cadence-boost", action="store_const",
                         const=0.0, dest="final_cadence_boost",
                         help="Disable final cadence chord-tone boost.")
+    parser.add_argument("--chord-tone-bias", action="store_true",
+                        help="Enable inference-time chord-tone steering for generated pitches.")
+    parser.add_argument("--chord-tone-bias-strength", type=float, default=2.0,
+                        dest="chord_tone_bias_strength",
+                        help="Logit boost added to active chord-tone pitch classes when --chord-tone-bias is enabled.")
+    parser.add_argument("--non-chord-penalty", type=float, default=0.0,
+                        dest="non_chord_penalty",
+                        help="Optional logit penalty subtracted from non-chord-tone pitch classes under --chord-tone-bias.")
+    parser.add_argument("--all-beat-chord-tone-bias", action="store_false",
+                        dest="strong_beat_only",
+                        help="Apply chord-tone bias to every generated position instead of only 0/4/8/12 anchors.")
     return parser.parse_args(argv)
 
 
@@ -585,6 +612,10 @@ def main(argv=None):
             chord_zeroed=args.chord_zeroed,
             chord_perturb_seed=args.rhythm_seed,
             final_cadence_boost=args.final_cadence_boost,
+            chord_tone_bias=args.chord_tone_bias,
+            chord_tone_bias_strength=args.chord_tone_bias_strength,
+            non_chord_penalty=args.non_chord_penalty,
+            strong_beat_only=args.strong_beat_only,
         )
 
         if args.with_rhythm_section:

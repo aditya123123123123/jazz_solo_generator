@@ -1,0 +1,45 @@
+# v6.3 Training Configuration
+# Based on v6.2.0 with harmonic loss masking fix (commit a8113c5)
+
+model:
+  d_model: 256
+  nhead: 8
+  num_encoder_layers: 4
+  num_decoder_layers: 4
+  dim_feedforward: 512
+  dropout: 0.1
+
+training:
+  epochs: 40
+  batch_size: 512
+  lr: 5.0e-4
+  weight_decay: 0.01
+  eta_min: 1.0e-5
+  warmup_frac: 0.05
+  label_smoothing: 0.0
+  patience: 4
+  grad_clip: 1.0
+  seed: 42
+  num_workers: 4
+
+loss:
+  harmonic_weight: 0.15          # Locked at 0.15 for v6.3
+  lambda_interval_min: 0.01
+  lambda_interval_max: 0.10
+  use_curriculum_ramp: true
+
+logging:
+  wandb_project: "jazz-solo-generator"
+  wandb_run_name: "note-executor-v6.3.0-runpod"
+  log_harm_every_step: true
+  log_valid_strong_fraction_every: 100
+
+checkpoints:
+  save_steps: [1000, 2000, 5000, 10000, 20000, "final"]
+  best_path: "checkpoints/v6.3.0_best.pt"
+  latest_path: "checkpoints/v6.3.0_latest.pt"
+
+evaluation:
+  chord_tone_hit_rate:
+    strong_beats: true
+    valid_chord_only: true

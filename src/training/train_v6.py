@@ -87,6 +87,8 @@ parser.add_argument("--best-output",      type=Path, default=BEST_PATH,
                     help=f"Best checkpoint path (default {BEST_PATH})")
 parser.add_argument("--latest-output",    type=Path, default=LATEST_PATH,
                     help=f"Latest checkpoint path (default {LATEST_PATH})")
+parser.add_argument("--harmonic-weight",  type=float, default=HARMONIC_WEIGHT,
+                    help=f"Weight for harmonic chord-tone loss (default {HARMONIC_WEIGHT})")
 
 
 # ---------------------------------------------------------------------------
@@ -200,11 +202,16 @@ def harmonic_penalty(
     for p in STRONG_BEAT_POS:
         strong |= (pos_in_phrase == p)
 
+    if target_chord_id.dim() != 1:
+        raise ValueError(
+            f"target_chord_id must be a per-sample 1D tensor, got shape {tuple(target_chord_id.shape)}"
+        )
+
     # Mask out special tokens (PAD/UNK/BOS/EOS/empty = IDs < 5)
     valid = strong & (target_chord_id >= 5)
 
     if not valid.any():
-        return torch.tensor(0.0, device=pitch_logits.device)
+        return pitch_logits.sum() * 0.0
 
     logits = pitch_logits[valid]
     c_ids = target_chord_id[valid]
@@ -250,7 +257,7 @@ def _load_model_checkpoint(model, checkpoint_path, device):
 
 def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
                  chord_tone_tensor, epoch, global_step, dry_run_batches,
-                 lambda_interval_override, total_steps):
+                 lambda_interval_override, total_steps, harmonic_weight):
     model.train()
     n_batches = len(loader)
 
@@ -302,7 +309,7 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
                 pitch_l
                 + dur_l
                 + rest_l
-                + HARMONIC_WEIGHT * harm_l
+                + harmonic_weight * harm_l
                 + lambda_interval * interval_l
             )
 
@@ -348,7 +355,7 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
 # ---------------------------------------------------------------------------
 
 def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches,
-              lambda_interval):
+              lambda_interval, harmonic_weight):
     model.eval()
     sums = {
         "loss": 0.0,
@@ -391,7 +398,7 @@ def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches,
                         batch["ctx_rest"],
                         batch["target_rest"],
                     )
-                tot = pl + dl + rl + HARMONIC_WEIGHT * hl + lambda_interval * il
+                tot = pl + dl + rl + harmonic_weight * hl + lambda_interval * il
             sums["loss"]  += tot.item()
             sums["pitch"] += pl.item()
             sums["dur"]   += dl.item()
@@ -497,7 +504,7 @@ def main():
             epochs=epochs, batch_size=BATCH_SIZE, lr=args.lr,
             weight_decay=WEIGHT_DECAY, eta_min=ETA_MIN,
             warmup_frac=WARMUP_FRAC, label_smoothing=LABEL_SMOOTHING,
-            harmonic_weight=HARMONIC_WEIGHT,
+            harmonic_weight=args.harmonic_weight,
             lambda_interval_mode="curriculum_ramp" if lambda_interval_override is None else "flat_override",
             lambda_interval_min=LAMBDA_INTERVAL_MIN,
             lambda_interval_max=LAMBDA_INTERVAL_MAX,
@@ -524,7 +531,7 @@ def main():
         global_step = _train_epoch(
             model, train_loader, opt, scheduler, scaler, ce, device,
             chord_tone_tensor, epoch, global_step, args.dry_run_batches,
-            lambda_interval_override, total_steps,
+            lambda_interval_override, total_steps, args.harmonic_weight,
         )
 
         # Use midpoint lambda for validation loss consistency across epochs.
@@ -535,7 +542,7 @@ def main():
         )
         val_metrics = _validate(
             model, val_loader, device, ce, chord_tone_tensor, args.dry_run_batches,
-            val_lambda,
+            val_lambda, args.harmonic_weight,
         )
 
         val_log = {
@@ -559,7 +566,7 @@ def main():
             best_val          = val_metrics["loss"]
             epochs_no_improve = 0
             _save_checkpoint(args.best_output, model, opt, epoch, best_val)
-            print(f"  ↳ new best val={best_val:.4f}, saved to {args.best_output}")
+            print(f"  -> new best val={best_val:.4f}, saved to {args.best_output}")
         else:
             epochs_no_improve += 1
             print(f"  no improvement ({epochs_no_improve}/{PATIENCE})")

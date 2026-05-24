@@ -168,6 +168,10 @@ class NoteExecutor(nn.Module):
         duration_temperature:  float = 1.0,
         rest_boost:            float = 0.0,
         final_note_chord_tone_boost: float = 3.0,
+        chord_tone_bias:       bool = False,
+        chord_tone_bias_strength: float = 2.0,
+        non_chord_penalty:     float = 0.0,
+        strong_beat_only:      bool = True,
         is_final_segment:      bool = False,
         active_chord_symbol:   Optional[str] = None,
     ) -> list:
@@ -190,6 +194,13 @@ class NoteExecutor(nn.Module):
         When this is the final chord segment, it nudges the last sampled pitch
         toward chord-tone pitch classes of `active_chord_symbol` and keeps that
         final token sounding so the cadence is audible.
+
+        `chord_tone_bias` is an inference-time harmonic steering control. When
+        enabled, it adds `chord_tone_bias_strength` to pitch logits whose pitch
+        class is a chord tone of `active_chord_symbol`. If `non_chord_penalty`
+        is positive, it subtracts that amount from non-chord-tone pitch logits.
+        With `strong_beat_only=True`, the steering applies only to phrase
+        anchors 0, 4, 8, and 12, matching the training harmonic-loss target.
         """
         self.eval()
         device = chord_ids.device
@@ -254,6 +265,13 @@ class NoteExecutor(nn.Module):
             for idx in range(4, pitch_logits.size(0)):
                 if (idx - 4) % 12 in recent_pcs:
                     pitch_logits[idx] = pitch_logits[idx] * 0.7
+            if chord_tone_bias and cadence_tones and (not strong_beat_only or pos in {0, 4, 8, 12}):
+                for idx in range(4, pitch_logits.size(0)):
+                    if (idx - 4) % 12 in cadence_tones:
+                        pitch_logits[idx] = pitch_logits[idx] + chord_tone_bias_strength
+                    elif non_chord_penalty > 0.0:
+                        pitch_logits[idx] = pitch_logits[idx] - non_chord_penalty
+
             if (
                 is_final_segment
                 and pos == n_notes - 1
