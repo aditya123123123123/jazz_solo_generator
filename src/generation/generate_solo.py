@@ -16,6 +16,7 @@ from pathlib import Path
 import pretty_midi
 import torch
 
+from src.generation.phrase_features import PhraseFeature, load_phrase_features, phrase_feature_to_dict
 from src.generation.rhythm_section import generate_rhythm_section
 from src.models.note_executor import NoteExecutor
 from src.models.phrase_planner import PhrasePlanner
@@ -227,6 +228,97 @@ def _plan_phrase(planner, chord_ids, artist_id, fallback=3, temperature=0.8):
     return tokens[0] if tokens else fallback
 
 
+def _plan_phrases(planner, model_chord_ids, artist_id, n_sections, fallback=3, temperature=0.8):
+    """Plan phrase tokens once over the full progression, then pad/repeat."""
+    full_chord_ids = torch.tensor([model_chord_ids], dtype=torch.long)
+    with torch.no_grad():
+        tokens = planner.generate(
+            full_chord_ids,
+            artist_id,
+            max_len=n_sections + 4,
+            temperature=temperature,
+        )
+    tokens = [int(t) for t in (tokens or []) if int(t) >= 3]
+    if not tokens:
+        tokens = [fallback]
+    while len(tokens) < n_sections:
+        tokens.extend(tokens)
+    return tokens[:n_sections]
+
+
+def _clamp(value, lo, hi):
+    return max(lo, min(hi, value))
+
+
+def _phrase_shaped_n_notes(feature: PhraseFeature | None) -> int:
+    if feature is None:
+        return N_NOTES
+    return int(_clamp(round(feature.median_num_notes), 8, 28))
+
+
+def _phrase_shaped_rest_boost(base_rest_boost: float, feature: PhraseFeature | None) -> float:
+    if feature is None:
+        return base_rest_boost
+    # Treat ~20% rest as neutral; scale gently and clamp to avoid destructive output.
+    return float(_clamp(base_rest_boost + (feature.median_rest_ratio - 0.20) * 4.0, 0.0, 4.0))
+
+
+def _section_contour(pitches: list[int]) -> str:
+    if len(pitches) < 2:
+        return "flat"
+    first, last = pitches[0], pitches[-1]
+    pitch_range = max(pitches) - min(pitches)
+    if pitch_range <= 2 or abs(last - first) <= 2:
+        return "flat"
+    mid = len(pitches) // 2
+    if max(pitches) in pitches[max(0, mid - 1): min(len(pitches), mid + 2)]:
+        if pitches[mid] > first and pitches[mid] > last:
+            return "arch"
+    return "ascending" if last > first else "descending"
+
+
+def _generated_phrase_metrics(section_events: list, beats: float) -> dict:
+    total_dur = sum(float(d) for _p, d, _r in section_events)
+    rest_dur = sum(float(d) for _p, d, r in section_events if r)
+    sounding = [(int(p), float(d)) for p, d, r in section_events if not r and 0 <= int(p) <= 127]
+    pitches = [p for p, _d in sounding]
+    return {
+        "contour": _section_contour(pitches),
+        "num_notes": len(sounding),
+        "density": (len(sounding) / float(beats)) if beats else 0.0,
+        "rest_ratio": (rest_dur / total_dur) if total_dur else 0.0,
+        "pitch_range": (max(pitches) - min(pitches)) if pitches else 0,
+        "final_pitch": pitches[-1] if pitches else None,
+    }
+
+
+def _apply_register_shape(section_events: list, contour: str | None) -> list:
+    """Gentle octave shaping only; keeps pitch classes/chord-tone bias intact."""
+    if contour not in {"ascending", "descending", "arch"}:
+        return section_events
+    shaped = []
+    n = max(1, len(section_events) - 1)
+    for i, (pitch, dur, is_rest) in enumerate(section_events):
+        if is_rest or not (0 <= int(pitch) <= 127):
+            shaped.append((pitch, dur, is_rest))
+            continue
+        frac = i / n
+        target = 0
+        if contour == "ascending":
+            target = -6 if frac < 0.33 else (6 if frac > 0.66 else 0)
+        elif contour == "descending":
+            target = 6 if frac < 0.33 else (-6 if frac > 0.66 else 0)
+        elif contour == "arch":
+            target = 6 if 0.33 <= frac <= 0.66 else -6
+        new_pitch = int(pitch)
+        if target > 0 and new_pitch + 12 <= PITCH_HI:
+            new_pitch += 12
+        elif target < 0 and new_pitch - 12 >= PITCH_LO:
+            new_pitch -= 12
+        shaped.append((new_pitch, dur, is_rest))
+    return shaped
+
+
 def _generate_notes(executor, chord_ids, phrase_id, artist_id,
                     prefix_pitch=None, prefix_dur=None, prefix_rest=None,
                     temperature=0.8, window=8,
@@ -237,10 +329,11 @@ def _generate_notes(executor, chord_ids, phrase_id, artist_id,
                     non_chord_penalty=0.0,
                     strong_beat_only=True,
                     is_final_segment=False,
-                    active_chord_symbol=None):
+                    active_chord_symbol=None,
+                    n_notes=N_NOTES):
     with torch.no_grad():
         raw = executor.generate(
-            chord_ids, phrase_id, artist_id, n_notes=N_NOTES,
+            chord_ids, phrase_id, artist_id, n_notes=n_notes,
             prefix_pitch=prefix_pitch,
             prefix_dur=prefix_dur,
             prefix_rest=prefix_rest,
@@ -276,7 +369,9 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   chord_tone_bias=False,
                   chord_tone_bias_strength=2.0,
                   non_chord_penalty=0.0,
-                  strong_beat_only=True):
+                  strong_beat_only=True,
+                  phrase_features: dict[str, PhraseFeature] | None = None,
+                  phrase_shaping=False):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -304,6 +399,19 @@ def generate_solo(progression, artist_name="Charlie Parker",
         model_chord_ids = [getattr(chord_tok, "UNK", 0)] * len(model_chord_ids)
         chord_condition = "chord_zeroed"
 
+    phrase_plan_ints = _plan_phrases(
+        planner,
+        model_chord_ids,
+        artist_id,
+        len(progression),
+        fallback=phrase_tok.encode("PHRASE_00"),
+        temperature=temperature,
+    )
+    phrase_plan_labels = []
+    for i, raw_phrase in enumerate(phrase_plan_ints):
+        chord_for_remap = chord_tok.decode(model_chord_ids[i])
+        phrase_plan_labels.append(phrase_tok.decode(remap_phrase_fallback(raw_phrase, chord_for_remap, phrase_tok)))
+
     # Rolling cross-chord context: last WINDOW note tokens from previous section
     ctx_pitch: list = []
     ctx_dur:   list = []
@@ -320,11 +428,14 @@ def generate_solo(progression, artist_name="Charlie Parker",
         chord_ids = torch.tensor([[model_chord_id]], dtype=torch.long)
 
         # ---- PhrasePlanner + PHRASE_00 remapping ----
-        phrase_int_raw = _plan_phrase(planner, chord_ids, artist_id, temperature=temperature)
+        phrase_int_raw = phrase_plan_ints[section_idx]
         phrase_int     = remap_phrase_fallback(phrase_int_raw, model_chord_str, phrase_tok)
         phrase_remapped = phrase_int != phrase_int_raw
         phrase_label = phrase_tok.decode(phrase_int)
         phrase_id    = torch.tensor([phrase_int], dtype=torch.long)
+        feature = phrase_features.get(phrase_label) if phrase_features else None
+        section_n_notes = _phrase_shaped_n_notes(feature) if phrase_shaping else N_NOTES
+        section_rest_boost = _phrase_shaped_rest_boost(rest_boost, feature) if phrase_shaping else rest_boost
 
         # ---- NoteExecutor (with cross-chord prefix) ----
         pfx_p = ctx_pitch[-window:] or None
@@ -336,7 +447,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
             temperature=temperature,
             window=window,
             duration_temperature=duration_temperature,
-            rest_boost=rest_boost,
+            rest_boost=section_rest_boost,
             final_note_chord_tone_boost=final_cadence_boost,
             chord_tone_bias=chord_tone_bias,
             chord_tone_bias_strength=chord_tone_bias_strength,
@@ -344,6 +455,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
             strong_beat_only=strong_beat_only,
             is_final_segment=section_idx == len(progression) - 1,
             active_chord_symbol=chord_str,
+            n_notes=section_n_notes,
         )
 
         section_events = []
@@ -372,6 +484,9 @@ def generate_solo(progression, artist_name="Charlie Parker",
 
         # --- Rest injection (within section) ---
         section_events = _inject_rests(section_events)
+        if phrase_shaping and feature is not None:
+            section_events = _apply_register_shape(section_events, feature.contour)
+        generated_metrics = _generated_phrase_metrics(section_events, beats)
 
         # --- Boundary rest (between sections) ---
         if note_events and section_events:
@@ -391,9 +506,14 @@ def generate_solo(progression, artist_name="Charlie Parker",
             "beats":           beats,
             "in_vocab":        chord_id != chord_tok.UNK,
             "phrase_token":    phrase_label,
+            "phrase_plan":     phrase_plan_labels,
+            "phrase_features": phrase_feature_to_dict(feature),
+            "generated_phrase_metrics": generated_metrics,
+            "phrase_shaping":  bool(phrase_shaping),
+            "section_rest_boost": section_rest_boost,
             "phrase_remapped": phrase_remapped,
             "phrase_original": phrase_tok.decode(phrase_int_raw) if phrase_remapped else None,
-            "n_notes":         16,           # always 16 model-generated notes
+            "n_notes":         section_n_notes,
             "n_clamped":       n_clamped,
             "dur_fallback":    dur_fallback,
             "pitches":         pitches_midi,
@@ -443,6 +563,34 @@ def export_midi(note_events, output_path, tempo=120, rhythm_instruments=None):
 def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
     """Save note events and per-chord metadata as JSON."""
     output_path = Path(output_path)
+    sections = []
+    for s in summaries:
+        section = {
+            "chord":          s["chord"],
+            "model_chord":    s.get("model_chord", s["chord"]),
+            "chord_condition": s.get("chord_condition", "normal"),
+            "beats":          s["beats"],
+            "phrase":         s["phrase_token"],
+            "n_notes":        s["n_notes"],
+            "clamped":        s.get("n_clamped", 0),
+            "distinct_pitches": len(set(s["pitches"])),
+            "dur_fallback":   s.get("dur_fallback", 0),
+            "pitches":         s.get("pitches", []),
+        }
+        for optional_key in (
+            "phrase_features",
+            "generated_phrase_metrics",
+            "phrase_shaping",
+            "section_rest_boost",
+        ):
+            if optional_key in s:
+                section[optional_key] = s.get(optional_key)
+        section.update({
+            "phrase_remapped": s.get("phrase_remapped", False),
+            "phrase_original": s.get("phrase_original", None),
+        })
+        sections.append(section)
+
     data = {
         "name":        name or output_path.stem,
         "tempo_bpm":   tempo_bpm,
@@ -451,24 +599,18 @@ def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
             {"pitch": int(p), "duration_sec": round(float(d), 4), "is_rest": bool(r)}
             for p, d, r in note_events
         ],
-        "sections": [
-            {
-                "chord":          s["chord"],
-                "model_chord":    s.get("model_chord", s["chord"]),
-                "chord_condition": s.get("chord_condition", "normal"),
-                "beats":          s["beats"],
-                "phrase":         s["phrase_token"],
-                "n_notes":        s["n_notes"],
-                "clamped":        s.get("n_clamped", 0),
-                "distinct_pitches": len(set(s["pitches"])),
-                "dur_fallback":   s.get("dur_fallback", 0),
-                "pitches":         s.get("pitches", []),
-                "phrase_remapped": s.get("phrase_remapped", False),
-                "phrase_original": s.get("phrase_original", None),
-            }
-            for s in summaries
-        ],
+        "sections": sections,
     }
+    if summaries and "phrase_plan" in summaries[0]:
+        # Preserve legacy JSON shape when callers provide old-style summaries.
+        data = {
+            "name": data["name"],
+            "tempo_bpm": data["tempo_bpm"],
+            "total_notes": data["total_notes"],
+            "phrase_plan": summaries[0].get("phrase_plan", []),
+            "notes": data["notes"],
+            "sections": data["sections"],
+        }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(data, f, indent=2)
@@ -569,6 +711,8 @@ def parse_args(argv=None):
     parser.add_argument("--all-beat-chord-tone-bias", action="store_false",
                         dest="strong_beat_only",
                         help="Apply chord-tone bias to every generated position instead of only 0/4/8/12 anchors.")
+    parser.add_argument("--phrase-shaping", action="store_true",
+                        help="Use phrase-cluster feature medians to shape note count/rests/register.")
     return parser.parse_args(argv)
 
 
@@ -596,6 +740,7 @@ def main(argv=None):
     # Rhythm-section tempo is derived from the solo's own internal grid so
     # the two streams cannot desync. BEAT_DURATION is seconds-per-beat.
     tempo_bpm = 60.0 / BEAT_DURATION
+    phrase_features = load_phrase_features()
 
 
     for name, progression in PROGRESSIONS.items():
@@ -616,6 +761,8 @@ def main(argv=None):
             chord_tone_bias_strength=args.chord_tone_bias_strength,
             non_chord_penalty=args.non_chord_penalty,
             strong_beat_only=args.strong_beat_only,
+            phrase_features=phrase_features,
+            phrase_shaping=args.phrase_shaping,
         )
 
         if args.with_rhythm_section:
