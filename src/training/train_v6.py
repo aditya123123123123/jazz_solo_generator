@@ -89,6 +89,8 @@ parser.add_argument("--latest-output",    type=Path, default=LATEST_PATH,
                     help=f"Latest checkpoint path (default {LATEST_PATH})")
 parser.add_argument("--harmonic-weight",  type=float, default=HARMONIC_WEIGHT,
                     help=f"Weight for harmonic chord-tone loss (default {HARMONIC_WEIGHT})")
+parser.add_argument("--jazz-vocab-sample-weight", type=float, default=1.0,
+                    help="Pitch-loss multiplier for samples labeled as chromatic approaches, enclosures, guide-tone landings, or blues colors. 1 disables weighting.")
 
 
 # ---------------------------------------------------------------------------
@@ -107,6 +109,21 @@ def collate_with_tempo(batch):
     out = collate_note_window(batch)
     out["tempo_bpm"] = torch.stack([b["tempo_bpm"] for b in batch])
     return out
+
+
+def vocabulary_weighted_ce(
+    logits: torch.Tensor,
+    target: torch.Tensor,
+    jazz_vocab_label: torch.Tensor | None,
+    weight: float = 1.0,
+) -> torch.Tensor:
+    """Cross entropy that can upweight target notes carrying jazz-vocabulary labels."""
+    per_sample = F.cross_entropy(logits, target, reduction="none", label_smoothing=LABEL_SMOOTHING)
+    if jazz_vocab_label is None or weight == 1.0:
+        return per_sample.mean()
+    weights = torch.ones_like(per_sample)
+    weights = weights + (float(weight) - 1.0) * jazz_vocab_label.to(per_sample.device).float().clamp(0, 1)
+    return (per_sample * weights).sum() / weights.sum().clamp_min(1e-8)
 
 
 def _entropy(logits: torch.Tensor) -> float:
@@ -257,7 +274,8 @@ def _load_model_checkpoint(model, checkpoint_path, device):
 
 def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
                  chord_tone_tensor, epoch, global_step, dry_run_batches,
-                 lambda_interval_override, total_steps, harmonic_weight):
+                 lambda_interval_override, total_steps, harmonic_weight,
+                 jazz_vocab_sample_weight):
     model.train()
     n_batches = len(loader)
 
@@ -290,7 +308,12 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
                 tempo_bpm=batch["tempo_bpm"],
                 src_key_padding_mask=~batch["chord_mask"],
             )
-            pitch_l = ce(p_logits, batch["target_pitch"])
+            pitch_l = vocabulary_weighted_ce(
+                p_logits,
+                batch["target_pitch"],
+                batch.get("jazz_vocab_label"),
+                weight=jazz_vocab_sample_weight,
+            )
             dur_l   = ce(d_logits, batch["target_dur"])
             rest_l  = ce(r_logits, batch["target_rest"])
             harm_l  = harmonic_penalty(
@@ -355,7 +378,7 @@ def _train_epoch(model, loader, opt, scheduler, scaler, ce, device,
 # ---------------------------------------------------------------------------
 
 def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches,
-              lambda_interval, harmonic_weight):
+              lambda_interval, harmonic_weight, jazz_vocab_sample_weight):
     model.eval()
     sums = {
         "loss": 0.0,
@@ -385,7 +408,12 @@ def _validate(model, loader, device, ce, chord_tone_tensor, dry_run_batches,
                     tempo_bpm=batch["tempo_bpm"],
                     src_key_padding_mask=~batch["chord_mask"],
                 )
-                pl = ce(p, batch["target_pitch"])
+                pl = vocabulary_weighted_ce(
+                    p,
+                    batch["target_pitch"],
+                    batch.get("jazz_vocab_label"),
+                    weight=jazz_vocab_sample_weight,
+                )
                 dl = ce(d, batch["target_dur"])
                 rl = ce(r, batch["target_rest"])
                 hl = harmonic_penalty(p, batch["pos_in_phrase"], batch["target_chord_id"], chord_tone_tensor)
@@ -517,6 +545,7 @@ def main():
             dur_vocab_size=18, vocab_version="v6",
             n_train=n_train, n_val=n_val, cache=str(args.cache),
             resume=str(args.resume) if args.resume else None,
+            jazz_vocab_sample_weight=args.jazz_vocab_sample_weight,
         ),
     )
 
@@ -532,6 +561,7 @@ def main():
             model, train_loader, opt, scheduler, scaler, ce, device,
             chord_tone_tensor, epoch, global_step, args.dry_run_batches,
             lambda_interval_override, total_steps, args.harmonic_weight,
+            args.jazz_vocab_sample_weight,
         )
 
         # Use midpoint lambda for validation loss consistency across epochs.
@@ -542,7 +572,7 @@ def main():
         )
         val_metrics = _validate(
             model, val_loader, device, ce, chord_tone_tensor, args.dry_run_batches,
-            val_lambda, args.harmonic_weight,
+            val_lambda, args.harmonic_weight, args.jazz_vocab_sample_weight,
         )
 
         val_log = {

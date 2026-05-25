@@ -60,6 +60,13 @@ def main():
         "artist_id":     torch.stack([s["artist_id"]     for s in samples]),
         "pos_in_phrase": torch.stack([s["pos_in_phrase"] for s in samples]),
         "tempo_bpm":     torch.stack([s["tempo_bpm"]     for s in samples]),
+        "target_chord_id": torch.stack([s["target_chord_id"] for s in samples]),
+        "phrase_position": torch.stack([s["phrase_position"] for s in samples]),
+        "jazz_vocab_label": torch.stack([s["jazz_vocab_label"] for s in samples]),
+        "chromatic_approach_label": torch.stack([s["chromatic_approach_label"] for s in samples]),
+        "enclosure_label": torch.stack([s["enclosure_label"] for s in samples]),
+        "guide_tone_label": torch.stack([s["guide_tone_label"] for s in samples]),
+        "blues_color_label": torch.stack([s["blues_color_label"] for s in samples]),
     }
     print(f"  stacked in {time.time() - t1:.1f}s")
 
@@ -82,6 +89,13 @@ def main():
         "transpose_semitones": list(TRANSPOSE_SEMITONES),
         "phrases_path":        PHRASES_REL,
         "clusters_path":       CLUSTERS_REL,
+        "jazz_vocab_labels":   [
+            "jazz_vocab_label",
+            "chromatic_approach_label",
+            "enclosure_label",
+            "guide_tone_label",
+            "blues_color_label",
+        ],
     }
 
     print(f"Saving to {CACHE_PATH} …")

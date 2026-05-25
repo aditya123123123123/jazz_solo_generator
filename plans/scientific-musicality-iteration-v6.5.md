@@ -532,3 +532,69 @@ Overall corpus result from `data/processed/phrases_all_with_tempo.json`:
 Interpretation: the current corpus is not empty of jazz vocabulary. It contains measurable approach-note, enclosure, guide-tone, and blues-color material. That means the next issue is probably not only "we need any jazz data at all"; it is that the current note model/training objective/conditioning is not making those devices salient enough at generation time. Expanding the dataset can still help, especially if we add more targeted bebop/blues/transcription-heavy material, but the expansion should be paired with explicit vocabulary-aware training targets or sampling/evaluation metrics. Otherwise the model may continue averaging the language into safe but bland chord-tone output.
 
 Recommended next move: build v6.6 training-data expansion/fine-tuning around these labels. Use the audit to create auxiliary targets for chromatic approach, enclosure, guide-tone landing, and blues-color events, then train/fine-tune and compare the raw model output against Exp 10 before applying post-processing.
+
+### v6.6 vocabulary-aware training label plumbing
+
+Implemented the first concrete step toward training the model to learn the Exp 10 jazz-language behavior natively instead of relying only on inference post-processing.
+
+Changes:
+
+- Added `src/data/jazz_vocab_labels.py` with target-aligned scalar labels per note:
+  - `chromatic_approach_label`
+  - `enclosure_label`
+  - `guide_tone_label`
+  - `blues_color_label`
+  - aggregate `jazz_vocab_label`
+- Updated `NoteWindowDataset` so every one-note training sample carries those labels.
+- Updated `scripts/build_v6_cache.py` so rebuilt caches store the label tensors plus `target_chord_id` and `phrase_position` explicitly.
+- Updated `collate_note_window` to preserve the labels in training batches while remaining backward-compatible with older caches.
+- Added `--jazz-vocab-sample-weight` to `src/training/train_v6.py`; it upweights pitch loss on labeled vocabulary examples without changing the model architecture yet. This is deliberately conservative: it makes existing jazz events more salient before adding new heads or changing generation.
+
+TDD/verification:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_jazz_vocab_training_labels.py -q
+# 3 passed
+
+PYTHONPATH=. .venv/bin/python -m pytest tests/ -q
+# 75 passed
+```
+
+Cache rebuilt locally at `data/processed/notes_v6_cache.pt` and verified:
+
+- Samples: 2,216,748
+- Cache size: 948.6 MB
+- `jazz_vocab_label`: 462,936 samples, 20.88%
+- `chromatic_approach_label`: 99,156 samples, 4.47%
+- `enclosure_label`: 34,896 samples, 1.57%
+- `guide_tone_label`: 340,860 samples, 15.38%
+- `blues_color_label`: 160,164 samples, 7.23%
+
+Dry-run training check:
+
+```bash
+WANDB_MODE=disabled PYTHONPATH=. .venv/bin/python src/training/train_v6.py \
+  --epochs 1 \
+  --dry-run-batches 1 \
+  --jazz-vocab-sample-weight 2.0 \
+  --output-dir outputs/tmp_vocab_dryrun_ckpt \
+  --best-output outputs/tmp_vocab_dryrun_ckpt/best.pt \
+  --latest-output outputs/tmp_vocab_dryrun_ckpt/latest.pt
+```
+
+Result: dry run completed; train and validation both consumed the rebuilt cache with vocabulary-weighted pitch loss. Temporary dry-run checkpoints were removed afterward.
+
+Recommended v6.6 training command on the Windows GPU machine after pulling this commit and rebuilding/syncing the cache:
+
+```bash
+WANDB_MODE=online PYTHONPATH=. python src/training/train_v6.py \
+  --resume checkpoints/v6.3.2_best.pt \
+  --run-name note-executor-v6.6-vocab-weighted-ft \
+  --jazz-vocab-sample-weight 2.0 \
+  --epochs 20 \
+  --lr 1e-4 \
+  --best-output checkpoints/v6.6_vocab_weighted_best.pt \
+  --latest-output checkpoints/v6.6_vocab_weighted_latest.pt
+```
+
+Evaluate by generating the usual Blues F / Autumn Leaves / ii-V-I probes from the raw v6.6 checkpoint first, then compare against Exp 10 before enabling post-processing. Acceptance requires the raw model to show more intentional chromatic approaches/blues language while preserving Exp 10-level cadence/harmony after the existing safe inference settings are applied.

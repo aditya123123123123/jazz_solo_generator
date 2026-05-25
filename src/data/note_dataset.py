@@ -19,6 +19,8 @@ from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
+
+from src.data.jazz_vocab_labels import compute_jazz_vocab_labels
 import torch
 from torch.utils.data import Dataset
 
@@ -140,6 +142,7 @@ class NoteWindowDataset(Dataset):
                 phrase_int = phrase_tok.encode(
                     token_map.get((solo_id, ph["phrase_number"]), "PHRASE_00")
                 )
+                labels = compute_jazz_vocab_labels(notes)
                 note_enc = []
                 for i, note in enumerate(notes):
                     dur_tok = note_tok.encode_duration(note["duration"], tempo)
@@ -150,8 +153,13 @@ class NoteWindowDataset(Dataset):
                                - notes[i - 1]["onset"]
                                - notes[i - 1]["duration"])
                         is_rest = 1 if gap > REST_GAP_THRESHOLD else 0
-                    note_enc.append((note["pitch"], dur_tok, is_rest,
-                                     min(i, MAX_POS_IN_PHRASE)))
+                    note_enc.append((
+                        note["pitch"],
+                        dur_tok,
+                        is_rest,
+                        min(i, MAX_POS_IN_PHRASE),
+                        labels[i],
+                    ))
                 phrase_data.append((phrase_int, notes, note_enc, tempo))
 
             # Build one flat sequence + samples per transposition
@@ -166,7 +174,7 @@ class NoteWindowDataset(Dataset):
                     a_id_t = torch.tensor(artist_id_v,  dtype=torch.long)
                     tempo_t = torch.tensor(tempo, dtype=torch.float)
 
-                    for note, (midi_pitch, dur_tok, is_rest, pos_in_ph) in zip(notes, note_enc):
+                    for note, (midi_pitch, dur_tok, is_rest, pos_in_ph, jazz_labels) in zip(notes, note_enc):
                         trans_midi = max(48, min(84, midi_pitch + semitones))
                         pitch_tok  = note_tok.encode_pitch(trans_midi)
                         target_chord_id = torch.tensor(
@@ -175,11 +183,12 @@ class NoteWindowDataset(Dataset):
                         )
                         flat.append((pitch_tok, dur_tok, is_rest,
                                      p_id_t, a_id_t, chord_ids_t, chord_len,
-                                     pos_in_ph, tempo_t, target_chord_id))
+                                     pos_in_ph, tempo_t, target_chord_id,
+                                     jazz_labels))
 
                 # Sliding window samples
                 for abs_idx, target in enumerate(flat):
-                    t_pitch, t_dur, t_rest, p_id, a_id, c_ids, c_len, pos, tempo_t, target_chord_id = target
+                    t_pitch, t_dur, t_rest, p_id, a_id, c_ids, c_len, pos, tempo_t, target_chord_id, jazz_labels = target
                     ctx_start   = max(0, abs_idx - window)
                     ctx_entries = flat[ctx_start:abs_idx]
                     pad_len     = window - len(ctx_entries)
@@ -202,6 +211,11 @@ class NoteWindowDataset(Dataset):
                         "target_dur":    torch.tensor(t_dur,     dtype=torch.long),
                         "target_rest":   torch.tensor(t_rest,    dtype=torch.long),
                         "target_chord_id": target_chord_id,
+                        "jazz_vocab_label": torch.tensor(jazz_labels["jazz_vocab_label"], dtype=torch.long),
+                        "chromatic_approach_label": torch.tensor(jazz_labels["is_chromatic_approach_target"], dtype=torch.long),
+                        "enclosure_label": torch.tensor(jazz_labels["is_enclosure_target"], dtype=torch.long),
+                        "guide_tone_label": torch.tensor(jazz_labels["is_guide_tone"], dtype=torch.long),
+                        "blues_color_label": torch.tensor(jazz_labels["is_dominant_blues_color"], dtype=torch.long),
                         "pos_in_phrase": torch.tensor(pos,        dtype=torch.long),
                         "tempo_bpm":     tempo_t,
                     })
@@ -250,6 +264,11 @@ class NoteWindowDataset(Dataset):
             "target_dur":    c["target_dur"][idx],
             "target_rest":   c["target_rest"][idx],
             "target_chord_id": c["target_chord_id"][idx],
+            "jazz_vocab_label": c["jazz_vocab_label"][idx] if "jazz_vocab_label" in c else torch.tensor(0, dtype=torch.long),
+            "chromatic_approach_label": c["chromatic_approach_label"][idx] if "chromatic_approach_label" in c else torch.tensor(0, dtype=torch.long),
+            "enclosure_label": c["enclosure_label"][idx] if "enclosure_label" in c else torch.tensor(0, dtype=torch.long),
+            "guide_tone_label": c["guide_tone_label"][idx] if "guide_tone_label" in c else torch.tensor(0, dtype=torch.long),
+            "blues_color_label": c["blues_color_label"][idx] if "blues_color_label" in c else torch.tensor(0, dtype=torch.long),
             "pos_in_phrase": c["pos_in_phrase"][idx],
             "tempo_bpm":     c["tempo_bpm"][idx],
         }
@@ -280,5 +299,10 @@ def collate_note_window(batch):
         "target_dur":    torch.stack([b["target_dur"]    for b in batch]),
         "target_rest":   torch.stack([b["target_rest"]   for b in batch]),
         "target_chord_id": torch.stack([b["target_chord_id"] for b in batch]),
+        "jazz_vocab_label": torch.stack([b.get("jazz_vocab_label", torch.tensor(0, dtype=torch.long)) for b in batch]),
+        "chromatic_approach_label": torch.stack([b.get("chromatic_approach_label", torch.tensor(0, dtype=torch.long)) for b in batch]),
+        "enclosure_label": torch.stack([b.get("enclosure_label", torch.tensor(0, dtype=torch.long)) for b in batch]),
+        "guide_tone_label": torch.stack([b.get("guide_tone_label", torch.tensor(0, dtype=torch.long)) for b in batch]),
+        "blues_color_label": torch.stack([b.get("blues_color_label", torch.tensor(0, dtype=torch.long)) for b in batch]),
         "pos_in_phrase": torch.stack([b["pos_in_phrase"] for b in batch]),
     }
