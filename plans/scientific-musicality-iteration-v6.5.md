@@ -478,14 +478,14 @@ Accompaniment verification on generated rhythm-section MIDI:
 - Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
 - ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
 
-Result: ready for listening, not automatically accepted. The objective gates that protect correctness passed, and the outside-note increase is intentional/controlled. The deciding question is whether the added chromatic approach notes actually read as jazz language by ear, especially on Blues F, or whether they sound like arbitrary wrong notes.
+Result: human listening accepted. Aditya said Exp 10 is "definitely a lot better." Treat Exp 10 as the current best musical baseline for the jazzy-feeling goal: it preserves Exp 9's correctness gates while moving the output toward intentional jazz vocabulary.
 
-Interpretation: A/B Exp 10 against Exp 9. If Exp 10 is noticeably jazzier without sounding wrong, keep this direction and expand it into enclosures/guide-tone targeting. If it is not enough or sounds artificial, the next step is not more random chromaticism; it is a training-data/vocabulary diagnostic to find whether the corpus/model has enough bebop/blues language to learn.
+Interpretation: controlled chromatic approach notes are the right direction. The next experiment should expand vocabulary one step, not return to generic correctness tuning: add constrained two-note enclosures around important guide tones, especially 3rds/7ths on dominant chords, while preserving Exp 10's cadence, register, repetition, phrase plan, and accompaniment behavior.
 
 ## Candidate next experiments, one at a time
 
-1. Listen to Exp 10 vs Exp 9, especially Blues F, and decide whether the controlled chromaticism sounds like jazz language or wrong notes.
-2. If Exp 10 works: add a second vocabulary layer for two-note enclosures around 3rds/7ths on dominant chords.
-3. If Exp 10 does not work: run a training-data vocabulary diagnostic for blues/bebop devices, then retrain/fine-tune with explicit jazz-vocabulary targets.
-4. Chord-tone/extension bias strength grid only if listening says Exp 9/Exp 10 are too boxed-in after vocabulary decisions.
+1. Add a second vocabulary layer for constrained two-note enclosures around 3rds/7ths on dominant chords, comparing against Exp 10.
+2. Add blues-specific dominant vocabulary for Blues F only if enclosures improve the jazz feeling without sounding forced.
+3. Run a training-data vocabulary diagnostic for blues/bebop devices if inference-time vocabulary layers plateau.
+4. Chord-tone/extension bias strength grid only if listening says Exp 10 or enclosure probes are too boxed-in after vocabulary decisions.
 5. Deterministic duration quantile clamp only if listening says rhythm is still too unstable after jazz-language work.
