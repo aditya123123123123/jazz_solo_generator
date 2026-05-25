@@ -489,3 +489,46 @@ Interpretation: controlled chromatic approach notes are the right direction. The
 3. Run a training-data vocabulary diagnostic for blues/bebop devices if inference-time vocabulary layers plateau.
 4. Chord-tone/extension bias strength grid only if listening says Exp 10 or enclosure probes are too boxed-in after vocabulary decisions.
 5. Deterministic duration quantile clamp only if listening says rhythm is still too unstable after jazz-language work.
+
+### Training-set jazz vocabulary audit v1
+
+Question: should we expand the model's training set before adding more inference-time vocabulary layers?
+
+Implemented `scripts/audit_jazz_vocabulary.py` to measure whether the current processed training corpus already contains learnable jazz vocabulary devices:
+
+- beat-boundary chromatic approaches into chord tones
+- two-note enclosures into guide tones
+- guide-tone landings, especially 3rds/7ths
+- dominant/blues color tones: b3, b5, b7 over dominant harmony
+
+TDD/verification:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_jazz_vocabulary_audit.py -q
+# 4 passed
+
+PYTHONPATH=. .venv/bin/python scripts/audit_jazz_vocabulary.py \
+  --phrases data/processed/phrases_all_with_tempo.json \
+  --json-out outputs/jazz_vocabulary_audit_v1.json \
+  --md-out outputs/jazz_vocabulary_audit_v1.md
+```
+
+Audit artifacts:
+
+- `outputs/jazz_vocabulary_audit_v1.json`
+- `outputs/jazz_vocabulary_audit_v1.md`
+
+Overall corpus result from `data/processed/phrases_all_with_tempo.json`:
+
+- Phrases: 10,163
+- Analyzable notes: 126,625
+- Beat-boundary approach candidates: 53,094, or 41.9% of analyzable notes
+- Weak→strong chromatic approach rate: 14.1%, or 7,493/53,094 candidate pairs
+- Guide-tone enclosure rate: 10.7%, or 2,908/27,061 guide-tone targets
+- Guide-tone landing rate: 22.4%
+- Chord-tone landing rate: 50.1%
+- Dominant blues-color note rate: 21.3%, or 13,347/62,664 dominant-chord notes
+
+Interpretation: the current corpus is not empty of jazz vocabulary. It contains measurable approach-note, enclosure, guide-tone, and blues-color material. That means the next issue is probably not only "we need any jazz data at all"; it is that the current note model/training objective/conditioning is not making those devices salient enough at generation time. Expanding the dataset can still help, especially if we add more targeted bebop/blues/transcription-heavy material, but the expansion should be paired with explicit vocabulary-aware training targets or sampling/evaluation metrics. Otherwise the model may continue averaging the language into safe but bland chord-tone output.
+
+Recommended next move: build v6.6 training-data expansion/fine-tuning around these labels. Use the audit to create auxiliary targets for chromatic approach, enclosure, guide-tone landing, and blues-color events, then train/fine-tune and compare the raw model output against Exp 10 before applying post-processing.
