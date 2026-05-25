@@ -86,6 +86,20 @@ def test_multitrack_export(tmp_path):
     assert {"Solo", "Piano", "Bass", "Drums"}.issubset(names)
 
 
+def test_export_midi_names_source_track_solo_when_rhythm_section_present(tmp_path):
+    from src.generation.generate_solo import export_midi
+
+    insts = generate_rhythm_section(PROG_ii_V_I, tempo_bpm=120, style="swing", seed=42)
+    out = tmp_path / "generated_with_rhythm.mid"
+    export_midi([(60, 0.5, False), (0, 0.25, True)], out, tempo=120, rhythm_instruments=insts)
+
+    loaded = pretty_midi.PrettyMIDI(str(out))
+    names = [i.name for i in loaded.instruments]
+    assert names.count("Solo") == 1
+    assert {"Solo", "Piano", "Bass", "Drums"}.issubset(set(names))
+    assert len(next(i for i in loaded.instruments if i.name == "Solo").notes) == 1
+
+
 # ---------------------------------------------------------------------------
 # Unknown-chord fallback
 # ---------------------------------------------------------------------------

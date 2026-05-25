@@ -1,0 +1,646 @@
+[
+  {
+    "file": "autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence.mid",
+    "source_form_chords": 8,
+    "backing_chords": 24,
+    "tracks": [
+      [
+        "Solo",
+        136,
+        false
+      ],
+      [
+        "Piano",
+        180,
+        false
+      ],
+      [
+        "Bass",
+        120,
+        false
+      ],
+      [
+        "Drums",
+        330,
+        true
+      ]
+    ],
+    "expected_end_sec": 60.0,
+    "actual_end_sec": 60.0,
+    "solo_notes": 136,
+    "solo_end_sec": 52.12,
+    "piano_notes": 180,
+    "piano_end_sec": 59.634,
+    "bass_notes": 120,
+    "bass_end_sec": 59.975,
+    "drums_notes": 330,
+    "drums_end_sec": 60.0,
+    "bass_boundary_rows": [
+      {
+        "beat": 0,
+        "chord": "Cm7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 4,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 8,
+        "chord": "Bbj7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 12,
+        "chord": "Ebj7",
+        "bass_pc": 3,
+        "expected_root_pc": 3,
+        "ok": true
+      },
+      {
+        "beat": 16,
+        "chord": "Am7b5",
+        "bass_pc": 9,
+        "expected_root_pc": 9,
+        "ok": true
+      },
+      {
+        "beat": 20,
+        "chord": "D7",
+        "bass_pc": 2,
+        "expected_root_pc": 2,
+        "ok": true
+      },
+      {
+        "beat": 24,
+        "chord": "Gm7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 32,
+        "chord": "Gm7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 40,
+        "chord": "Cm7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 44,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 48,
+        "chord": "Bbj7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 52,
+        "chord": "Ebj7",
+        "bass_pc": 3,
+        "expected_root_pc": 3,
+        "ok": true
+      },
+      {
+        "beat": 56,
+        "chord": "Am7b5",
+        "bass_pc": 9,
+        "expected_root_pc": 9,
+        "ok": true
+      },
+      {
+        "beat": 60,
+        "chord": "D7",
+        "bass_pc": 2,
+        "expected_root_pc": 2,
+        "ok": true
+      },
+      {
+        "beat": 64,
+        "chord": "Gm7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 72,
+        "chord": "Gm7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 80,
+        "chord": "Cm7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 84,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 88,
+        "chord": "Bbj7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 92,
+        "chord": "Ebj7",
+        "bass_pc": 3,
+        "expected_root_pc": 3,
+        "ok": true
+      },
+      {
+        "beat": 96,
+        "chord": "Am7b5",
+        "bass_pc": 9,
+        "expected_root_pc": 9,
+        "ok": true
+      },
+      {
+        "beat": 100,
+        "chord": "D7",
+        "bass_pc": 2,
+        "expected_root_pc": 2,
+        "ok": true
+      },
+      {
+        "beat": 104,
+        "chord": "Gm7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 112,
+        "chord": "Gm7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      }
+    ],
+    "bass_boundaries_ok": 24,
+    "bass_boundaries_total": 24,
+    "piano_bad_tones": [],
+    "piano_bad_tone_count": 0,
+    "solo_chord_tone_ratio": 0.529,
+    "solo_chord_or_color_ratio": 0.846,
+    "solo_outside_ratio": 0.154,
+    "solo_harmony_counts": {
+      "total": 136,
+      "chord": 72,
+      "color": 43,
+      "outside": 21
+    },
+    "solo_by_chord": {
+      "Cm7": {
+        "total": 19,
+        "chord": 11,
+        "color": 5,
+        "outside": 3
+      },
+      "F7": {
+        "total": 16,
+        "chord": 6,
+        "color": 10,
+        "outside": 0
+      },
+      "Bbj7": {
+        "total": 15,
+        "chord": 5,
+        "color": 10,
+        "outside": 0
+      },
+      "Ebj7": {
+        "total": 16,
+        "chord": 10,
+        "color": 5,
+        "outside": 1
+      },
+      "Am7b5": {
+        "total": 14,
+        "chord": 6,
+        "color": 3,
+        "outside": 5
+      },
+      "D7": {
+        "total": 18,
+        "chord": 8,
+        "color": 4,
+        "outside": 6
+      },
+      "Gm7": {
+        "total": 38,
+        "chord": 26,
+        "color": 6,
+        "outside": 6
+      }
+    }
+  },
+  {
+    "file": "blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence.mid",
+    "source_form_chords": 12,
+    "backing_chords": 24,
+    "tracks": [
+      [
+        "Solo",
+        128,
+        false
+      ],
+      [
+        "Piano",
+        144,
+        false
+      ],
+      [
+        "Bass",
+        96,
+        false
+      ],
+      [
+        "Drums",
+        264,
+        true
+      ]
+    ],
+    "expected_end_sec": 48.0,
+    "actual_end_sec": 48.0,
+    "solo_notes": 128,
+    "solo_end_sec": 43.605,
+    "piano_notes": 144,
+    "piano_end_sec": 47.634,
+    "bass_notes": 96,
+    "bass_end_sec": 47.975,
+    "drums_notes": 264,
+    "drums_end_sec": 48.0,
+    "bass_boundary_rows": [
+      {
+        "beat": 0,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 4,
+        "chord": "Bb7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 8,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 12,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 16,
+        "chord": "Bb7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 20,
+        "chord": "Bb7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 24,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 28,
+        "chord": "D7",
+        "bass_pc": 2,
+        "expected_root_pc": 2,
+        "ok": true
+      },
+      {
+        "beat": 32,
+        "chord": "Gm7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 36,
+        "chord": "C7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 40,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 44,
+        "chord": "C7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 48,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 52,
+        "chord": "Bb7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 56,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 60,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 64,
+        "chord": "Bb7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 68,
+        "chord": "Bb7",
+        "bass_pc": 10,
+        "expected_root_pc": 10,
+        "ok": true
+      },
+      {
+        "beat": 72,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 76,
+        "chord": "D7",
+        "bass_pc": 2,
+        "expected_root_pc": 2,
+        "ok": true
+      },
+      {
+        "beat": 80,
+        "chord": "Gm7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 84,
+        "chord": "C7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 88,
+        "chord": "F7",
+        "bass_pc": 5,
+        "expected_root_pc": 5,
+        "ok": true
+      },
+      {
+        "beat": 92,
+        "chord": "C7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      }
+    ],
+    "bass_boundaries_ok": 24,
+    "bass_boundaries_total": 24,
+    "piano_bad_tones": [],
+    "piano_bad_tone_count": 0,
+    "solo_chord_tone_ratio": 0.492,
+    "solo_chord_or_color_ratio": 0.828,
+    "solo_outside_ratio": 0.172,
+    "solo_harmony_counts": {
+      "total": 128,
+      "chord": 63,
+      "color": 43,
+      "outside": 22
+    },
+    "solo_by_chord": {
+      "F7": {
+        "total": 52,
+        "chord": 29,
+        "color": 19,
+        "outside": 4
+      },
+      "Bb7": {
+        "total": 37,
+        "chord": 17,
+        "color": 16,
+        "outside": 4
+      },
+      "D7": {
+        "total": 15,
+        "chord": 4,
+        "color": 0,
+        "outside": 11
+      },
+      "Gm7": {
+        "total": 15,
+        "chord": 7,
+        "color": 6,
+        "outside": 2
+      },
+      "C7": {
+        "total": 9,
+        "chord": 6,
+        "color": 2,
+        "outside": 1
+      }
+    }
+  },
+  {
+    "file": "ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence.mid",
+    "source_form_chords": 4,
+    "backing_chords": 8,
+    "tracks": [
+      [
+        "Solo",
+        46,
+        false
+      ],
+      [
+        "Piano",
+        72,
+        false
+      ],
+      [
+        "Bass",
+        48,
+        false
+      ],
+      [
+        "Drums",
+        132,
+        true
+      ]
+    ],
+    "expected_end_sec": 24.0,
+    "actual_end_sec": 24.0,
+    "solo_notes": 46,
+    "solo_end_sec": 13.566,
+    "piano_notes": 72,
+    "piano_end_sec": 23.634,
+    "bass_notes": 48,
+    "bass_end_sec": 23.975,
+    "drums_notes": 132,
+    "drums_end_sec": 24.0,
+    "bass_boundary_rows": [
+      {
+        "beat": 0,
+        "chord": "Dm7",
+        "bass_pc": 2,
+        "expected_root_pc": 2,
+        "ok": true
+      },
+      {
+        "beat": 4,
+        "chord": "G7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 8,
+        "chord": "Cj7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 16,
+        "chord": "Cj7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 24,
+        "chord": "Dm7",
+        "bass_pc": 2,
+        "expected_root_pc": 2,
+        "ok": true
+      },
+      {
+        "beat": 28,
+        "chord": "G7",
+        "bass_pc": 7,
+        "expected_root_pc": 7,
+        "ok": true
+      },
+      {
+        "beat": 32,
+        "chord": "Cj7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      },
+      {
+        "beat": 40,
+        "chord": "Cj7",
+        "bass_pc": 0,
+        "expected_root_pc": 0,
+        "ok": true
+      }
+    ],
+    "bass_boundaries_ok": 8,
+    "bass_boundaries_total": 8,
+    "piano_bad_tones": [],
+    "piano_bad_tone_count": 0,
+    "solo_chord_tone_ratio": 0.717,
+    "solo_chord_or_color_ratio": 0.957,
+    "solo_outside_ratio": 0.043,
+    "solo_harmony_counts": {
+      "total": 46,
+      "chord": 33,
+      "color": 11,
+      "outside": 2
+    },
+    "solo_by_chord": {
+      "Dm7": {
+        "total": 14,
+        "chord": 8,
+        "color": 4,
+        "outside": 2
+      },
+      "G7": {
+        "total": 10,
+        "chord": 7,
+        "color": 3,
+        "outside": 0
+      },
+      "Cj7": {
+        "total": 22,
+        "chord": 18,
+        "color": 4,
+        "outside": 0
+      }
+    }
+  }
+]

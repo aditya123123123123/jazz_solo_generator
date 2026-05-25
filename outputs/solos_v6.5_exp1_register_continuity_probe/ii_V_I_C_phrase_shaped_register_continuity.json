@@ -1,0 +1,455 @@
+{
+  "name": "ii_V_I_C",
+  "tempo_bpm": 120,
+  "total_notes": 50,
+  "phrase_plan": [
+    "PHRASE_22",
+    "PHRASE_59",
+    "PHRASE_59",
+    "PHRASE_19"
+  ],
+  "notes": [
+    {
+      "pitch": 60,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 66,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 66,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 68,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 74,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 73,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 72,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 71,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 69,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 66,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 61,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.05,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.25,
+      "is_rest": true
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 68,
+      "duration_sec": 1.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 63,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.375,
+      "is_rest": false
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 54,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 56,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 51,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.05,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.25,
+      "is_rest": true
+    }
+  ],
+  "sections": [
+    {
+      "chord": "Dm7",
+      "model_chord": "D-7",
+      "chord_condition": "normal",
+      "beats": 4,
+      "phrase": "PHRASE_22",
+      "n_notes": 8,
+      "clamped": 0,
+      "distinct_pitches": 8,
+      "dur_fallback": 0,
+      "pitches": [
+        60,
+        66,
+        69,
+        67,
+        65,
+        62,
+        63,
+        64
+      ],
+      "phrase_features": {
+        "token": "PHRASE_22",
+        "median_length_beats": 3.6079365079365076,
+        "median_num_notes": 7,
+        "median_density": 2.011441247184062,
+        "median_pitch_mean": 61.725,
+        "median_pitch_range": 8.0,
+        "median_rest_ratio": 0.08401769219243105,
+        "contour": "descending",
+        "starts_on_downbeat": false
+      },
+      "generated_phrase_metrics": {
+        "contour": "ascending",
+        "num_notes": 8,
+        "density": 2.0,
+        "rest_ratio": 0.13884297520661154,
+        "pitch_range": 9,
+        "final_pitch": 64
+      },
+      "phrase_shaping": true,
+      "section_rest_boost": 1.3360707687697242,
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "G7",
+      "model_chord": "G7",
+      "chord_condition": "normal",
+      "beats": 4,
+      "phrase": "PHRASE_59",
+      "n_notes": 15,
+      "clamped": 0,
+      "distinct_pitches": 12,
+      "dur_fallback": 0,
+      "pitches": [
+        65,
+        66,
+        67,
+        68,
+        71,
+        74,
+        73,
+        72,
+        71,
+        69,
+        67,
+        66,
+        62,
+        61,
+        59
+      ],
+      "phrase_features": {
+        "token": "PHRASE_59",
+        "median_length_beats": 10.141179138321988,
+        "median_num_notes": 15,
+        "median_density": 1.51685486374193,
+        "median_pitch_mean": 57.275,
+        "median_pitch_range": 11.0,
+        "median_rest_ratio": 0.1128037523283554,
+        "contour": "flat",
+        "starts_on_downbeat": false
+      },
+      "generated_phrase_metrics": {
+        "contour": "descending",
+        "num_notes": 15,
+        "density": 3.75,
+        "rest_ratio": 0.0,
+        "pitch_range": 15,
+        "final_pitch": 59
+      },
+      "phrase_shaping": true,
+      "section_rest_boost": 1.4512150093134215,
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "Cj7",
+      "model_chord": "Cj7",
+      "chord_condition": "normal",
+      "beats": 8,
+      "phrase": "PHRASE_59",
+      "n_notes": 15,
+      "clamped": 0,
+      "distinct_pitches": 11,
+      "dur_fallback": 0,
+      "pitches": [
+        60,
+        62,
+        65,
+        67,
+        68,
+        64,
+        65,
+        62,
+        63,
+        64,
+        60,
+        59,
+        55,
+        52,
+        53
+      ],
+      "phrase_features": {
+        "token": "PHRASE_59",
+        "median_length_beats": 10.141179138321988,
+        "median_num_notes": 15,
+        "median_density": 1.51685486374193,
+        "median_pitch_mean": 57.275,
+        "median_pitch_range": 11.0,
+        "median_rest_ratio": 0.1128037523283554,
+        "contour": "flat",
+        "starts_on_downbeat": false
+      },
+      "generated_phrase_metrics": {
+        "contour": "descending",
+        "num_notes": 15,
+        "density": 1.875,
+        "rest_ratio": 0.06536964980544747,
+        "pitch_range": 16,
+        "final_pitch": 53
+      },
+      "phrase_shaping": true,
+      "section_rest_boost": 1.4512150093134215,
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "Cj7",
+      "model_chord": "Cj7",
+      "chord_condition": "normal",
+      "beats": 8,
+      "phrase": "PHRASE_19",
+      "n_notes": 8,
+      "clamped": 0,
+      "distinct_pitches": 8,
+      "dur_fallback": 0,
+      "pitches": [
+        48,
+        54,
+        55,
+        56,
+        52,
+        51,
+        59,
+        60
+      ],
+      "phrase_features": {
+        "token": "PHRASE_19",
+        "median_length_beats": 4.028571428571425,
+        "median_num_notes": 8,
+        "median_density": 2.2050000000000005,
+        "median_pitch_mean": 54.625,
+        "median_pitch_range": 11.0,
+        "median_rest_ratio": 0.1122448979591826,
+        "contour": "ascending",
+        "starts_on_downbeat": false
+      },
+      "generated_phrase_metrics": {
+        "contour": "ascending",
+        "num_notes": 8,
+        "density": 1.0,
+        "rest_ratio": 0.0,
+        "pitch_range": 12,
+        "final_pitch": 60
+      },
+      "phrase_shaping": true,
+      "section_rest_boost": 1.4489795918367303,
+      "phrase_remapped": false,
+      "phrase_original": null
+    }
+  ]
+}

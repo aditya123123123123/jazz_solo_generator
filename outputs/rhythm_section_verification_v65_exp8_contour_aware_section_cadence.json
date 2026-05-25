@@ -1,0 +1,59 @@
+[
+  {
+    "name": "autumn_leaves",
+    "midi": "outputs/solos_v6.5_exp8_contour_aware_section_cadence_probe/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_contour_preserved.mid",
+    "track_note_counts": {
+      "Solo": 136,
+      "Piano": 180,
+      "Bass": 120,
+      "Drums": 330
+    },
+    "form_repeats": 3,
+    "backing_chords": 24,
+    "tracks": 4,
+    "solo_notes": 136,
+    "piano_notes": 180,
+    "bass_notes": 120,
+    "drum_notes": 330,
+    "bass_root_checks": 24,
+    "piano_tone_checks": 180
+  },
+  {
+    "name": "blues_F",
+    "midi": "outputs/solos_v6.5_exp8_contour_aware_section_cadence_probe/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_contour_preserved.mid",
+    "track_note_counts": {
+      "Solo": 128,
+      "Piano": 144,
+      "Bass": 96,
+      "Drums": 264
+    },
+    "form_repeats": 2,
+    "backing_chords": 24,
+    "tracks": 4,
+    "solo_notes": 128,
+    "piano_notes": 144,
+    "bass_notes": 96,
+    "drum_notes": 264,
+    "bass_root_checks": 24,
+    "piano_tone_checks": 144
+  },
+  {
+    "name": "ii_V_I_C",
+    "midi": "outputs/solos_v6.5_exp8_contour_aware_section_cadence_probe/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_contour_preserved.mid",
+    "track_note_counts": {
+      "Solo": 46,
+      "Piano": 72,
+      "Bass": 48,
+      "Drums": 132
+    },
+    "form_repeats": 2,
+    "backing_chords": 8,
+    "tracks": 4,
+    "solo_notes": 46,
+    "piano_notes": 72,
+    "bass_notes": 48,
+    "drum_notes": 132,
+    "bass_root_checks": 8,
+    "piano_tone_checks": 72
+  }
+]

@@ -1,0 +1,347 @@
+{
+  "solos_dir": "outputs/solos_v6.5_exp5_duration_temp_1p0_probe",
+  "solos": [
+    {
+      "file": "outputs/solos_v6.5_exp5_duration_temp_1p0_probe/autumn_leaves_rhythm_swing_dt1.0_rb1.8_phrase_shaped_register_continuity_phrase_diverse3.json",
+      "name": "autumn_leaves",
+      "sections": [
+        {
+          "chord": "Cm7",
+          "phrase": "PHRASE_36",
+          "target_contour": "descending",
+          "generated_contour": "flat",
+          "contour_match": false,
+          "density_error": 4.410352836280223,
+          "note_count_error": 16.0,
+          "pitch_range_error": 16.0,
+          "rest_ratio_error": 0.1603955100936797,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "F7",
+          "phrase": "PHRASE_38",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 0.4551921090901425,
+          "note_count_error": 9.0,
+          "pitch_range_error": 2.0,
+          "rest_ratio_error": 0.22691463327303973,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "Bbj7",
+          "phrase": "PHRASE_37",
+          "target_contour": "descending",
+          "generated_contour": "ascending",
+          "contour_match": false,
+          "density_error": 0.21354263156302844,
+          "note_count_error": 4.0,
+          "pitch_range_error": 2.0,
+          "rest_ratio_error": 0.12915879428890473,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "Ebj7",
+          "phrase": "PHRASE_59",
+          "target_contour": "flat",
+          "generated_contour": "arch",
+          "contour_match": false,
+          "density_error": 2.23314513625807,
+          "note_count_error": 0.0,
+          "pitch_range_error": 1.0,
+          "rest_ratio_error": 0.1128037523283554,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "Am7b5",
+          "phrase": "PHRASE_42",
+          "target_contour": "descending",
+          "generated_contour": "ascending",
+          "contour_match": false,
+          "density_error": 0.2927834443454227,
+          "note_count_error": 0.0,
+          "pitch_range_error": 6.0,
+          "rest_ratio_error": 0.08742954159592806,
+          "cadence_resolution": false
+        },
+        {
+          "chord": "D7",
+          "phrase": "PHRASE_26",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 2.019933045589612,
+          "note_count_error": 2.0,
+          "pitch_range_error": 6.0,
+          "rest_ratio_error": 0.05001935049485401,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "Gm7",
+          "phrase": "PHRASE_33",
+          "target_contour": "descending",
+          "generated_contour": "ascending",
+          "contour_match": false,
+          "density_error": 0.0942486410661032,
+          "note_count_error": 7.0,
+          "pitch_range_error": 5.0,
+          "rest_ratio_error": 0.18359330504975782,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "Gm7",
+          "phrase": "PHRASE_44",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 1.5440806954713524,
+          "note_count_error": 0.0,
+          "pitch_range_error": 16.0,
+          "rest_ratio_error": 0.049931630873418106,
+          "cadence_resolution": true
+        }
+      ],
+      "summary": {
+        "sections": 8,
+        "contour_match_rate": 0.375,
+        "cadence_resolution_rate": 0.875,
+        "mean_density_error": 1.4079098174579943,
+        "mean_note_count_error": 4.75,
+        "mean_pitch_range_error": 6.75,
+        "mean_rest_ratio_error": 0.1250308147497422
+      }
+    },
+    {
+      "file": "outputs/solos_v6.5_exp5_duration_temp_1p0_probe/blues_F_rhythm_swing_dt1.0_rb1.8_phrase_shaped_register_continuity_phrase_diverse3.json",
+      "name": "blues_F",
+      "sections": [
+        {
+          "chord": "F7",
+          "phrase": "PHRASE_14",
+          "target_contour": "flat",
+          "generated_contour": "flat",
+          "contour_match": true,
+          "density_error": 0.8068248096758426,
+          "note_count_error": 0.0,
+          "pitch_range_error": 1.0,
+          "rest_ratio_error": 0.10318923390646181,
+          "cadence_resolution": false
+        },
+        {
+          "chord": "Bb7",
+          "phrase": "PHRASE_53",
+          "target_contour": "descending",
+          "generated_contour": "ascending",
+          "contour_match": false,
+          "density_error": 0.9829545454545467,
+          "note_count_error": 1.0,
+          "pitch_range_error": 6.0,
+          "rest_ratio_error": 0.0911730545876882,
+          "cadence_resolution": false
+        },
+        {
+          "chord": "F7",
+          "phrase": "PHRASE_53",
+          "target_contour": "descending",
+          "generated_contour": "arch",
+          "contour_match": false,
+          "density_error": 0.9829545454545467,
+          "note_count_error": 1.0,
+          "pitch_range_error": 1.0,
+          "rest_ratio_error": 0.0911730545876882,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "F7",
+          "phrase": "PHRASE_43",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 2.029903017241379,
+          "note_count_error": 0.0,
+          "pitch_range_error": 12.0,
+          "rest_ratio_error": 0.1374216651745733,
+          "cadence_resolution": false
+        },
+        {
+          "chord": "Bb7",
+          "phrase": "PHRASE_53",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 0.9829545454545467,
+          "note_count_error": 1.0,
+          "pitch_range_error": 5.0,
+          "rest_ratio_error": 0.0911730545876882,
+          "cadence_resolution": false
+        },
+        {
+          "chord": "Bb7",
+          "phrase": "PHRASE_22",
+          "target_contour": "descending",
+          "generated_contour": "flat",
+          "contour_match": false,
+          "density_error": 0.011441247184062142,
+          "note_count_error": 1.0,
+          "pitch_range_error": 0.0,
+          "rest_ratio_error": 0.08401769219243105,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "F7",
+          "phrase": "PHRASE_24",
+          "target_contour": "ascending",
+          "generated_contour": "ascending",
+          "contour_match": true,
+          "density_error": 0.3007812499999756,
+          "note_count_error": 4.0,
+          "pitch_range_error": 7.0,
+          "rest_ratio_error": 0.1908454777246527,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "D7",
+          "phrase": "PHRASE_42",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 0.2927834443454227,
+          "note_count_error": 0.0,
+          "pitch_range_error": 0.0,
+          "rest_ratio_error": 0.08742954159592806,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "Gm7",
+          "phrase": "PHRASE_22",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 0.011441247184062142,
+          "note_count_error": 1.0,
+          "pitch_range_error": 2.0,
+          "rest_ratio_error": 0.08401769219243105,
+          "cadence_resolution": false
+        },
+        {
+          "chord": "C7",
+          "phrase": "PHRASE_22",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 0.011441247184062142,
+          "note_count_error": 1.0,
+          "pitch_range_error": 3.0,
+          "rest_ratio_error": 0.08401769219243105,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "F7",
+          "phrase": "PHRASE_26",
+          "target_contour": "descending",
+          "generated_contour": "ascending",
+          "contour_match": false,
+          "density_error": 2.519933045589612,
+          "note_count_error": 0.0,
+          "pitch_range_error": 2.0,
+          "rest_ratio_error": 0.1282802200600714,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "C7",
+          "phrase": "PHRASE_43",
+          "target_contour": "descending",
+          "generated_contour": "descending",
+          "contour_match": true,
+          "density_error": 2.029903017241379,
+          "note_count_error": 0.0,
+          "pitch_range_error": 7.0,
+          "rest_ratio_error": 0.06308538198873259,
+          "cadence_resolution": true
+        }
+      ],
+      "summary": {
+        "sections": 12,
+        "contour_match_rate": 0.6666666666666666,
+        "cadence_resolution_rate": 0.5833333333333334,
+        "mean_density_error": 0.9136096635007864,
+        "mean_note_count_error": 0.8333333333333334,
+        "mean_pitch_range_error": 3.8333333333333335,
+        "mean_rest_ratio_error": 0.10298531339923146
+      }
+    },
+    {
+      "file": "outputs/solos_v6.5_exp5_duration_temp_1p0_probe/ii_V_I_C_rhythm_swing_dt1.0_rb1.8_phrase_shaped_register_continuity_phrase_diverse3.json",
+      "name": "ii_V_I_C",
+      "sections": [
+        {
+          "chord": "Dm7",
+          "phrase": "PHRASE_22",
+          "target_contour": "descending",
+          "generated_contour": "arch",
+          "contour_match": false,
+          "density_error": 0.011441247184062142,
+          "note_count_error": 1.0,
+          "pitch_range_error": 4.0,
+          "rest_ratio_error": 0.08401769219243105,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "G7",
+          "phrase": "PHRASE_59",
+          "target_contour": "flat",
+          "generated_contour": "descending",
+          "contour_match": false,
+          "density_error": 2.23314513625807,
+          "note_count_error": 0.0,
+          "pitch_range_error": 6.0,
+          "rest_ratio_error": 0.1128037523283554,
+          "cadence_resolution": false
+        },
+        {
+          "chord": "Cj7",
+          "phrase": "PHRASE_59",
+          "target_contour": "flat",
+          "generated_contour": "ascending",
+          "contour_match": false,
+          "density_error": 0.3581451362580701,
+          "note_count_error": 0.0,
+          "pitch_range_error": 13.0,
+          "rest_ratio_error": 0.1128037523283554,
+          "cadence_resolution": true
+        },
+        {
+          "chord": "Cj7",
+          "phrase": "PHRASE_19",
+          "target_contour": "ascending",
+          "generated_contour": "descending",
+          "contour_match": false,
+          "density_error": 1.2050000000000005,
+          "note_count_error": 0.0,
+          "pitch_range_error": 6.0,
+          "rest_ratio_error": 0.1122448979591826,
+          "cadence_resolution": true
+        }
+      ],
+      "summary": {
+        "sections": 4,
+        "contour_match_rate": 0.0,
+        "cadence_resolution_rate": 0.75,
+        "mean_density_error": 0.9519328799250507,
+        "mean_note_count_error": 0.25,
+        "mean_pitch_range_error": 7.25,
+        "mean_rest_ratio_error": 0.10546752370208112
+      }
+    }
+  ],
+  "aggregate": {
+    "sections": 24,
+    "contour_match_rate": 0.4583333333333333,
+    "cadence_resolution_rate": 0.7083333333333334,
+    "mean_density_error": 1.0847635842238998,
+    "mean_note_count_error": 2.0416666666666665,
+    "mean_pitch_range_error": 5.375,
+    "mean_rest_ratio_error": 0.11074751556654332
+  }
+}

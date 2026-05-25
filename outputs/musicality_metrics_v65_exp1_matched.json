@@ -1,0 +1,72 @@
+{
+  "matched_baseline": {
+    "autumn_leaves": {
+      "notes": 139,
+      "octave_leaps": 13,
+      "max_leap": 27,
+      "mean_leap": 4.35,
+      "outside_pct": 23.0,
+      "pure_pct": 48.9,
+      "color_pct": 28.1,
+      "phrase_repeat_max": 1,
+      "phrase_total": 8
+    },
+    "blues_F": {
+      "notes": 131,
+      "octave_leaps": 18,
+      "max_leap": 31,
+      "mean_leap": 5.35,
+      "outside_pct": 19.1,
+      "pure_pct": 49.6,
+      "color_pct": 31.3,
+      "phrase_repeat_max": 6,
+      "phrase_total": 12
+    },
+    "ii_V_I_C": {
+      "notes": 46,
+      "octave_leaps": 1,
+      "max_leap": 14,
+      "mean_leap": 2.84,
+      "outside_pct": 26.1,
+      "pure_pct": 54.3,
+      "color_pct": 19.6,
+      "phrase_repeat_max": 2,
+      "phrase_total": 4
+    }
+  },
+  "exp1": {
+    "autumn_leaves": {
+      "notes": 139,
+      "octave_leaps": 0,
+      "max_leap": 10,
+      "mean_leap": 2.72,
+      "outside_pct": 23.0,
+      "pure_pct": 48.9,
+      "color_pct": 28.1,
+      "phrase_repeat_max": 1,
+      "phrase_total": 8
+    },
+    "blues_F": {
+      "notes": 131,
+      "octave_leaps": 0,
+      "max_leap": 10,
+      "mean_leap": 2.45,
+      "outside_pct": 19.1,
+      "pure_pct": 49.6,
+      "color_pct": 31.3,
+      "phrase_repeat_max": 6,
+      "phrase_total": 12
+    },
+    "ii_V_I_C": {
+      "notes": 46,
+      "octave_leaps": 0,
+      "max_leap": 8,
+      "mean_leap": 2.27,
+      "outside_pct": 26.1,
+      "pure_pct": 54.3,
+      "color_pct": 19.6,
+      "phrase_repeat_max": 2,
+      "phrase_total": 4
+    }
+  }
+}

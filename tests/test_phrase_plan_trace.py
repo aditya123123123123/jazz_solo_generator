@@ -32,6 +32,11 @@ def test_export_json_includes_top_level_plan_features_and_generated_metrics(tmp_
             "pitches": [60, 64, 67, 75],
             "phrase_remapped": False,
             "phrase_original": None,
+            "phrase_diversity": True,
+            "phrase_diversity_remapped": True,
+            "phrase_before_diversity": "PHRASE_53",
+            "register_continuity": True,
+            "register_continuity_adjusted": 2,
         }
     ]
     out = tmp_path / "solo.json"
@@ -45,3 +50,8 @@ def test_export_json_includes_top_level_plan_features_and_generated_metrics(tmp_
     assert section["phrase_features"]["median_num_notes"] == 28
     assert section["generated_phrase_metrics"]["num_notes"] == 16
     assert section["generated_phrase_metrics"]["pitch_range"] == 15
+    assert section["phrase_diversity"] is True
+    assert section["phrase_diversity_remapped"] is True
+    assert section["phrase_before_diversity"] == "PHRASE_53"
+    assert section["register_continuity"] is True
+    assert section["register_continuity_adjusted"] == 2

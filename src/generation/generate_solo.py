@@ -9,6 +9,7 @@ For each chord in a progression:
 import argparse
 import json
 import logging
+import math
 import random
 import re
 from pathlib import Path
@@ -16,6 +17,7 @@ from pathlib import Path
 import pretty_midi
 import torch
 
+from src.generation.chord_utils import chord_tones, parse_chord
 from src.generation.phrase_features import PhraseFeature, load_phrase_features, phrase_feature_to_dict
 from src.generation.rhythm_section import generate_rhythm_section
 from src.models.note_executor import NoteExecutor
@@ -246,6 +248,71 @@ def _plan_phrases(planner, model_chord_ids, artist_id, n_sections, fallback=3, t
     return tokens[:n_sections]
 
 
+def _phrase_feature_distance(a: PhraseFeature, b: PhraseFeature) -> float:
+    return (
+        abs(float(a.median_num_notes) - float(b.median_num_notes))
+        + abs(float(a.median_density) - float(b.median_density)) * 2.0
+        + abs(float(a.median_rest_ratio) - float(b.median_rest_ratio)) * 8.0
+        + abs(float(a.median_pitch_range) - float(b.median_pitch_range)) * 0.25
+    )
+
+
+def _diversify_phrase_plan(
+    phrase_plan_ints: list[int],
+    phrase_tok,
+    phrase_features: dict[str, PhraseFeature] | None,
+    max_uses: int = 2,
+    preserve_cadence: bool = False,
+) -> tuple[list[int], int]:
+    """Replace overused phrase IDs with similar-feature alternatives.
+
+    This is a deterministic post-planner diversity constraint. It changes only
+    phrase-token selection, not note sampling, harmony steering, or register
+    smoothing.
+    """
+    if not phrase_features or max_uses <= 0:
+        return list(phrase_plan_ints), 0
+
+    out: list[int] = []
+    counts: dict[str, int] = {}
+    changed = 0
+    feature_items = sorted(phrase_features.items())
+
+    for token in phrase_plan_ints:
+        label = phrase_tok.decode(int(token))
+        count = counts.get(label, 0)
+        if count < max_uses or label not in phrase_features:
+            chosen = label
+        else:
+            source = phrase_features[label]
+            candidates = [
+                (candidate_label, candidate_feature)
+                for candidate_label, candidate_feature in feature_items
+                if candidate_label != label
+                and candidate_feature.contour == source.contour
+                and counts.get(candidate_label, 0) < max_uses
+            ]
+            if not candidates:
+                chosen = label
+            else:
+                chosen = min(
+                    candidates,
+                    key=lambda item: (
+                        abs(source.final_chord_tone_rate - item[1].final_chord_tone_rate) * 4.0
+                        if preserve_cadence
+                        else 0.0,
+                        _phrase_feature_distance(source, item[1]),
+                        counts.get(item[0], 0),
+                        item[0],
+                    ),
+                )[0]
+        counts[chosen] = counts.get(chosen, 0) + 1
+        if chosen != label:
+            changed += 1
+        out.append(phrase_tok.encode(chosen))
+    return out, changed
+
+
 def _clamp(value, lo, hi):
     return max(lo, min(hi, value))
 
@@ -292,6 +359,41 @@ def _generated_phrase_metrics(section_events: list, beats: float) -> dict:
     }
 
 
+def _calibrate_section_rests(section_events: list, target_sounding_notes: int | None) -> tuple[list, int]:
+    """Post-decode density calibration by toggling rest flags only.
+
+    This is deliberately narrow: it preserves sampled pitches, durations, and
+    ordering, but if the rest head makes a phrase much sparser than its phrase
+    cluster target, it reactivates enough sampled rest positions to hit the
+    target sounding-note count. Register continuity and harmony checks then see
+    the same pitch stream as a normal generated phrase, just less over-rested.
+    """
+    if target_sounding_notes is None:
+        return section_events, 0
+    target = int(_clamp(target_sounding_notes, 0, len(section_events)))
+    sounding = sum(1 for p, _d, r in section_events if not r and 0 <= int(p) <= 127)
+    if sounding >= target:
+        return section_events, 0
+
+    needed = target - sounding
+    calibrated = list(section_events)
+    changed = 0
+    # Prefer short rests first; those are usually articulation gaps rather than
+    # long breaths. Stable tie-break by original position keeps this deterministic.
+    candidates = sorted(
+        [
+            (float(d), i)
+            for i, (p, d, r) in enumerate(calibrated)
+            if r and 0 <= int(p) <= 127
+        ]
+    )
+    for _dur, i in candidates[:needed]:
+        p, d, _r = calibrated[i]
+        calibrated[i] = (p, d, False)
+        changed += 1
+    return calibrated, changed
+
+
 def _apply_register_shape(section_events: list, contour: str | None) -> list:
     """Gentle octave shaping only; keeps pitch classes/chord-tone bias intact."""
     if contour not in {"ascending", "descending", "arch"}:
@@ -317,6 +419,104 @@ def _apply_register_shape(section_events: list, contour: str | None) -> list:
             new_pitch -= 12
         shaped.append((new_pitch, dur, is_rest))
     return shaped
+
+
+def _nearest_octave_pitch(pitch: int, anchor: int, lo: int = PITCH_LO, hi: int = PITCH_HI) -> int:
+    """Move pitch by octaves to the nearest equivalent register around anchor."""
+    candidates = [int(pitch) + 12 * k for k in range(-8, 9)]
+    candidates = [p for p in candidates if lo <= p <= hi]
+    if not candidates:
+        return int(pitch)
+    return min(candidates, key=lambda p: (abs(p - int(anchor)), abs(p - int(pitch))))
+
+
+def _apply_register_continuity(section_events: list, previous_pitch: int | None = None) -> tuple[list, int | None, int]:
+    """Reduce register teleports while preserving sampled pitch classes exactly."""
+    smoothed = []
+    anchor = previous_pitch
+    adjusted = 0
+    for pitch, dur, is_rest in section_events:
+        if is_rest or not (0 <= int(pitch) <= 127):
+            smoothed.append((pitch, dur, is_rest))
+            continue
+        new_pitch = int(pitch)
+        if anchor is not None:
+            new_pitch = _nearest_octave_pitch(new_pitch, anchor)
+        if new_pitch != int(pitch):
+            adjusted += 1
+        anchor = new_pitch
+        smoothed.append((new_pitch, dur, is_rest))
+    return smoothed, anchor, adjusted
+
+
+def _nearest_pitch_with_pc(anchor: int, pitch_class: int, lo: int = PITCH_LO, hi: int = PITCH_HI) -> int:
+    """Return the in-range pitch with ``pitch_class`` nearest to ``anchor``."""
+    candidates = [p for p in range(lo, hi + 1) if p % 12 == int(pitch_class) % 12]
+    if not candidates:
+        return int(anchor)
+    return min(candidates, key=lambda p: (abs(p - int(anchor)), abs(p - clamp_pitch(int(anchor)))))
+
+
+def _enforce_section_cadence(
+    section_events: list,
+    chord_symbol: str,
+    preserve_contour: bool = False,
+) -> tuple[list, bool, int | None]:
+    """Move only the final sounding pitch of a section to an active chord tone.
+
+    Durations, rests, note count, and all earlier phrase material are preserved.
+    This is intentionally a narrow post-decode cadence control for section ends.
+    When ``preserve_contour`` is enabled, choose among chord-tone octave
+    candidates that preserve the pre-edit generated contour before falling back
+    to nearest pitch.
+    """
+    parsed = parse_chord(chord_symbol)
+    if parsed is None:
+        return section_events, False, None
+    root_pc, quality = parsed
+    allowed = set(chord_tones(root_pc, quality))
+    final_idx = None
+    final_pitch = None
+    for i in range(len(section_events) - 1, -1, -1):
+        p, _d, r = section_events[i]
+        if not r and 0 <= int(p) <= 127:
+            final_idx = i
+            final_pitch = int(p)
+            break
+    if final_idx is None or final_pitch is None:
+        return section_events, False, None
+    if final_pitch % 12 in allowed:
+        return section_events, False, final_pitch
+
+    sounding = [int(p) for p, _d, r in section_events if not r and 0 <= int(p) <= 127]
+    source_contour = _section_contour(sounding)
+    chord_tone_candidates = [
+        p
+        for p in range(PITCH_LO, PITCH_HI + 1)
+        if p % 12 in allowed
+    ]
+    if not chord_tone_candidates:
+        chord_tone_candidates = [_nearest_pitch_with_pc(final_pitch, pc) for pc in allowed]
+
+    def contour_after(candidate: int) -> str:
+        edited = list(sounding)
+        if edited:
+            edited[-1] = int(candidate)
+        return _section_contour(edited)
+
+    new_pitch = min(
+        chord_tone_candidates,
+        key=lambda p: (
+            0 if (preserve_contour and contour_after(p) == source_contour) else 1,
+            abs(p - final_pitch),
+            abs(p - clamp_pitch(final_pitch)),
+            p,
+        ),
+    )
+    adjusted = list(section_events)
+    _old_p, dur, is_rest = adjusted[final_idx]
+    adjusted[final_idx] = (new_pitch, dur, is_rest)
+    return adjusted, True, new_pitch
 
 
 def _generate_notes(executor, chord_ids, phrase_id, artist_id,
@@ -371,7 +571,14 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   non_chord_penalty=0.0,
                   strong_beat_only=True,
                   phrase_features: dict[str, PhraseFeature] | None = None,
-                  phrase_shaping=False):
+                  phrase_shaping=False,
+                  register_continuity=False,
+                  phrase_diversity=False,
+                  phrase_max_uses=2,
+                  phrase_diversity_preserve_cadence=False,
+                  section_cadence_enforcement=False,
+                  section_cadence_preserve_contour=False,
+                  rhythm_density_calibration=False):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -399,7 +606,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
         model_chord_ids = [getattr(chord_tok, "UNK", 0)] * len(model_chord_ids)
         chord_condition = "chord_zeroed"
 
-    phrase_plan_ints = _plan_phrases(
+    raw_phrase_plan_ints = _plan_phrases(
         planner,
         model_chord_ids,
         artist_id,
@@ -407,15 +614,27 @@ def generate_solo(progression, artist_name="Charlie Parker",
         fallback=phrase_tok.encode("PHRASE_00"),
         temperature=temperature,
     )
-    phrase_plan_labels = []
-    for i, raw_phrase in enumerate(phrase_plan_ints):
+    remapped_phrase_plan_ints = []
+    for i, raw_phrase in enumerate(raw_phrase_plan_ints):
         chord_for_remap = chord_tok.decode(model_chord_ids[i])
-        phrase_plan_labels.append(phrase_tok.decode(remap_phrase_fallback(raw_phrase, chord_for_remap, phrase_tok)))
+        remapped_phrase_plan_ints.append(remap_phrase_fallback(raw_phrase, chord_for_remap, phrase_tok))
+    if phrase_diversity:
+        phrase_plan_ints, _phrase_diversity_changed_total = _diversify_phrase_plan(
+            remapped_phrase_plan_ints,
+            phrase_tok,
+            phrase_features,
+            max_uses=phrase_max_uses,
+            preserve_cadence=phrase_diversity_preserve_cadence,
+        )
+    else:
+        phrase_plan_ints = list(remapped_phrase_plan_ints)
+    phrase_plan_labels = [phrase_tok.decode(token) for token in phrase_plan_ints]
 
     # Rolling cross-chord context: last WINDOW note tokens from previous section
     ctx_pitch: list = []
     ctx_dur:   list = []
     ctx_rest:  list = []
+    previous_sounding_pitch: int | None = None
 
     for section_idx, (chord_str, beats) in enumerate(progression):
         wjazz_str = normalize_chord(chord_str)
@@ -427,10 +646,12 @@ def generate_solo(progression, artist_name="Charlie Parker",
         model_chord_str = chord_tok.decode(model_chord_id)
         chord_ids = torch.tensor([[model_chord_id]], dtype=torch.long)
 
-        # ---- PhrasePlanner + PHRASE_00 remapping ----
-        phrase_int_raw = phrase_plan_ints[section_idx]
-        phrase_int     = remap_phrase_fallback(phrase_int_raw, model_chord_str, phrase_tok)
-        phrase_remapped = phrase_int != phrase_int_raw
+        # ---- PhrasePlanner + PHRASE_00 remapping + optional diversity ----
+        phrase_int_raw = raw_phrase_plan_ints[section_idx]
+        phrase_int_remapped = remapped_phrase_plan_ints[section_idx]
+        phrase_int = phrase_plan_ints[section_idx]
+        phrase_remapped = phrase_int_remapped != phrase_int_raw
+        phrase_diversity_remapped = phrase_int != phrase_int_remapped
         phrase_label = phrase_tok.decode(phrase_int)
         phrase_id    = torch.tensor([phrase_int], dtype=torch.long)
         feature = phrase_features.get(phrase_label) if phrase_features else None
@@ -484,8 +705,33 @@ def generate_solo(progression, artist_name="Charlie Parker",
 
         # --- Rest injection (within section) ---
         section_events = _inject_rests(section_events)
+        rhythm_density_calibration_adjusted = 0
+        if phrase_shaping and rhythm_density_calibration and feature is not None:
+            section_events, rhythm_density_calibration_adjusted = _calibrate_section_rests(
+                section_events,
+                section_n_notes,
+            )
+        register_continuity_adjusted = 0
         if phrase_shaping and feature is not None:
             section_events = _apply_register_shape(section_events, feature.contour)
+        if register_continuity:
+            section_events, previous_sounding_pitch, register_continuity_adjusted = _apply_register_continuity(
+                section_events,
+                previous_sounding_pitch,
+            )
+        else:
+            sounding_pitches = [int(p) for p, _d, r in section_events if not r and 0 <= int(p) <= 127]
+            if sounding_pitches:
+                previous_sounding_pitch = sounding_pitches[-1]
+        section_cadence_adjusted = False
+        if section_cadence_enforcement:
+            section_events, section_cadence_adjusted, enforced_final_pitch = _enforce_section_cadence(
+                section_events,
+                chord_str,
+                preserve_contour=section_cadence_preserve_contour,
+            )
+            if enforced_final_pitch is not None:
+                previous_sounding_pitch = enforced_final_pitch
         generated_metrics = _generated_phrase_metrics(section_events, beats)
 
         # --- Boundary rest (between sections) ---
@@ -496,6 +742,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
                 section_events[-1] = (last_p, shortened, last_r)
                 section_events.append((0, BOUNDARY_REST, True))
 
+        final_pitches_midi = [int(p) for p, _d, r in section_events if not r and 0 <= int(p) <= 127]
         note_events.extend(section_events)
         chord_summaries.append({
             "chord":           chord_str,
@@ -512,11 +759,21 @@ def generate_solo(progression, artist_name="Charlie Parker",
             "phrase_shaping":  bool(phrase_shaping),
             "section_rest_boost": section_rest_boost,
             "phrase_remapped": phrase_remapped,
+            "phrase_diversity": bool(phrase_diversity),
+            "phrase_diversity_remapped": phrase_diversity_remapped,
+            "rhythm_density_calibration": bool(rhythm_density_calibration),
+            "rhythm_density_calibration_adjusted": rhythm_density_calibration_adjusted,
+            "phrase_before_diversity": phrase_tok.decode(phrase_int_remapped) if phrase_diversity_remapped else None,
             "phrase_original": phrase_tok.decode(phrase_int_raw) if phrase_remapped else None,
             "n_notes":         section_n_notes,
             "n_clamped":       n_clamped,
             "dur_fallback":    dur_fallback,
-            "pitches":         pitches_midi,
+            "register_continuity": bool(register_continuity),
+            "register_continuity_adjusted": register_continuity_adjusted,
+            "section_cadence_enforcement": bool(section_cadence_enforcement),
+            "section_cadence_preserve_contour": bool(section_cadence_preserve_contour),
+            "section_cadence_adjusted": bool(section_cadence_adjusted),
+            "pitches":         final_pitches_midi,
         })
 
     return note_events, chord_summaries, unknown_chords
@@ -534,7 +791,8 @@ def export_midi(note_events, output_path, tempo=120, rhythm_instruments=None):
     original solo-only export exactly.
     """
     pm    = pretty_midi.PrettyMIDI(initial_tempo=float(tempo))
-    piano = pretty_midi.Instrument(program=0, name="Piano")
+    solo_name = "Solo" if rhythm_instruments else "Piano"
+    piano = pretty_midi.Instrument(program=0, name=solo_name)
 
     t = 0.0
     for pitch_midi, dur_sec, is_rest in note_events:
@@ -582,6 +840,15 @@ def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
             "generated_phrase_metrics",
             "phrase_shaping",
             "section_rest_boost",
+            "phrase_diversity",
+            "phrase_diversity_remapped",
+            "phrase_before_diversity",
+            "rhythm_density_calibration",
+            "rhythm_density_calibration_adjusted",
+            "register_continuity",
+            "register_continuity_adjusted",
+            "section_cadence_enforcement",
+            "section_cadence_adjusted",
         ):
             if optional_key in s:
                 section[optional_key] = s.get(optional_key)
@@ -713,6 +980,20 @@ def parse_args(argv=None):
                         help="Apply chord-tone bias to every generated position instead of only 0/4/8/12 anchors.")
     parser.add_argument("--phrase-shaping", action="store_true",
                         help="Use phrase-cluster feature medians to shape note count/rests/register.")
+    parser.add_argument("--register-continuity", action="store_true",
+                        help="Post-process sampled pitches to nearest octave-equivalent register around the previous sounding note.")
+    parser.add_argument("--phrase-diversity", action="store_true",
+                        help="Post-process overused phrase IDs into similar-feature alternatives.")
+    parser.add_argument("--phrase-max-uses", type=int, default=2,
+                        help="Maximum uses of one phrase ID before --phrase-diversity remaps later occurrences.")
+    parser.add_argument("--phrase-diversity-preserve-cadence", action="store_true",
+                        help="When remapping overused phrase IDs, prefer alternatives with a similar training-set final-chord-tone cadence rate.")
+    parser.add_argument("--section-cadence-enforcement", action="store_true",
+                        help="Post-process each section's final sounding note to the nearest active chord tone.")
+    parser.add_argument("--section-cadence-preserve-contour", action="store_true",
+                        help="When enforcing section cadences, prefer a chord-tone final pitch that preserves the pre-edit section contour.")
+    parser.add_argument("--rhythm-density-calibration", action="store_true",
+                        help="When phrase shaping is enabled, reactivate sampled rest positions until each section reaches its phrase-cluster note-count target.")
     return parser.parse_args(argv)
 
 
@@ -763,6 +1044,13 @@ def main(argv=None):
             strong_beat_only=args.strong_beat_only,
             phrase_features=phrase_features,
             phrase_shaping=args.phrase_shaping,
+            register_continuity=args.register_continuity,
+            phrase_diversity=args.phrase_diversity,
+            phrase_max_uses=args.phrase_max_uses,
+            phrase_diversity_preserve_cadence=args.phrase_diversity_preserve_cadence,
+            section_cadence_enforcement=args.section_cadence_enforcement,
+            section_cadence_preserve_contour=args.section_cadence_preserve_contour,
+            rhythm_density_calibration=args.rhythm_density_calibration,
         )
 
         if args.with_rhythm_section:
@@ -778,14 +1066,32 @@ def main(argv=None):
             stem += "_chord_shuffled"
         elif args.chord_zeroed:
             stem += "_chord_zeroed"
+        if args.phrase_shaping:
+            stem += "_phrase_shaped"
+        if args.register_continuity:
+            stem += "_register_continuity"
+        if args.phrase_diversity:
+            stem += f"_phrase_diverse{args.phrase_max_uses}"
+            if args.phrase_diversity_preserve_cadence:
+                stem += "_cadence_preserved"
+        if args.rhythm_density_calibration:
+            stem += "_rhythm_calibrated"
+        if args.section_cadence_enforcement:
+            stem += "_section_cadence"
+            if args.section_cadence_preserve_contour:
+                stem += "_contour_preserved"
 
         midi_out = args.out_dir / f"{stem}.mid"
         json_out = args.out_dir / f"{stem}.json"
 
         rhythm = None
         if args.with_rhythm_section:
+            solo_duration_sec = sum(float(d) for _p, d, _r in note_events)
+            one_form_sec = sum(float(beats) for _chord, beats in progression) * 60.0 / tempo_bpm
+            repeats = max(1, math.ceil(solo_duration_sec / one_form_sec)) if one_form_sec > 0 else 1
+            backing_progression = list(progression) * repeats
             rhythm = generate_rhythm_section(
-                progression, tempo_bpm=tempo_bpm,
+                backing_progression, tempo_bpm=tempo_bpm,
                 style=args.rhythm_style, seed=args.rhythm_seed,
             )
 

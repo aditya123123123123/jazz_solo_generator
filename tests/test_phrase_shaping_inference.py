@@ -40,3 +40,110 @@ def test_default_generation_keeps_legacy_note_count_without_phrase_shaping():
 
     assert common["executor"].calls[0]["n_notes"] == 16
     assert summaries[0]["n_notes"] == 16
+
+
+def test_rhythm_density_calibration_reactivates_sampled_rests_to_phrase_target():
+    common = make_common((13,))  # PHRASE_10
+    features = {"PHRASE_10": PhraseFeature("PHRASE_10", 4, 8, 2.0, 60, 8, 0.05, "flat", True)}
+
+    def sparse_generate(_chord_ids, _phrase_id, _artist_id, n_notes=16, **_kwargs):
+        assert n_notes == 8
+        return [
+            (60, 4, 0),
+            (62, 4, 1),
+            (64, 4, 1),
+            (65, 4, 0),
+            (67, 4, 1),
+            (69, 4, 1),
+            (71, 4, 1),
+            (72, 4, 1),
+        ]
+
+    common["executor"].generate = sparse_generate
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Dm7", 4)],
+        phrase_features=features,
+        phrase_shaping=True,
+        rhythm_density_calibration=True,
+        **common,
+    )
+
+    sounding = [p for p, _d, r in notes if not r]
+    assert len(sounding) == 8
+    assert summaries[0]["rhythm_density_calibration"] is True
+    assert summaries[0]["rhythm_density_calibration_adjusted"] == 6
+
+
+def test_rhythm_density_calibration_is_opt_in():
+    common = make_common((13,))
+    features = {"PHRASE_10": PhraseFeature("PHRASE_10", 4, 6, 1.5, 60, 8, 0.05, "flat", True)}
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (60, 4, 0), (62, 4, 1), (64, 4, 1), (65, 4, 0), (67, 4, 1), (69, 4, 1)
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Dm7", 4)],
+        phrase_features=features,
+        phrase_shaping=True,
+        rhythm_density_calibration=False,
+        **common,
+    )
+
+    assert sum(1 for _p, _d, r in notes if not r) == 2
+    assert summaries[0]["rhythm_density_calibration"] is False
+    assert summaries[0]["rhythm_density_calibration_adjusted"] == 0
+
+
+def test_section_cadence_enforcement_moves_only_final_sounding_pitch_to_chord_tone():
+    common = make_common((13,))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (61, 4, 0),  # Db, deliberately outside Dm7 but not final
+        (65, 4, 1),  # rest with a valid decoded pitch; must remain a rest
+        (64, 4, 0),  # E, outside Dm7 final; nearest shell tone is F
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Dm7", 4)],
+        section_cadence_enforcement=True,
+        **common,
+    )
+
+    assert notes == [(61, 0.25, False), (65, 0.25, True), (65, 0.25, False)]
+    assert summaries[0]["section_cadence_enforcement"] is True
+    assert summaries[0]["section_cadence_adjusted"] is True
+    assert summaries[0]["generated_phrase_metrics"]["final_pitch"] == 65
+
+
+def test_section_cadence_enforcement_can_preserve_generated_contour():
+    common = make_common((13,))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (48, 4, 0),
+        (53, 4, 0),
+        (53, 4, 0),  # F, outside Cj7; nearest E would flip contour to arch
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Cj7", 4)],
+        section_cadence_enforcement=True,
+        section_cadence_preserve_contour=True,
+        **common,
+    )
+
+    assert notes == [(48, 0.25, False), (53, 0.25, False), (55, 0.25, False)]
+    assert summaries[0]["section_cadence_preserve_contour"] is True
+    assert summaries[0]["generated_phrase_metrics"]["contour"] == "ascending"
+
+
+def test_section_cadence_enforcement_is_opt_in():
+    common = make_common((13,))
+    common["executor"].generate = lambda *_args, **_kwargs: [(64, 4, 0)]
+
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Dm7", 4)],
+        section_cadence_enforcement=False,
+        **common,
+    )
+
+    assert notes == [(64, 0.25, False)]
+    assert summaries[0]["section_cadence_enforcement"] is False
+    assert summaries[0]["section_cadence_adjusted"] is False
