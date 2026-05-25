@@ -461,14 +461,16 @@ def _enforce_section_cadence(
     section_events: list,
     chord_symbol: str,
     preserve_contour: bool = False,
+    target_contour: str | None = None,
 ) -> tuple[list, bool, int | None]:
     """Move only the final sounding pitch of a section to an active chord tone.
 
     Durations, rests, note count, and all earlier phrase material are preserved.
     This is intentionally a narrow post-decode cadence control for section ends.
-    When ``preserve_contour`` is enabled, choose among chord-tone octave
-    candidates that preserve the pre-edit generated contour before falling back
-    to nearest pitch.
+    When ``target_contour`` is provided, choose among chord-tone octave
+    candidates that best match the phrase-cluster target contour. Otherwise,
+    when ``preserve_contour`` is enabled, choose candidates that preserve the
+    pre-edit generated contour before falling back to nearest pitch.
     """
     parsed = parse_chord(chord_symbol)
     if parsed is None:
@@ -507,7 +509,8 @@ def _enforce_section_cadence(
     new_pitch = min(
         chord_tone_candidates,
         key=lambda p: (
-            0 if (preserve_contour and contour_after(p) == source_contour) else 1,
+            0 if (target_contour and contour_after(p) == target_contour) else 1,
+            0 if (not target_contour and preserve_contour and contour_after(p) == source_contour) else 1,
             abs(p - final_pitch),
             abs(p - clamp_pitch(final_pitch)),
             p,
@@ -578,6 +581,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   phrase_diversity_preserve_cadence=False,
                   section_cadence_enforcement=False,
                   section_cadence_preserve_contour=False,
+                  section_cadence_target_contour=False,
                   rhythm_density_calibration=False):
     """
     progression : list of (chord_str, beats)
@@ -729,6 +733,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
                 section_events,
                 chord_str,
                 preserve_contour=section_cadence_preserve_contour,
+                target_contour=feature.contour if (section_cadence_target_contour and feature is not None) else None,
             )
             if enforced_final_pitch is not None:
                 previous_sounding_pitch = enforced_final_pitch
@@ -772,6 +777,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
             "register_continuity_adjusted": register_continuity_adjusted,
             "section_cadence_enforcement": bool(section_cadence_enforcement),
             "section_cadence_preserve_contour": bool(section_cadence_preserve_contour),
+            "section_cadence_target_contour": bool(section_cadence_target_contour),
             "section_cadence_adjusted": bool(section_cadence_adjusted),
             "pitches":         final_pitches_midi,
         })
@@ -848,6 +854,8 @@ def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
             "register_continuity",
             "register_continuity_adjusted",
             "section_cadence_enforcement",
+            "section_cadence_preserve_contour",
+            "section_cadence_target_contour",
             "section_cadence_adjusted",
         ):
             if optional_key in s:
@@ -992,6 +1000,8 @@ def parse_args(argv=None):
                         help="Post-process each section's final sounding note to the nearest active chord tone.")
     parser.add_argument("--section-cadence-preserve-contour", action="store_true",
                         help="When enforcing section cadences, prefer a chord-tone final pitch that preserves the pre-edit section contour.")
+    parser.add_argument("--section-cadence-target-contour", action="store_true",
+                        help="When enforcing section cadences, prefer a chord-tone final pitch that matches the phrase-cluster target contour.")
     parser.add_argument("--rhythm-density-calibration", action="store_true",
                         help="When phrase shaping is enabled, reactivate sampled rest positions until each section reaches its phrase-cluster note-count target.")
     return parser.parse_args(argv)
@@ -1050,6 +1060,7 @@ def main(argv=None):
             phrase_diversity_preserve_cadence=args.phrase_diversity_preserve_cadence,
             section_cadence_enforcement=args.section_cadence_enforcement,
             section_cadence_preserve_contour=args.section_cadence_preserve_contour,
+            section_cadence_target_contour=args.section_cadence_target_contour,
             rhythm_density_calibration=args.rhythm_density_calibration,
         )
 
@@ -1078,7 +1089,9 @@ def main(argv=None):
             stem += "_rhythm_calibrated"
         if args.section_cadence_enforcement:
             stem += "_section_cadence"
-            if args.section_cadence_preserve_contour:
+            if args.section_cadence_target_contour:
+                stem += "_target_contour"
+            elif args.section_cadence_preserve_contour:
                 stem += "_contour_preserved"
 
         midi_out = args.out_dir / f"{stem}.mid"

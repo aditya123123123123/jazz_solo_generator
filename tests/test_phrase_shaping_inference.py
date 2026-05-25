@@ -134,6 +134,31 @@ def test_section_cadence_enforcement_can_preserve_generated_contour():
     assert summaries[0]["generated_phrase_metrics"]["contour"] == "ascending"
 
 
+def test_section_cadence_enforcement_can_prefer_target_phrase_contour():
+    common = make_common((13,))
+    features = {
+        "PHRASE_10": PhraseFeature("PHRASE_10", 4, 8, 2.0, 60, 8, 0.05, "descending", True)
+    }
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (72, 4, 0),
+        (70, 4, 0),
+        (73, 4, 0),  # C#, outside Cj7; nearest C keeps flat generated contour
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Cj7", 4)],
+        phrase_features=features,
+        phrase_shaping=True,
+        section_cadence_enforcement=True,
+        section_cadence_target_contour=True,
+        **common,
+    )
+
+    assert notes == [(84, 0.25, False), (70, 0.25, False), (60, 0.25, False)]
+    assert summaries[0]["section_cadence_target_contour"] is True
+    assert summaries[0]["generated_phrase_metrics"]["contour"] == "descending"
+
+
 def test_section_cadence_enforcement_is_opt_in():
     common = make_common((13,))
     common["executor"].generate = lambda *_args, **_kwargs: [(64, 4, 0)]

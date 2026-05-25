@@ -390,14 +390,55 @@ Accompaniment verification on generated rhythm-section MIDI:
 - Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
 - ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
 
-Result: rejected as the next default setting, although still useful as a listening probe. It kept the cadence/harmony benefits of Exp 7 and did not damage rhythm or repetition metrics, but it failed the primary contour-recovery hypothesis. The reason is now clearer: preserving the pre-edit generated contour is not the same as preserving the phrase-cluster target contour. If the model had already missed the target contour before the final note, a contour-preserving cadence edit can faithfully preserve the wrong contour.
+Result: objective contour gate failed, but after A/B review Aditya accepted Exp 8 as the more musical direction and provisional human-approved baseline. It kept the cadence/harmony benefits of Exp 7 and did not damage rhythm or repetition metrics; the remaining flaw was contour target mismatch.
 
-Interpretation: keep Exp 3b as the current objective best until listening says the 100% cadence tradeoff is worth the contour drop. The next single-variable experiment should target the actual phrase target rather than the generated contour: target-contour-aware cadence enforcement, choosing a chord-tone final pitch that improves or preserves match to `phrase_features.contour` when available.
+Interpretation: compare future musicality probes against Exp 8, not Exp 3b, unless the new probe loses the cadence/harmony gains that made Exp 8 preferable by ear. The next single-variable experiment should target the actual phrase target rather than the generated contour: target-contour-aware cadence enforcement, choosing a chord-tone final pitch that improves or preserves match to `phrase_features.contour` when available.
+
+### Experiment 9: target-contour-aware per-section cadence enforcement
+
+Hypothesis: If cadence enforcement chooses a chord-tone final pitch that matches the phrase-cluster target contour when possible, then it will keep Exp 8's 100% cadence/harmony gains while recovering contour match toward Exp 3b.
+
+Primary variable changed: cadence-enforcement candidate selection only, behind `--section-cadence-target-contour` and active with `--section-cadence-enforcement`. It prefers in-range active chord-tone candidates whose edited section contour matches `phrase_features.contour`; if no target match exists, it falls back to nearest chord tone. No model, phrase plan, duration/rest, chord-bias, register-continuity, dataset, or training changes.
+
+Focused tests:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_phrase_shaping_inference.py tests/test_phrase_diversity.py tests/test_register_continuity.py tests/test_rhythm_section.py tests/test_phrase_plan_trace.py tests/test_phrase_position_embed.py -q
+# 30 passed
+```
+
+Generated artifacts:
+
+- JSON/MIDI: `outputs/solos_v6.5_exp9_target_contour_section_cadence_probe/`
+- MP3: `outputs/mp3_v65_exp9_target_contour_section_cadence/`
+- MP3 ZIP: `outputs/v65_exp9_target_contour_section_cadence_mp3s.zip`
+- Metrics: `outputs/musicality_metrics_v65_exp9_target_contour_section_cadence.json`
+- Phrase faithfulness: `outputs/phrase_faithfulness_v65_exp9_target_contour_section_cadence.json`
+- Rhythm verification: `outputs/rhythm_section_verification_v65_exp9_target_contour_section_cadence.json`
+
+Exp 8 human-approved baseline -> Exp 9 objective comparison:
+
+- Aggregate cadence resolution stayed perfect: 100.0% -> 100.0%.
+- Aggregate contour match improved: 37.5% -> 41.7%, recovering to the Exp 3b level.
+- Harmony metrics were unchanged on the scored probes: Autumn outside 5.9%, Blues outside 6.2%, ii-V-I outside 4.3%; Blues pure chord tones 81.2%, ii-V-I pure chord tones 82.6%.
+- Density, note-count, rest-ratio, and pitch-range errors were unchanged: density 1.100, note-count 1.875, rest-ratio 0.0799, pitch-range 3.79.
+- Register continuity stayed controlled: octave+ leaps remain 0 on all probes; max leap stayed <= 10.
+- Phrase repetition stayed controlled: Blues max repeated phrase remains 3/12.
+
+Accompaniment verification on generated rhythm-section MIDI:
+
+- Autumn Leaves tracks: Solo 136, Piano 180, Bass 120, Drums 330; bass boundaries 24/24; piano bad tones 0/180.
+- Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
+- ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
+
+Result: accepted objectively as the next listening candidate over Exp 8. It recovers the contour metric without sacrificing the cadence/harmony, repetition, rhythm, or accompaniment checks that made Exp 8 promising. Final promotion should still wait for listening, especially Blues F.
+
+Interpretation: listen to Exp 9 vs Exp 8. If it sounds at least as resolved and natural, promote Exp 9 as the current default baseline. If target-contour note choices sound less natural by ear, keep Exp 8 despite the lower contour metric.
 
 ## Candidate next experiments, one at a time
 
-1. Target-contour-aware per-section cadence enforcement: among active chord-tone final pitches, prefer a candidate that makes the generated section contour match the phrase-cluster target contour when possible; otherwise fall back to Exp 8's generated-contour-preserving nearest candidate.
-2. Chord-tone/extension bias strength grid if listening says Exp 3b/Exp 7/Exp 8 are too boxed-in.
+1. Listen to Exp 9 vs Exp 8; promote Exp 9 only if the recovered contour metric also sounds natural.
+2. Chord-tone/extension bias strength grid if listening says Exp 8/Exp 9 are too boxed-in.
 3. Deterministic duration quantile clamp only if listening says rhythm is still too unstable after cadence is fixed.
 4. Dataset expansion or re-extraction, only after inference-side issues are isolated.
 5. Retraining with a single additional loss/target at a time, after a dry-run alignment check.
