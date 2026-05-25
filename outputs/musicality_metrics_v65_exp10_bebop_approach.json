@@ -1,0 +1,138 @@
+{
+  "exp9": {
+    "autumn_leaves": {
+      "notes": 136,
+      "octave_leaps": 0,
+      "max_leap": 10,
+      "mean_leap": 3.09,
+      "outside_pct": 5.9,
+      "pure_pct": 76.5,
+      "color_pct": 17.6,
+      "phrase_repeat_max": 1,
+      "phrase_total": 8,
+      "phrase_diversity_remaps": 0,
+      "phrase_plan": [
+        "PHRASE_36",
+        "PHRASE_38",
+        "PHRASE_37",
+        "PHRASE_59",
+        "PHRASE_42",
+        "PHRASE_26",
+        "PHRASE_33",
+        "PHRASE_44"
+      ]
+    },
+    "blues_F": {
+      "notes": 128,
+      "octave_leaps": 0,
+      "max_leap": 10,
+      "mean_leap": 3.09,
+      "outside_pct": 6.2,
+      "pure_pct": 81.2,
+      "color_pct": 12.5,
+      "phrase_repeat_max": 3,
+      "phrase_total": 12,
+      "phrase_diversity_remaps": 3,
+      "phrase_plan": [
+        "PHRASE_14",
+        "PHRASE_53",
+        "PHRASE_53",
+        "PHRASE_43",
+        "PHRASE_53",
+        "PHRASE_22",
+        "PHRASE_24",
+        "PHRASE_42",
+        "PHRASE_22",
+        "PHRASE_22",
+        "PHRASE_26",
+        "PHRASE_43"
+      ]
+    },
+    "ii_V_I_C": {
+      "notes": 46,
+      "octave_leaps": 0,
+      "max_leap": 5,
+      "mean_leap": 2.93,
+      "outside_pct": 4.3,
+      "pure_pct": 82.6,
+      "color_pct": 13.0,
+      "phrase_repeat_max": 2,
+      "phrase_total": 4,
+      "phrase_diversity_remaps": 0,
+      "phrase_plan": [
+        "PHRASE_22",
+        "PHRASE_59",
+        "PHRASE_59",
+        "PHRASE_19"
+      ]
+    }
+  },
+  "exp10": {
+    "autumn_leaves": {
+      "notes": 136,
+      "octave_leaps": 0,
+      "max_leap": 10,
+      "mean_leap": 3.09,
+      "outside_pct": 8.8,
+      "pure_pct": 73.5,
+      "color_pct": 17.6,
+      "phrase_repeat_max": 1,
+      "phrase_total": 8,
+      "phrase_diversity_remaps": 0,
+      "phrase_plan": [
+        "PHRASE_36",
+        "PHRASE_38",
+        "PHRASE_37",
+        "PHRASE_59",
+        "PHRASE_42",
+        "PHRASE_26",
+        "PHRASE_33",
+        "PHRASE_44"
+      ]
+    },
+    "blues_F": {
+      "notes": 128,
+      "octave_leaps": 0,
+      "max_leap": 10,
+      "mean_leap": 3.09,
+      "outside_pct": 8.6,
+      "pure_pct": 79.7,
+      "color_pct": 11.7,
+      "phrase_repeat_max": 3,
+      "phrase_total": 12,
+      "phrase_diversity_remaps": 3,
+      "phrase_plan": [
+        "PHRASE_14",
+        "PHRASE_53",
+        "PHRASE_53",
+        "PHRASE_43",
+        "PHRASE_53",
+        "PHRASE_22",
+        "PHRASE_24",
+        "PHRASE_42",
+        "PHRASE_22",
+        "PHRASE_22",
+        "PHRASE_26",
+        "PHRASE_43"
+      ]
+    },
+    "ii_V_I_C": {
+      "notes": 46,
+      "octave_leaps": 0,
+      "max_leap": 5,
+      "mean_leap": 2.93,
+      "outside_pct": 4.3,
+      "pure_pct": 82.6,
+      "color_pct": 13.0,
+      "phrase_repeat_max": 2,
+      "phrase_total": 4,
+      "phrase_diversity_remaps": 0,
+      "phrase_plan": [
+        "PHRASE_22",
+        "PHRASE_59",
+        "PHRASE_59",
+        "PHRASE_19"
+      ]
+    }
+  }
+}

@@ -431,14 +431,61 @@ Accompaniment verification on generated rhythm-section MIDI:
 - Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
 - ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
 
-Result: accepted objectively as the next listening candidate over Exp 8. It recovers the contour metric without sacrificing the cadence/harmony, repetition, rhythm, or accompaniment checks that made Exp 8 promising. Final promotion should still wait for listening, especially Blues F.
+Result: Aditya listened and said Exp 9 sounds better, but still not jazzy. Treat Exp 9 as the best correctness/musical-shape baseline, but not the final musical target.
 
-Interpretation: listen to Exp 9 vs Exp 8. If it sounds at least as resolved and natural, promote Exp 9 as the current default baseline. If target-contour note choices sound less natural by ear, keep Exp 8 despite the lower contour metric.
+Interpretation: cadence, contour, register, repetition, and harmonic safety are no longer the main blocker. The next single-variable experiment should target idiomatic jazz language directly: weak-beat chromatic approach notes into strong-beat chord tones, while keeping Exp 9's phrase plan, cadence, register, and rhythm-section settings intact.
+
+### Experiment 10: weak-beat bebop approach notes
+
+Hypothesis: If existing weak-beat notes immediately before strong-beat chord tones are rewritten as chromatic approach tones, then the generated solos will sound more idiomatic/jazzy while preserving Exp 9's cadence, contour, note count, register continuity, repetition, and rhythm section behavior.
+
+Primary variable changed: a narrow post-process behind `--bebop-approach-notes`. It only changes an existing sounding weak-beat note immediately before an integer-beat chord-tone target. Durations, rests, note count, phrase plan, cadence targets, model, dataset, and training are unchanged. Cadence enforcement still runs after this layer.
+
+Focused tests:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_phrase_shaping_inference.py tests/test_phrase_diversity.py tests/test_register_continuity.py tests/test_rhythm_section.py tests/test_phrase_plan_trace.py tests/test_phrase_position_embed.py -q
+# 32 passed
+
+PYTHONPATH=. .venv/bin/python -m pytest tests/ -q
+# 68 passed
+```
+
+Generated artifacts:
+
+- JSON/MIDI: `outputs/solos_v6.5_exp10_bebop_approach_probe/`
+- MP3: `outputs/mp3_v65_exp10_bebop_approach/`
+- MP3 ZIP: `outputs/v65_exp10_bebop_approach_mp3s.zip`
+- Metrics: `outputs/musicality_metrics_v65_exp10_bebop_approach.json`
+- Phrase faithfulness: `outputs/phrase_faithfulness_v65_exp10_bebop_approach.json`
+- Rhythm verification: `outputs/rhythm_section_verification_v65_exp10_bebop_approach.json`
+
+Exp 9 correctness baseline -> Exp 10 jazz-vocabulary probe objective comparison:
+
+- Aggregate cadence resolution stayed perfect: 100.0% -> 100.0%.
+- Aggregate contour match stayed unchanged: 41.7% -> 41.7%.
+- Density, note-count, rest-ratio, and pitch-range errors stayed unchanged: density 1.100, note-count 1.875, rest-ratio 0.0799, pitch-range 3.79.
+- Register continuity stayed controlled: octave+ leaps remain 0; max leap stayed <= 10.
+- Phrase repetition stayed controlled: Blues max repeated phrase remains 3/12.
+- Controlled chromaticism increased outside-note rate where approach notes were added:
+  - Autumn outside 5.9% -> 8.8% with 5 bebop approach edits.
+  - Blues outside 6.2% -> 8.6% with 3 bebop approach edits.
+  - ii-V-I unchanged at 4.3% with 0 edits.
+
+Accompaniment verification on generated rhythm-section MIDI:
+
+- Autumn Leaves tracks: Solo 136, Piano 180, Bass 120, Drums 330; bass boundaries 24/24; piano bad tones 0/180.
+- Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
+- ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
+
+Result: ready for listening, not automatically accepted. The objective gates that protect correctness passed, and the outside-note increase is intentional/controlled. The deciding question is whether the added chromatic approach notes actually read as jazz language by ear, especially on Blues F, or whether they sound like arbitrary wrong notes.
+
+Interpretation: A/B Exp 10 against Exp 9. If Exp 10 is noticeably jazzier without sounding wrong, keep this direction and expand it into enclosures/guide-tone targeting. If it is not enough or sounds artificial, the next step is not more random chromaticism; it is a training-data/vocabulary diagnostic to find whether the corpus/model has enough bebop/blues language to learn.
 
 ## Candidate next experiments, one at a time
 
-1. Listen to Exp 9 vs Exp 8; promote Exp 9 only if the recovered contour metric also sounds natural.
-2. Chord-tone/extension bias strength grid if listening says Exp 8/Exp 9 are too boxed-in.
-3. Deterministic duration quantile clamp only if listening says rhythm is still too unstable after cadence is fixed.
-4. Dataset expansion or re-extraction, only after inference-side issues are isolated.
-5. Retraining with a single additional loss/target at a time, after a dry-run alignment check.
+1. Listen to Exp 10 vs Exp 9, especially Blues F, and decide whether the controlled chromaticism sounds like jazz language or wrong notes.
+2. If Exp 10 works: add a second vocabulary layer for two-note enclosures around 3rds/7ths on dominant chords.
+3. If Exp 10 does not work: run a training-data vocabulary diagnostic for blues/bebop devices, then retrain/fine-tune with explicit jazz-vocabulary targets.
+4. Chord-tone/extension bias strength grid only if listening says Exp 9/Exp 10 are too boxed-in after vocabulary decisions.
+5. Deterministic duration quantile clamp only if listening says rhythm is still too unstable after jazz-language work.

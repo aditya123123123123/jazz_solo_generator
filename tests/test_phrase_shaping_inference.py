@@ -159,6 +159,57 @@ def test_section_cadence_enforcement_can_prefer_target_phrase_contour():
     assert summaries[0]["generated_phrase_metrics"]["contour"] == "descending"
 
 
+def test_bebop_approach_notes_put_weak_beat_chromatic_approach_before_chord_tone():
+    common = make_common((13,))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (60, 4, 0),  # C on beat 0.0, already a Cj7 chord tone
+        (62, 4, 0),  # D on beat 0.5, weak beat; should become D# into E
+        (64, 4, 0),  # E on beat 1.0, strong beat chord tone target
+        (67, 4, 0),  # G on beat 1.5, chord tone but not a target position
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Cj7", 4)],
+        bebop_approach_notes=True,
+        **common,
+    )
+
+    assert notes == [
+        (60, 0.25, False),
+        (63, 0.25, False),
+        (64, 0.25, False),
+        (67, 0.25, False),
+    ]
+    assert summaries[0]["bebop_approach_notes"] is True
+    assert summaries[0]["bebop_approach_adjusted"] == 1
+
+
+def test_bebop_approach_notes_keep_rests_and_cadence_final_pitch_safe():
+    common = make_common((13,))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (60, 4, 0),
+        (62, 4, 1),  # rest should not become a chromatic sounding note
+        (64, 4, 0),
+        (66, 4, 0),  # final outside pitch should still be cadence-enforced
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Cj7", 4)],
+        bebop_approach_notes=True,
+        section_cadence_enforcement=True,
+        **common,
+    )
+
+    assert notes == [
+        (60, 0.25, False),
+        (62, 0.25, True),
+        (64, 0.25, False),
+        (67, 0.25, False),
+    ]
+    assert summaries[0]["bebop_approach_adjusted"] == 0
+    assert summaries[0]["section_cadence_adjusted"] is True
+
+
 def test_section_cadence_enforcement_is_opt_in():
     common = make_common((13,))
     common["executor"].generate = lambda *_args, **_kwargs: [(64, 4, 0)]

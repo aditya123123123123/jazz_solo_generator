@@ -457,6 +457,68 @@ def _nearest_pitch_with_pc(anchor: int, pitch_class: int, lo: int = PITCH_LO, hi
     return min(candidates, key=lambda p: (abs(p - int(anchor)), abs(p - clamp_pitch(int(anchor)))))
 
 
+def _is_integer_beat_position(beat_position: float, tolerance: float = 1e-6) -> bool:
+    return abs(beat_position - round(beat_position)) <= tolerance
+
+
+def _chromatic_approach_pitch(target_pitch: int, previous_pitch: int | None = None) -> int:
+    """Pick an in-range chromatic approach one semitone from target.
+
+    Prefer lower approaches by default; use the candidate nearest to the prior
+    sounding pitch when available so the inserted color tone does not create a
+    needless register jump.
+    """
+    candidates = [target_pitch - 1, target_pitch + 1]
+    candidates = [p for p in candidates if PITCH_LO <= p <= PITCH_HI]
+    if not candidates:
+        return int(target_pitch)
+    if previous_pitch is None:
+        return candidates[0]
+    return min(candidates, key=lambda p: (abs(p - int(previous_pitch)), p))
+
+
+def _apply_bebop_approach_notes(section_events: list, chord_symbol: str) -> tuple[list, int]:
+    """Add weak-beat chromatic approach notes into strong-beat chord tones.
+
+    This is a deliberately narrow jazz-vocabulary layer: it changes only an
+    existing sounding weak-beat note immediately before an integer-beat chord
+    tone. Durations, rests, note count, and cadence notes are preserved.
+    """
+    parsed = parse_chord(chord_symbol)
+    if parsed is None:
+        return section_events, 0
+    root_pc, quality = parsed
+    allowed = set(chord_tones(root_pc, quality))
+    adjusted = list(section_events)
+    changed = 0
+    beat_cursor = 0.0
+    previous_sounding_pitch: int | None = None
+    previous_sounding_idx: int | None = None
+    previous_sounding_beat: float | None = None
+    for idx, (pitch, dur, is_rest) in enumerate(section_events):
+        start_beat = beat_cursor / BEAT_DURATION
+        beat_cursor += float(dur)
+        if is_rest or not (0 <= int(pitch) <= 127):
+            continue
+        pitch = int(pitch)
+        if (
+            previous_sounding_idx is not None
+            and previous_sounding_beat is not None
+            and not _is_integer_beat_position(previous_sounding_beat)
+            and _is_integer_beat_position(start_beat)
+            and pitch % 12 in allowed
+        ):
+            approach = _chromatic_approach_pitch(pitch, previous_sounding_pitch)
+            old_p, old_d, old_r = adjusted[previous_sounding_idx]
+            if int(old_p) != approach:
+                adjusted[previous_sounding_idx] = (approach, old_d, old_r)
+                changed += 1
+        previous_sounding_pitch = pitch
+        previous_sounding_idx = idx
+        previous_sounding_beat = start_beat
+    return adjusted, changed
+
+
 def _enforce_section_cadence(
     section_events: list,
     chord_symbol: str,
@@ -582,6 +644,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   section_cadence_enforcement=False,
                   section_cadence_preserve_contour=False,
                   section_cadence_target_contour=False,
+                  bebop_approach_notes=False,
                   rhythm_density_calibration=False):
     """
     progression : list of (chord_str, beats)
@@ -727,6 +790,12 @@ def generate_solo(progression, artist_name="Charlie Parker",
             sounding_pitches = [int(p) for p, _d, r in section_events if not r and 0 <= int(p) <= 127]
             if sounding_pitches:
                 previous_sounding_pitch = sounding_pitches[-1]
+        bebop_approach_adjusted = 0
+        if bebop_approach_notes:
+            section_events, bebop_approach_adjusted = _apply_bebop_approach_notes(
+                section_events,
+                chord_str,
+            )
         section_cadence_adjusted = False
         if section_cadence_enforcement:
             section_events, section_cadence_adjusted, enforced_final_pitch = _enforce_section_cadence(
@@ -775,6 +844,8 @@ def generate_solo(progression, artist_name="Charlie Parker",
             "dur_fallback":    dur_fallback,
             "register_continuity": bool(register_continuity),
             "register_continuity_adjusted": register_continuity_adjusted,
+            "bebop_approach_notes": bool(bebop_approach_notes),
+            "bebop_approach_adjusted": bebop_approach_adjusted,
             "section_cadence_enforcement": bool(section_cadence_enforcement),
             "section_cadence_preserve_contour": bool(section_cadence_preserve_contour),
             "section_cadence_target_contour": bool(section_cadence_target_contour),
@@ -853,6 +924,8 @@ def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
             "rhythm_density_calibration_adjusted",
             "register_continuity",
             "register_continuity_adjusted",
+            "bebop_approach_notes",
+            "bebop_approach_adjusted",
             "section_cadence_enforcement",
             "section_cadence_preserve_contour",
             "section_cadence_target_contour",
@@ -1002,6 +1075,8 @@ def parse_args(argv=None):
                         help="When enforcing section cadences, prefer a chord-tone final pitch that preserves the pre-edit section contour.")
     parser.add_argument("--section-cadence-target-contour", action="store_true",
                         help="When enforcing section cadences, prefer a chord-tone final pitch that matches the phrase-cluster target contour.")
+    parser.add_argument("--bebop-approach-notes", action="store_true",
+                        help="Add weak-beat chromatic approach notes into strong-beat chord tones as a controlled jazz vocabulary layer.")
     parser.add_argument("--rhythm-density-calibration", action="store_true",
                         help="When phrase shaping is enabled, reactivate sampled rest positions until each section reaches its phrase-cluster note-count target.")
     return parser.parse_args(argv)
@@ -1061,6 +1136,7 @@ def main(argv=None):
             section_cadence_enforcement=args.section_cadence_enforcement,
             section_cadence_preserve_contour=args.section_cadence_preserve_contour,
             section_cadence_target_contour=args.section_cadence_target_contour,
+            bebop_approach_notes=args.bebop_approach_notes,
             rhythm_density_calibration=args.rhythm_density_calibration,
         )
 
@@ -1087,6 +1163,8 @@ def main(argv=None):
                 stem += "_cadence_preserved"
         if args.rhythm_density_calibration:
             stem += "_rhythm_calibrated"
+        if args.bebop_approach_notes:
+            stem += "_bebop_approach"
         if args.section_cadence_enforcement:
             stem += "_section_cadence"
             if args.section_cadence_target_contour:
