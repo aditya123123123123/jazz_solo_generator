@@ -584,6 +584,162 @@ def _enforce_section_cadence(
     return adjusted, True, new_pitch
 
 
+def _chord_spans_for_duration(progression, total_duration_sec: float, tempo_bpm: float):
+    """Repeat progression as needed and return (start_sec, end_sec, chord)."""
+    if not progression:
+        return []
+    beat_sec = 60.0 / float(tempo_bpm)
+    spans = []
+    cursor = 0.0
+    guard = 0
+    while cursor < total_duration_sec - 1e-9 and guard < 10000:
+        guard += 1
+        for chord_symbol, beats in progression:
+            start = cursor
+            end = start + float(beats) * beat_sec
+            spans.append((start, end, chord_symbol))
+            cursor = end
+            if cursor >= total_duration_sec - 1e-9:
+                break
+    return spans
+
+
+def _spans_overlapping_note(chord_spans, start_sec: float, end_sec: float):
+    return [
+        (max(start_sec, span_start), min(end_sec, span_end), chord_symbol)
+        for span_start, span_end, chord_symbol in chord_spans
+        if span_start < end_sec - 1e-9 and span_end > start_sec + 1e-9
+    ]
+
+
+def _nearest_pitch_in_pitch_classes(
+    pitch: int,
+    allowed_pitch_classes: set[int],
+    previous_pitch: int | None = None,
+    lo: int = PITCH_LO,
+    hi: int = PITCH_HI,
+) -> int:
+    candidates = [p for p in range(lo, hi + 1) if p % 12 in allowed_pitch_classes]
+    if not candidates:
+        return int(pitch)
+    anchor = int(previous_pitch) if previous_pitch is not None else int(pitch)
+    return min(candidates, key=lambda p: (abs(p - anchor), abs(p - int(pitch)), p))
+
+
+def _strict_chord_tone_pitch_classes(chord_symbol: str) -> set[int]:
+    parsed = parse_chord(chord_symbol)
+    if parsed is None:
+        return set()
+    return set(chord_tones(*parsed))
+
+
+def _chord_color_pitch_classes(chord_symbol: str) -> set[int]:
+    """Chord tones plus conservative, non-avoid extensions by quality."""
+    parsed = parse_chord(chord_symbol)
+    if parsed is None:
+        return set()
+    root_pc, quality = parsed
+    allowed = set(chord_tones(root_pc, quality))
+    if quality == "maj7":
+        # 9 and 13 are safe; omit natural 11, which clashes with the major 3rd.
+        allowed.update({(root_pc + 2) % 12, (root_pc + 9) % 12})
+    elif quality in {"min7", "minmaj7"}:
+        allowed.update({(root_pc + 2) % 12, (root_pc + 5) % 12})
+    elif quality == "dom7":
+        # Keep unaltered 9/13 only; altered dominants can come later after
+        # resolution-aware handling. Natural 11 is omitted.
+        allowed.update({(root_pc + 2) % 12, (root_pc + 9) % 12})
+    elif quality == "halfdim":
+        allowed.update({(root_pc + 5) % 12})
+    return allowed
+
+
+def _allowed_pitch_classes_for_harmony_mode(chord_symbol: str, mode: str) -> set[int]:
+    if mode == "strict_chord_tone":
+        return _strict_chord_tone_pitch_classes(chord_symbol)
+    if mode == "chord_color":
+        return _chord_color_pitch_classes(chord_symbol)
+    raise ValueError(f"unsupported timing-aware harmony mode: {mode}")
+
+
+def _apply_timing_aware_harmony(
+    note_events: list,
+    progression: list,
+    tempo_bpm: float = 120.0,
+    mode: str = "strict_chord_tone",
+) -> tuple[list, dict]:
+    """Retune/split solo events against the chord actually sounding in time.
+
+    Generation works section-by-section, but decoded durations can push notes
+    over section boundaries. This pass uses playback time, repeats the backing
+    progression to cover the full solo, splits sustained notes at chord changes,
+    and retunes sounding segments whose pitch class is not legal for the active
+    chord. `strict_chord_tone` deliberately allows only chord tones; it is the
+    safest listening baseline before adding controlled color tones later.
+    """
+    if mode not in {"strict_chord_tone", "chord_color"}:
+        raise ValueError(f"unsupported timing-aware harmony mode: {mode}")
+    total_duration = sum(float(d) for _p, d, _r in note_events)
+    chord_spans = _chord_spans_for_duration(progression, total_duration, tempo_bpm)
+    if not chord_spans:
+        return list(note_events), {
+            "mode": mode,
+            "retuned": 0,
+            "split_notes": 0,
+            "unknown_chords": 0,
+            "events_in": len(note_events),
+            "events_out": len(note_events),
+        }
+
+    adjusted = []
+    stats = {
+        "mode": mode,
+        "retuned": 0,
+        "split_notes": 0,
+        "unknown_chords": 0,
+        "events_in": len(note_events),
+        "events_out": 0,
+    }
+    cursor = 0.0
+    previous_sounding_pitch: int | None = None
+    for pitch, dur, is_rest in note_events:
+        dur = float(dur)
+        end = cursor + dur
+        if dur <= 0:
+            cursor = end
+            continue
+        if is_rest or not (0 <= int(pitch) <= 127):
+            adjusted.append((pitch, dur, is_rest))
+            cursor = end
+            continue
+        overlaps = _spans_overlapping_note(chord_spans, cursor, end)
+        if not overlaps:
+            adjusted.append((pitch, dur, is_rest))
+            previous_sounding_pitch = int(pitch)
+            cursor = end
+            continue
+        if len(overlaps) > 1:
+            stats["split_notes"] += 1
+        for seg_start, seg_end, chord_symbol in overlaps:
+            seg_dur = seg_end - seg_start
+            if seg_dur <= 1e-9:
+                continue
+            allowed = _allowed_pitch_classes_for_harmony_mode(chord_symbol, mode)
+            if not allowed:
+                stats["unknown_chords"] += 1
+                new_pitch = int(pitch)
+            elif int(pitch) % 12 in allowed:
+                new_pitch = int(pitch)
+            else:
+                new_pitch = _nearest_pitch_in_pitch_classes(int(pitch), allowed, previous_sounding_pitch)
+                stats["retuned"] += 1
+            adjusted.append((new_pitch, seg_dur, False))
+            previous_sounding_pitch = new_pitch
+        cursor = end
+    stats["events_out"] = len(adjusted)
+    return adjusted, stats
+
+
 def _generate_notes(executor, chord_ids, phrase_id, artist_id,
                     prefix_pitch=None, prefix_dur=None, prefix_rest=None,
                     temperature=0.8, window=8,
@@ -645,7 +801,9 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   section_cadence_preserve_contour=False,
                   section_cadence_target_contour=False,
                   bebop_approach_notes=False,
-                  rhythm_density_calibration=False):
+                  rhythm_density_calibration=False,
+                  timing_aware_harmony=False,
+                  timing_aware_harmony_mode="strict_chord_tone"):
     """
     progression : list of (chord_str, beats)
     Returns (note_events, chord_summaries, unknown_chords)
@@ -852,6 +1010,17 @@ def generate_solo(progression, artist_name="Charlie Parker",
             "section_cadence_adjusted": bool(section_cadence_adjusted),
             "pitches":         final_pitches_midi,
         })
+
+    if timing_aware_harmony:
+        note_events, timing_harmony_stats = _apply_timing_aware_harmony(
+            note_events,
+            progression,
+            tempo_bpm=tempo_bpm,
+            mode=timing_aware_harmony_mode,
+        )
+        if chord_summaries:
+            chord_summaries[0]["timing_aware_harmony"] = True
+            chord_summaries[0]["timing_aware_harmony_stats"] = timing_harmony_stats
 
     return note_events, chord_summaries, unknown_chords
 
@@ -1079,6 +1248,11 @@ def parse_args(argv=None):
                         help="Add weak-beat chromatic approach notes into strong-beat chord tones as a controlled jazz vocabulary layer.")
     parser.add_argument("--rhythm-density-calibration", action="store_true",
                         help="When phrase shaping is enabled, reactivate sampled rest positions until each section reaches its phrase-cluster note-count target.")
+    parser.add_argument("--timing-aware-harmony", action="store_true",
+                        help="Post-process solo by actual playback time: split at chord boundaries and retune outside notes.")
+    parser.add_argument("--timing-aware-harmony-mode", default="strict_chord_tone",
+                        choices=["strict_chord_tone", "chord_color"],
+                        help="Allowed pitch-class set for --timing-aware-harmony.")
     return parser.parse_args(argv)
 
 
@@ -1138,6 +1312,8 @@ def main(argv=None):
             section_cadence_target_contour=args.section_cadence_target_contour,
             bebop_approach_notes=args.bebop_approach_notes,
             rhythm_density_calibration=args.rhythm_density_calibration,
+            timing_aware_harmony=args.timing_aware_harmony,
+            timing_aware_harmony_mode=args.timing_aware_harmony_mode,
         )
 
         if args.with_rhythm_section:
@@ -1163,6 +1339,8 @@ def main(argv=None):
                 stem += "_cadence_preserved"
         if args.rhythm_density_calibration:
             stem += "_rhythm_calibrated"
+        if args.timing_aware_harmony:
+            stem += "_timing_harmony" if args.timing_aware_harmony_mode == "strict_chord_tone" else f"_timing_harmony_{args.timing_aware_harmony_mode}"
         if args.bebop_approach_notes:
             stem += "_bebop_approach"
         if args.section_cadence_enforcement:
