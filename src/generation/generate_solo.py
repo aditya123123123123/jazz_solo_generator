@@ -359,7 +359,7 @@ def _generated_phrase_metrics(section_events: list, beats: float) -> dict:
     }
 
 
-def _calibrate_section_rests(section_events: list, target_sounding_notes: int | None) -> tuple[list, int]:
+def _calibrate_section_rests(section_events: list, target_sounding_notes: int | None, min_ratio: float = 1.0) -> tuple[list, int]:
     """Post-decode density calibration by toggling rest flags only.
 
     This is deliberately narrow: it preserves sampled pitches, durations, and
@@ -373,6 +373,9 @@ def _calibrate_section_rests(section_events: list, target_sounding_notes: int | 
     target = int(_clamp(target_sounding_notes, 0, len(section_events)))
     sounding = sum(1 for p, _d, r in section_events if not r and 0 <= int(p) <= 127)
     if sounding >= target:
+        return section_events, 0
+    threshold = max(0, min(float(min_ratio), 1.0))
+    if target > 0 and (sounding / target) >= threshold:
         return section_events, 0
 
     needed = target - sounding
@@ -448,6 +451,93 @@ def _apply_register_continuity(section_events: list, previous_pitch: int | None 
         smoothed.append((new_pitch, dur, is_rest))
     return smoothed, anchor, adjusted
 
+
+
+
+def _apply_repeat_guard(section_events: list, chord_symbol: str, max_repeats: int | None = None) -> tuple[list, int]:
+    """Replace excessive consecutive pitch repeats with nearby chord tones.
+
+    The first ``max_repeats`` repetitions are preserved so intentional rhythmic
+    emphasis survives. Later repeated sounding notes are moved to different
+    chord-tone pitch classes near the repeated pitch, preserving duration and
+    sounding/rest status.
+    """
+    if max_repeats is None or max_repeats <= 0:
+        return section_events, 0
+    parsed = parse_chord(chord_symbol)
+    allowed_pcs = []
+    if parsed is not None:
+        root_pc, quality = parsed
+        allowed_pcs = [pc % 12 for pc in chord_tones(root_pc, quality)]
+    guarded = list(section_events)
+    last_pitch = None
+    run_len = 0
+    changed = 0
+    pc_cursor = 0
+    for i, (pitch, dur, is_rest) in enumerate(guarded):
+        if is_rest or not (0 <= int(pitch) <= 127):
+            last_pitch = None
+            run_len = 0
+            continue
+        pitch = int(pitch)
+        if pitch == last_pitch:
+            run_len += 1
+        else:
+            last_pitch = pitch
+            run_len = 1
+        if run_len <= max_repeats:
+            continue
+
+        candidates = []
+        for offset in range(len(allowed_pcs)):
+            if not allowed_pcs:
+                break
+            pc = allowed_pcs[(pc_cursor + offset) % len(allowed_pcs)]
+            if pc != pitch % 12:
+                candidates.append(_nearest_pitch_with_pc(pitch, pc))
+        if not candidates:
+            candidates = [p for p in (pitch + 2, pitch - 2, pitch + 1, pitch - 1) if PITCH_LO <= p <= PITCH_HI]
+        if not candidates:
+            continue
+        new_pitch = min(candidates, key=lambda p: (abs(p - pitch), p))
+        guarded[i] = (new_pitch, dur, is_rest)
+        last_pitch = new_pitch
+        run_len = 1
+        changed += 1
+        if allowed_pcs:
+            pc_cursor = (pc_cursor + 1) % len(allowed_pcs)
+    return guarded, changed
+
+
+def _is_ii_v_i_context(progression: list, section_idx: int) -> bool:
+    """Return True for ii or V chords in an immediate ii-V-I cadence."""
+    parsed = [parse_chord(normalize_chord(chord)) for chord, _beats in progression]
+    current = parsed[section_idx] if 0 <= section_idx < len(parsed) else None
+    if current is None:
+        return False
+    root, quality = current
+    # ii: minor seventh whose next chord is V7 and following chord is Imaj7.
+    if quality in {"min7", "m7"} and section_idx + 2 < len(parsed):
+        nxt, nxt2 = parsed[section_idx + 1], parsed[section_idx + 2]
+        if nxt and nxt2:
+            v_root, v_quality = nxt
+            i_root, i_quality = nxt2
+            if v_quality == "dom7" and i_quality == "maj7" and v_root % 12 == (root + 5) % 12 and i_root % 12 == (v_root + 5) % 12:
+                return True
+    # V: dominant seventh whose next chord is Imaj7.
+    if quality == "dom7" and section_idx + 1 < len(parsed):
+        nxt = parsed[section_idx + 1]
+        if nxt:
+            i_root, i_quality = nxt
+            if i_quality == "maj7" and i_root % 12 == (root + 5) % 12:
+                return True
+    return False
+
+
+def _section_chord_tone_bias_strength(progression: list, section_idx: int, base_strength: float, ii_v_i_strength: float | None = None) -> float:
+    if ii_v_i_strength is not None and _is_ii_v_i_context(progression, section_idx):
+        return float(ii_v_i_strength)
+    return float(base_strength)
 
 def _nearest_pitch_with_pc(anchor: int, pitch_class: int, lo: int = PITCH_LO, hi: int = PITCH_HI) -> int:
     """Return the in-range pitch with ``pitch_class`` nearest to ``anchor``."""
@@ -960,6 +1050,12 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   dominant_blues_colors=False,
                   dominant_blues_color_max_edits: int | None = None,
                   rhythm_density_calibration=False,
+                  rhythm_density_calibration_min_ratio: float = 1.0,
+                  register_continuity_max_adjustments: int | None = None,
+                  register_continuity_max_adjustment_ratio: float | None = None,
+                  register_continuity_resample_attempts: int = 0,
+                  repeat_guard_max_repeats: int | None = None,
+                  ii_v_i_chord_tone_bias_strength: float | None = None,
                   timing_aware_harmony=False,
                   timing_aware_harmony_mode="strict_chord_tone"):
     """
@@ -1049,67 +1145,137 @@ def generate_solo(progression, artist_name="Charlie Parker",
         pfx_p = ctx_pitch[-window:] or None
         pfx_d = ctx_dur[-window:]   or None
         pfx_r = ctx_rest[-window:]  or None
-        raw_notes = _generate_notes(
-            executor, chord_ids, phrase_id, artist_id,
-            prefix_pitch=pfx_p, prefix_dur=pfx_d, prefix_rest=pfx_r,
-            temperature=temperature,
-            window=window,
-            duration_temperature=duration_temperature,
-            rest_boost=section_rest_boost,
-            final_note_chord_tone_boost=final_cadence_boost,
-            chord_tone_bias=chord_tone_bias,
-            chord_tone_bias_strength=chord_tone_bias_strength,
-            non_chord_penalty=non_chord_penalty,
-            strong_beat_only=strong_beat_only,
-            is_final_segment=section_idx == len(progression) - 1,
-            active_chord_symbol=chord_str,
-            n_notes=section_n_notes,
+        section_bias_strength = _section_chord_tone_bias_strength(
+            progression,
+            section_idx,
+            chord_tone_bias_strength,
+            ii_v_i_chord_tone_bias_strength,
         )
+        accepted_raw_notes = None
+        best_attempt = None
+        register_continuity_resampled = False
+        register_continuity_attempts = 0
+        base_previous_sounding_pitch = previous_sounding_pitch
 
-        section_events = []
-        pitches_midi   = []
-        n_clamped      = 0
-        dur_fallback   = 0
-        for p_tok, d_tok, r_tok in raw_notes:
-            # Accumulate rolling token context for next chord section
+        max_attempts = max(0, int(register_continuity_resample_attempts)) + 1
+        for attempt_idx in range(max_attempts):
+            register_continuity_attempts = attempt_idx + 1
+            raw_notes = _generate_notes(
+                executor, chord_ids, phrase_id, artist_id,
+                prefix_pitch=pfx_p, prefix_dur=pfx_d, prefix_rest=pfx_r,
+                temperature=temperature,
+                window=window,
+                duration_temperature=duration_temperature,
+                rest_boost=section_rest_boost,
+                final_note_chord_tone_boost=final_cadence_boost,
+                chord_tone_bias=chord_tone_bias,
+                chord_tone_bias_strength=section_bias_strength,
+                non_chord_penalty=non_chord_penalty,
+                strong_beat_only=strong_beat_only,
+                is_final_segment=section_idx == len(progression) - 1,
+                active_chord_symbol=chord_str,
+                n_notes=section_n_notes,
+            )
+
+            section_events = []
+            pitches_midi   = []
+            n_clamped      = 0
+            dur_fallback   = 0
+            for p_tok, d_tok, r_tok in raw_notes:
+                raw_pitch  = note_tok.decode_pitch(p_tok)
+                pitch_midi = clamp_pitch(raw_pitch) if 0 <= raw_pitch <= 127 else raw_pitch
+                if pitch_midi != raw_pitch:
+                    n_clamped += 1
+                try:
+                    _d = decode_dur(d_tok, tempo_bpm) if decode_dur is not None else note_tok.decode_duration(d_tok, tempo_bpm)
+                except ValueError:
+                    _d = 0.25
+                    dur_fallback += 1
+                dur_sec  = max(_d, MIN_NOTE_DUR)
+                is_rest  = bool(r_tok)
+                section_events.append((pitch_midi, dur_sec, is_rest))
+                if 0 <= pitch_midi <= 127:
+                    pitches_midi.append(pitch_midi)
+
+            # --- Rest injection (within section) ---
+            section_events = _inject_rests(section_events)
+            rhythm_density_calibration_adjusted = 0
+            if phrase_shaping and rhythm_density_calibration and feature is not None:
+                section_events, rhythm_density_calibration_adjusted = _calibrate_section_rests(
+                    section_events,
+                    section_n_notes,
+                    min_ratio=rhythm_density_calibration_min_ratio,
+                )
+            register_continuity_adjusted = 0
+            if phrase_shaping and feature is not None:
+                section_events = _apply_register_shape(section_events, feature.contour)
+            trial_previous_sounding_pitch = base_previous_sounding_pitch
+            if register_continuity:
+                section_events, trial_previous_sounding_pitch, register_continuity_adjusted = _apply_register_continuity(
+                    section_events,
+                    trial_previous_sounding_pitch,
+                )
+            else:
+                sounding_pitches = [int(p) for p, _d, r in section_events if not r and 0 <= int(p) <= 127]
+                if sounding_pitches:
+                    trial_previous_sounding_pitch = sounding_pitches[-1]
+
+            sounding_count_for_ratio = max(1, sum(1 for p, _d, r in section_events if not r and 0 <= int(p) <= 127))
+            too_many_register_edits = False
+            if register_continuity and register_continuity_max_adjustments is not None:
+                too_many_register_edits = register_continuity_adjusted > int(register_continuity_max_adjustments)
+            if register_continuity and register_continuity_max_adjustment_ratio is not None:
+                too_many_register_edits = too_many_register_edits or (register_continuity_adjusted / sounding_count_for_ratio) > float(register_continuity_max_adjustment_ratio)
+            attempt_state = (
+                register_continuity_adjusted,
+                raw_notes,
+                section_events,
+                pitches_midi,
+                n_clamped,
+                dur_fallback,
+                rhythm_density_calibration_adjusted,
+                trial_previous_sounding_pitch,
+                register_continuity_attempts,
+            )
+            if best_attempt is None or register_continuity_adjusted < best_attempt[0]:
+                best_attempt = attempt_state
+            if too_many_register_edits and attempt_idx < max_attempts - 1:
+                register_continuity_resampled = True
+                continue
+
+            accepted_raw_notes = raw_notes
+            previous_sounding_pitch = trial_previous_sounding_pitch
+            break
+
+        if accepted_raw_notes is None and best_attempt is not None:
+            (
+                register_continuity_adjusted,
+                accepted_raw_notes,
+                section_events,
+                pitches_midi,
+                n_clamped,
+                dur_fallback,
+                rhythm_density_calibration_adjusted,
+                previous_sounding_pitch,
+                _best_register_attempts,
+            ) = best_attempt
+        elif accepted_raw_notes is None:
+            accepted_raw_notes = raw_notes
+
+        for p_tok, d_tok, r_tok in accepted_raw_notes:
+            # Accumulate rolling token context for next chord section only after
+            # accepting the section, so rejected resample attempts do not leak.
             ctx_pitch.append(p_tok)
             ctx_dur.append(d_tok)
             ctx_rest.append(r_tok)
-            raw_pitch  = note_tok.decode_pitch(p_tok)
-            pitch_midi = clamp_pitch(raw_pitch) if 0 <= raw_pitch <= 127 else raw_pitch
-            if pitch_midi != raw_pitch:
-                n_clamped += 1
-            try:
-                _d = decode_dur(d_tok, tempo_bpm) if decode_dur is not None else note_tok.decode_duration(d_tok, tempo_bpm)
-            except ValueError:
-                _d = 0.25
-                dur_fallback += 1
-            dur_sec  = max(_d, MIN_NOTE_DUR)
-            is_rest  = bool(r_tok)
-            section_events.append((pitch_midi, dur_sec, is_rest))
-            if 0 <= pitch_midi <= 127:
-                pitches_midi.append(pitch_midi)
 
-        # --- Rest injection (within section) ---
-        section_events = _inject_rests(section_events)
-        rhythm_density_calibration_adjusted = 0
-        if phrase_shaping and rhythm_density_calibration and feature is not None:
-            section_events, rhythm_density_calibration_adjusted = _calibrate_section_rests(
+        repeat_guard_adjusted = 0
+        if repeat_guard_max_repeats is not None:
+            section_events, repeat_guard_adjusted = _apply_repeat_guard(
                 section_events,
-                section_n_notes,
+                chord_str,
+                max_repeats=repeat_guard_max_repeats,
             )
-        register_continuity_adjusted = 0
-        if phrase_shaping and feature is not None:
-            section_events = _apply_register_shape(section_events, feature.contour)
-        if register_continuity:
-            section_events, previous_sounding_pitch, register_continuity_adjusted = _apply_register_continuity(
-                section_events,
-                previous_sounding_pitch,
-            )
-        else:
-            sounding_pitches = [int(p) for p, _d, r in section_events if not r and 0 <= int(p) <= 127]
-            if sounding_pitches:
-                previous_sounding_pitch = sounding_pitches[-1]
         bebop_approach_adjusted = 0
         if bebop_approach_notes:
             section_events, bebop_approach_adjusted = _apply_bebop_approach_notes(
@@ -1180,6 +1346,7 @@ def generate_solo(progression, artist_name="Charlie Parker",
             "phrase_diversity": bool(phrase_diversity),
             "phrase_diversity_remapped": phrase_diversity_remapped,
             "rhythm_density_calibration": bool(rhythm_density_calibration),
+            "rhythm_density_calibration_min_ratio": rhythm_density_calibration_min_ratio,
             "rhythm_density_calibration_adjusted": rhythm_density_calibration_adjusted,
             "phrase_before_diversity": phrase_tok.decode(phrase_int_remapped) if phrase_diversity_remapped else None,
             "phrase_original": phrase_tok.decode(phrase_int_raw) if phrase_remapped else None,
@@ -1188,6 +1355,12 @@ def generate_solo(progression, artist_name="Charlie Parker",
             "dur_fallback":    dur_fallback,
             "register_continuity": bool(register_continuity),
             "register_continuity_adjusted": register_continuity_adjusted,
+            "register_continuity_resampled": register_continuity_resampled,
+            "register_continuity_attempts": register_continuity_attempts,
+            "repeat_guard_max_repeats": repeat_guard_max_repeats,
+            "repeat_guard_adjusted": repeat_guard_adjusted,
+            "ii_v_i_chord_tone_bias_strength": ii_v_i_chord_tone_bias_strength,
+            "section_chord_tone_bias_strength": section_bias_strength,
             "bebop_approach_notes": bool(bebop_approach_notes),
             "bebop_approach_adjusted": bebop_approach_adjusted,
             "dominant_blues_colors": bool(dominant_blues_colors),
@@ -1282,9 +1455,16 @@ def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
             "phrase_diversity_remapped",
             "phrase_before_diversity",
             "rhythm_density_calibration",
+            "rhythm_density_calibration_min_ratio",
             "rhythm_density_calibration_adjusted",
             "register_continuity",
             "register_continuity_adjusted",
+            "register_continuity_resampled",
+            "register_continuity_attempts",
+            "repeat_guard_max_repeats",
+            "repeat_guard_adjusted",
+            "ii_v_i_chord_tone_bias_strength",
+            "section_chord_tone_bias_strength",
             "bebop_approach_notes",
             "bebop_approach_adjusted",
             "dominant_blues_colors",
@@ -1455,7 +1635,19 @@ def parse_args(argv=None):
     parser.add_argument("--dominant-blues-colors-blues-only", action="store_true",
                         help="Apply --dominant-blues-colors only to named blues-form probes (currently blues_F), leaving other progressions at the baseline vocabulary setting.")
     parser.add_argument("--rhythm-density-calibration", action="store_true",
-                        help="When phrase shaping is enabled, reactivate sampled rest positions until each section reaches its phrase-cluster note-count target.")
+                        help="When phrase shaping is enabled, reactivate sampled rest positions until sparse sections reach their phrase-cluster note-count target.")
+    parser.add_argument("--rhythm-density-calibration-min-ratio", type=float, default=0.6,
+                        help="Only density-calibrate sections below this fraction of target sounding notes (default: 0.6).")
+    parser.add_argument("--register-continuity-max-adjustments", type=int, default=None,
+                        help="If register continuity needs more than this many edits, resample the section before accepting it.")
+    parser.add_argument("--register-continuity-max-adjustment-ratio", type=float, default=None,
+                        help="If register continuity edits more than this fraction of sounding notes, resample before accepting.")
+    parser.add_argument("--register-continuity-resample-attempts", type=int, default=0,
+                        help="Number of extra section-generation attempts allowed when register continuity overcorrects.")
+    parser.add_argument("--repeat-guard-max-repeats", type=int, default=None,
+                        help="Maximum consecutive identical sounding pitches before retuning later repeats to nearby chord tones.")
+    parser.add_argument("--ii-v-i-chord-tone-bias-strength", type=float, default=None,
+                        help="Override chord-tone bias strength on ii and V sections in immediate ii-V-I progressions.")
     parser.add_argument("--timing-aware-harmony", action="store_true",
                         help="Post-process solo by actual playback time: split at chord boundaries and retune outside notes.")
     parser.add_argument("--timing-aware-harmony-mode", default="strict_chord_tone",
@@ -1531,6 +1723,12 @@ def main(argv=None):
             dominant_blues_colors=dominant_blues_colors_for_probe,
             dominant_blues_color_max_edits=dominant_blues_color_max_edits_for_probe,
             rhythm_density_calibration=args.rhythm_density_calibration,
+            rhythm_density_calibration_min_ratio=args.rhythm_density_calibration_min_ratio,
+            register_continuity_max_adjustments=args.register_continuity_max_adjustments,
+            register_continuity_max_adjustment_ratio=args.register_continuity_max_adjustment_ratio,
+            register_continuity_resample_attempts=args.register_continuity_resample_attempts,
+            repeat_guard_max_repeats=args.repeat_guard_max_repeats,
+            ii_v_i_chord_tone_bias_strength=args.ii_v_i_chord_tone_bias_strength,
             timing_aware_harmony=args.timing_aware_harmony,
             timing_aware_harmony_mode=args.timing_aware_harmony_mode,
         )
