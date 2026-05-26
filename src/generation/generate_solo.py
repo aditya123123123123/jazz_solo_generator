@@ -110,6 +110,36 @@ PROGRESSIONS = {
         ("Cm7", 4), ("F7", 4), ("Bbj7", 4), ("Ebj7", 4),
         ("Am7b5", 4), ("D7", 4), ("Gm7", 8), ("Gm7", 8),
     ],
+    # Extra default audition probes. These are intentionally compact forms: enough
+    # harmony to expose model behavior without turning each generation into a
+    # full-length tune render.
+    "rhythm_changes_Bb": [
+        ("Bbj7", 4), ("G7", 4), ("Cm7", 4), ("F7", 4),
+        ("Dm7", 4), ("G7", 4), ("Cm7", 4), ("F7", 4),
+        ("Bbj7", 4), ("Bb7", 4), ("Ebj7", 4), ("Ebm7", 4),
+        ("Dm7", 4), ("G7", 4), ("Cm7", 4), ("F7", 4),
+    ],
+    "all_the_things_you_are": [
+        ("Fm7", 4), ("Bbm7", 4), ("Eb7", 4), ("Abj7", 4),
+        ("Dbj7", 4), ("Dm7b5", 4), ("G7", 4), ("Cj7", 4),
+        ("Cm7", 4), ("Fm7", 4), ("Bb7", 4), ("Ebj7", 4),
+        ("Abj7", 4), ("Am7b5", 4), ("D7", 4), ("Gj7", 4),
+    ],
+    "giant_steps_cycle": [
+        ("Bj7", 4), ("D7", 4), ("Gj7", 4), ("Bb7", 4),
+        ("Ebj7", 4), ("Am7", 4), ("D7", 4), ("Gj7", 4),
+        ("Bbm7", 4), ("Eb7", 4), ("Abj7", 4), ("F#m7", 4),
+        ("B7", 4), ("Ej7", 4), ("Fm7", 4), ("Bb7", 4),
+    ],
+    "minor_blues_C": [
+        ("Cm7", 4), ("Fm7", 4), ("Cm7", 4), ("Cm7", 4),
+        ("Fm7", 4), ("Fm7", 4), ("Cm7", 4), ("A7", 4),
+        ("Dm7b5", 4), ("G7", 4), ("Cm7", 4), ("G7", 4),
+    ],
+    "modal_so_what_Dm": [
+        ("Dm7", 8), ("Dm7", 8), ("Dm7", 8), ("Dm7", 8),
+        ("Ebm7", 8), ("Ebm7", 8), ("Dm7", 8), ("Dm7", 8),
+    ],
 }
 
 
