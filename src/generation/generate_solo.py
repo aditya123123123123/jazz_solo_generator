@@ -519,6 +519,160 @@ def _apply_bebop_approach_notes(section_events: list, chord_symbol: str) -> tupl
     return adjusted, changed
 
 
+def _guide_tone_pitch_classes(chord_symbol: str) -> set[int]:
+    """Return active 3rd/7th guide-tone pitch classes for a chord."""
+    parsed = parse_chord(chord_symbol)
+    if parsed is None:
+        return set()
+    root_pc, quality = parsed
+    tones = chord_tones(root_pc, quality)
+    if len(tones) < 4:
+        return set()
+    return {tones[1] % 12, tones[3] % 12}
+
+
+def _enclosure_pitches(target_pitch: int, prior_pitch: int | None = None) -> tuple[int, int] | None:
+    """Pick two chromatic enclosure pitches around ``target_pitch``."""
+    lower = int(target_pitch) - 1
+    upper = int(target_pitch) + 1
+    if not (PITCH_LO <= lower <= PITCH_HI and PITCH_LO <= upper <= PITCH_HI):
+        return None
+    if prior_pitch is None:
+        return upper, lower
+    upper_first = (upper, lower)
+    lower_first = (lower, upper)
+    return min(
+        [upper_first, lower_first],
+        key=lambda pair: (abs(pair[0] - int(prior_pitch)), abs(pair[1] - int(target_pitch)), pair[0]),
+    )
+
+
+def _apply_bebop_enclosures(
+    section_events: list,
+    chord_symbol: str,
+    max_edits: int | None = None,
+) -> tuple[list, int]:
+    """Rewrite two existing pickup notes as chromatic enclosures into guide tones.
+
+    This deliberately changes only already-sounding notes immediately before an
+    integer-beat 3rd/7th target. It preserves note count, durations, rests, and
+    the target/cadence notes themselves. Cadence enforcement runs after this
+    layer in the main pipeline.
+    ``max_edits`` caps changed pickup pitches within the section/solo budget
+    passed by the caller, allowing sparse enclosure probes without changing the
+    rest/duration grid or target guide tone.
+    """
+    if max_edits is not None and max_edits <= 0:
+        return section_events, 0
+    guide_tones = _guide_tone_pitch_classes(chord_symbol)
+    if not guide_tones:
+        return section_events, 0
+
+    adjusted = list(section_events)
+    changed = 0
+    beat_cursor = 0.0
+    sounding: list[tuple[int, int, float]] = []
+    used_indices: set[int] = set()
+
+    for idx, (pitch, dur, is_rest) in enumerate(section_events):
+        start_beat = beat_cursor / BEAT_DURATION
+        beat_cursor += float(dur)
+        if is_rest or not (0 <= int(pitch) <= 127):
+            continue
+        pitch = int(pitch)
+        if _is_integer_beat_position(start_beat) and pitch % 12 in guide_tones and len(sounding) >= 2:
+            first_idx, _first_pitch, first_beat = sounding[-2]
+            second_idx, _second_pitch, second_beat = sounding[-1]
+            prior_pitch = sounding[-3][1] if len(sounding) >= 3 else None
+            if (
+                first_idx not in used_indices
+                and second_idx not in used_indices
+                and not _is_integer_beat_position(first_beat)
+                and not _is_integer_beat_position(second_beat)
+                and first_beat < second_beat < start_beat
+            ):
+                enclosure = _enclosure_pitches(pitch, prior_pitch)
+                if enclosure is not None:
+                    first_new, second_new = enclosure
+                    old_p, old_d, old_r = adjusted[first_idx]
+                    old2_p, old2_d, old2_r = adjusted[second_idx]
+                    local_changes = int(int(old_p) != first_new) + int(int(old2_p) != second_new)
+                    if max_edits is not None and changed + local_changes > max_edits:
+                        break
+                    if local_changes:
+                        adjusted[first_idx] = (first_new, old_d, old_r)
+                        adjusted[second_idx] = (second_new, old2_d, old2_r)
+                        used_indices.update({first_idx, second_idx})
+                        changed += local_changes
+                        if max_edits is not None and changed >= max_edits:
+                            break
+        sounding.append((idx, pitch, start_beat))
+    return adjusted, changed
+
+
+def _apply_dominant_blues_colors(
+    section_events: list,
+    chord_symbol: str,
+    max_edits: int | None = None,
+) -> tuple[list, int]:
+    """Rewrite selected weak-beat dominant chord tones as blues-color tones.
+
+    This is deliberately conservative: on dominant-7 chords only, change an
+    existing weak-beat 3rd or 5th into the adjacent blue 3rd or blue 5th when
+    the next sounding note resolves to a chord tone. It preserves rests,
+    durations, note count, strong-beat targets, and cadence notes. ``max_edits``
+    can cap the number of rewrites, allowing sparse color without stamping the
+    device onto every eligible weak beat.
+    """
+    if max_edits is not None and max_edits <= 0:
+        return section_events, 0
+    parsed = parse_chord(chord_symbol)
+    if parsed is None:
+        return section_events, 0
+    root_pc, quality = parsed
+    if quality != "dom7":
+        return section_events, 0
+
+    tones = chord_tones(root_pc, quality)
+    chord_set = set(tones)
+    third_pc = tones[1] % 12
+    fifth_pc = tones[2] % 12
+    blue_third_pc = (root_pc + 3) % 12
+    blue_fifth_pc = (root_pc + 6) % 12
+
+    adjusted = list(section_events)
+    sounding: list[tuple[int, int, float]] = []
+    beat_cursor = 0.0
+    for idx, (pitch, dur, is_rest) in enumerate(section_events):
+        start_beat = beat_cursor / BEAT_DURATION
+        beat_cursor += float(dur)
+        if not is_rest and 0 <= int(pitch) <= 127:
+            sounding.append((idx, int(pitch), start_beat))
+
+    changed = 0
+    for pos, (idx, pitch, start_beat) in enumerate(sounding[:-1]):
+        if _is_integer_beat_position(start_beat):
+            continue
+        next_pitch = sounding[pos + 1][1]
+        if next_pitch % 12 not in chord_set:
+            continue
+        pc = pitch % 12
+        if pc == third_pc:
+            target_pc = blue_third_pc
+        elif pc == fifth_pc:
+            target_pc = blue_fifth_pc
+        else:
+            continue
+        new_pitch = _nearest_pitch_with_pc(pitch, target_pc)
+        if new_pitch != pitch:
+            old_p, old_d, old_r = adjusted[idx]
+            adjusted[idx] = (new_pitch, old_d, old_r)
+            changed += 1
+            if max_edits is not None and changed >= max_edits:
+                break
+    return adjusted, changed
+
+
 def _enforce_section_cadence(
     section_events: list,
     chord_symbol: str,
@@ -801,6 +955,10 @@ def generate_solo(progression, artist_name="Charlie Parker",
                   section_cadence_preserve_contour=False,
                   section_cadence_target_contour=False,
                   bebop_approach_notes=False,
+                  bebop_enclosures=False,
+                  bebop_enclosure_max_edits: int | None = None,
+                  dominant_blues_colors=False,
+                  dominant_blues_color_max_edits: int | None = None,
                   rhythm_density_calibration=False,
                   timing_aware_harmony=False,
                   timing_aware_harmony_mode="strict_chord_tone"):
@@ -852,8 +1010,12 @@ def generate_solo(progression, artist_name="Charlie Parker",
             preserve_cadence=phrase_diversity_preserve_cadence,
         )
     else:
-        phrase_plan_ints = list(remapped_phrase_plan_ints)
+        phrase_plan_ints = remapped_phrase_plan_ints
+        _phrase_diversity_changed_total = 0
+
     phrase_plan_labels = [phrase_tok.decode(token) for token in phrase_plan_ints]
+    bebop_enclosure_edits_remaining = bebop_enclosure_max_edits
+    dominant_blues_color_edits_remaining = dominant_blues_color_max_edits
 
     # Rolling cross-chord context: last WINDOW note tokens from previous section
     ctx_pitch: list = []
@@ -954,6 +1116,30 @@ def generate_solo(progression, artist_name="Charlie Parker",
                 section_events,
                 chord_str,
             )
+        dominant_blues_color_adjusted = 0
+        if dominant_blues_colors:
+            section_events, dominant_blues_color_adjusted = _apply_dominant_blues_colors(
+                section_events,
+                chord_str,
+                max_edits=dominant_blues_color_edits_remaining,
+            )
+            if dominant_blues_color_edits_remaining is not None:
+                dominant_blues_color_edits_remaining = max(
+                    0,
+                    dominant_blues_color_edits_remaining - dominant_blues_color_adjusted,
+                )
+        bebop_enclosure_adjusted = 0
+        if bebop_enclosures:
+            section_events, bebop_enclosure_adjusted = _apply_bebop_enclosures(
+                section_events,
+                chord_str,
+                max_edits=bebop_enclosure_edits_remaining,
+            )
+            if bebop_enclosure_edits_remaining is not None:
+                bebop_enclosure_edits_remaining = max(
+                    0,
+                    bebop_enclosure_edits_remaining - bebop_enclosure_adjusted,
+                )
         section_cadence_adjusted = False
         if section_cadence_enforcement:
             section_events, section_cadence_adjusted, enforced_final_pitch = _enforce_section_cadence(
@@ -1004,6 +1190,12 @@ def generate_solo(progression, artist_name="Charlie Parker",
             "register_continuity_adjusted": register_continuity_adjusted,
             "bebop_approach_notes": bool(bebop_approach_notes),
             "bebop_approach_adjusted": bebop_approach_adjusted,
+            "dominant_blues_colors": bool(dominant_blues_colors),
+            "dominant_blues_color_adjusted": dominant_blues_color_adjusted,
+            "dominant_blues_color_max_edits": dominant_blues_color_max_edits,
+            "bebop_enclosures": bool(bebop_enclosures),
+            "bebop_enclosure_adjusted": bebop_enclosure_adjusted,
+            "bebop_enclosure_max_edits": bebop_enclosure_max_edits,
             "section_cadence_enforcement": bool(section_cadence_enforcement),
             "section_cadence_preserve_contour": bool(section_cadence_preserve_contour),
             "section_cadence_target_contour": bool(section_cadence_target_contour),
@@ -1095,6 +1287,12 @@ def export_json(note_events, summaries, output_path, name=None, tempo_bpm=120):
             "register_continuity_adjusted",
             "bebop_approach_notes",
             "bebop_approach_adjusted",
+            "dominant_blues_colors",
+            "dominant_blues_color_adjusted",
+            "dominant_blues_color_max_edits",
+            "bebop_enclosures",
+            "bebop_enclosure_adjusted",
+            "bebop_enclosure_max_edits",
             "section_cadence_enforcement",
             "section_cadence_preserve_contour",
             "section_cadence_target_contour",
@@ -1246,6 +1444,16 @@ def parse_args(argv=None):
                         help="When enforcing section cadences, prefer a chord-tone final pitch that matches the phrase-cluster target contour.")
     parser.add_argument("--bebop-approach-notes", action="store_true",
                         help="Add weak-beat chromatic approach notes into strong-beat chord tones as a controlled jazz vocabulary layer.")
+    parser.add_argument("--bebop-enclosures", action="store_true",
+                        help="Rewrite two weak-beat pickup notes as chromatic enclosures into strong-beat guide tones.")
+    parser.add_argument("--bebop-enclosure-max-edits", type=int, default=None,
+                        help="Optional total cap on bebop enclosure pickup-note rewrites per generated solo.")
+    parser.add_argument("--dominant-blues-colors", action="store_true",
+                        help="Rewrite selected weak-beat dominant 3rds/5ths as blue 3rds/5ths when they resolve to chord tones.")
+    parser.add_argument("--dominant-blues-color-max-edits", type=int, default=None,
+                        help="Optional total cap on dominant blue-note rewrites per generated solo.")
+    parser.add_argument("--dominant-blues-colors-blues-only", action="store_true",
+                        help="Apply --dominant-blues-colors only to named blues-form probes (currently blues_F), leaving other progressions at the baseline vocabulary setting.")
     parser.add_argument("--rhythm-density-calibration", action="store_true",
                         help="When phrase shaping is enabled, reactivate sampled rest positions until each section reaches its phrase-cluster note-count target.")
     parser.add_argument("--timing-aware-harmony", action="store_true",
@@ -1284,6 +1492,13 @@ def main(argv=None):
 
 
     for name, progression in PROGRESSIONS.items():
+        dominant_blues_colors_for_probe = args.dominant_blues_colors and (
+            not args.dominant_blues_colors_blues_only or name.lower().startswith("blues")
+        )
+        dominant_blues_color_max_edits_for_probe = (
+            args.dominant_blues_color_max_edits if dominant_blues_colors_for_probe else None
+        )
+
         note_events, summaries, unknowns = generate_solo(
             progression,
             chord_tok=chord_tok, note_tok=note_tok,
@@ -1311,6 +1526,10 @@ def main(argv=None):
             section_cadence_preserve_contour=args.section_cadence_preserve_contour,
             section_cadence_target_contour=args.section_cadence_target_contour,
             bebop_approach_notes=args.bebop_approach_notes,
+            bebop_enclosures=args.bebop_enclosures,
+            bebop_enclosure_max_edits=args.bebop_enclosure_max_edits,
+            dominant_blues_colors=dominant_blues_colors_for_probe,
+            dominant_blues_color_max_edits=dominant_blues_color_max_edits_for_probe,
             rhythm_density_calibration=args.rhythm_density_calibration,
             timing_aware_harmony=args.timing_aware_harmony,
             timing_aware_harmony_mode=args.timing_aware_harmony_mode,
@@ -1343,6 +1562,16 @@ def main(argv=None):
             stem += "_timing_harmony" if args.timing_aware_harmony_mode == "strict_chord_tone" else f"_timing_harmony_{args.timing_aware_harmony_mode}"
         if args.bebop_approach_notes:
             stem += "_bebop_approach"
+        if dominant_blues_colors_for_probe:
+            stem += "_dominant_blues_colors"
+            if dominant_blues_color_max_edits_for_probe is not None:
+                stem += f"_max{dominant_blues_color_max_edits_for_probe}"
+            if args.dominant_blues_colors_blues_only:
+                stem += "_blues_only"
+        if args.bebop_enclosures:
+            stem += "_bebop_enclosures"
+            if args.bebop_enclosure_max_edits is not None:
+                stem += f"_max{args.bebop_enclosure_max_edits}"
         if args.section_cadence_enforcement:
             stem += "_section_cadence"
             if args.section_cadence_target_contour:

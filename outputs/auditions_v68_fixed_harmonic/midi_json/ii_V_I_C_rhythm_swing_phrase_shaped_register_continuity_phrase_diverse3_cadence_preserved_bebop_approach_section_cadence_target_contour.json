@@ -1,0 +1,584 @@
+{
+  "name": "ii_V_I_C",
+  "tempo_bpm": 120,
+  "total_notes": 58,
+  "phrase_plan": [
+    "PHRASE_57",
+    "PHRASE_18",
+    "PHRASE_39",
+    "PHRASE_07"
+  ],
+  "notes": [
+    {
+      "pitch": 48,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 65,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 61,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.0625,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 54,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.3333,
+      "is_rest": true
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 1.65,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.35,
+      "is_rest": true
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 57,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 53,
+      "duration_sec": 0.1875,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.1667,
+      "is_rest": false
+    },
+    {
+      "pitch": 51,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 59,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 64,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 67,
+      "duration_sec": 0.3333,
+      "is_rest": false
+    },
+    {
+      "pitch": 62,
+      "duration_sec": 0.6667,
+      "is_rest": false
+    },
+    {
+      "pitch": 60,
+      "duration_sec": 0.125,
+      "is_rest": false
+    },
+    {
+      "pitch": 61,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 50,
+      "duration_sec": 0.0833,
+      "is_rest": false
+    },
+    {
+      "pitch": 48,
+      "duration_sec": 0.25,
+      "is_rest": false
+    },
+    {
+      "pitch": 52,
+      "duration_sec": 0.5,
+      "is_rest": false
+    },
+    {
+      "pitch": 55,
+      "duration_sec": 0.05,
+      "is_rest": false
+    },
+    {
+      "pitch": 0,
+      "duration_sec": 0.25,
+      "is_rest": true
+    }
+  ],
+  "sections": [
+    {
+      "chord": "Dm7",
+      "model_chord": "D-7",
+      "chord_condition": "normal",
+      "beats": 4,
+      "phrase": "PHRASE_57",
+      "n_notes": 12,
+      "clamped": 0,
+      "distinct_pitches": 9,
+      "dur_fallback": 0,
+      "pitches": [
+        48,
+        53,
+        55,
+        57,
+        60,
+        65,
+        62,
+        61,
+        60,
+        57,
+        53,
+        50
+      ],
+      "phrase_features": {
+        "token": "PHRASE_57",
+        "median_length_beats": 2.9976417233560095,
+        "median_num_notes": 12,
+        "median_density": 3.778173190984567,
+        "median_pitch_mean": 74.55555555555556,
+        "median_pitch_range": 15.0,
+        "median_rest_ratio": 0.1284722222222204,
+        "contour": "ascending",
+        "starts_on_downbeat": false,
+        "final_chord_tone_rate": 0.6025641025641025
+      },
+      "generated_phrase_metrics": {
+        "contour": "flat",
+        "num_notes": 12,
+        "density": 3.0,
+        "rest_ratio": 0.0,
+        "pitch_range": 17,
+        "final_pitch": 50
+      },
+      "phrase_shaping": true,
+      "section_rest_boost": 1.5138888888888817,
+      "phrase_diversity": true,
+      "phrase_diversity_remapped": false,
+      "phrase_before_diversity": null,
+      "rhythm_density_calibration": false,
+      "rhythm_density_calibration_adjusted": 0,
+      "register_continuity": true,
+      "register_continuity_adjusted": 4,
+      "bebop_approach_notes": true,
+      "bebop_approach_adjusted": 0,
+      "dominant_blues_colors": false,
+      "dominant_blues_color_adjusted": 0,
+      "dominant_blues_color_max_edits": null,
+      "bebop_enclosures": false,
+      "bebop_enclosure_adjusted": 0,
+      "bebop_enclosure_max_edits": null,
+      "section_cadence_enforcement": true,
+      "section_cadence_preserve_contour": false,
+      "section_cadence_target_contour": true,
+      "section_cadence_adjusted": false,
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "G7",
+      "model_chord": "G7",
+      "chord_condition": "normal",
+      "beats": 4,
+      "phrase": "PHRASE_18",
+      "n_notes": 8,
+      "clamped": 0,
+      "distinct_pitches": 6,
+      "dur_fallback": 0,
+      "pitches": [
+        55,
+        53,
+        52,
+        50,
+        54,
+        53,
+        50,
+        59
+      ],
+      "phrase_features": {
+        "token": "PHRASE_18",
+        "median_length_beats": 1.931995464852605,
+        "median_num_notes": 3,
+        "median_density": 2.032033500219172,
+        "median_pitch_mean": 78.45,
+        "median_pitch_range": 4.0,
+        "median_rest_ratio": 0.05313030429074625,
+        "contour": "flat",
+        "starts_on_downbeat": false,
+        "final_chord_tone_rate": 0.6354166666666666
+      },
+      "generated_phrase_metrics": {
+        "contour": "ascending",
+        "num_notes": 8,
+        "density": 2.0,
+        "rest_ratio": 0.0,
+        "pitch_range": 9,
+        "final_pitch": 59
+      },
+      "phrase_shaping": true,
+      "section_rest_boost": 1.212521217162985,
+      "phrase_diversity": true,
+      "phrase_diversity_remapped": false,
+      "phrase_before_diversity": null,
+      "rhythm_density_calibration": false,
+      "rhythm_density_calibration_adjusted": 0,
+      "register_continuity": true,
+      "register_continuity_adjusted": 4,
+      "bebop_approach_notes": true,
+      "bebop_approach_adjusted": 1,
+      "dominant_blues_colors": false,
+      "dominant_blues_color_adjusted": 0,
+      "dominant_blues_color_max_edits": null,
+      "bebop_enclosures": false,
+      "bebop_enclosure_adjusted": 0,
+      "bebop_enclosure_max_edits": null,
+      "section_cadence_enforcement": true,
+      "section_cadence_preserve_contour": false,
+      "section_cadence_target_contour": true,
+      "section_cadence_adjusted": false,
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "Cj7",
+      "model_chord": "Cj7",
+      "chord_condition": "normal",
+      "beats": 8,
+      "phrase": "PHRASE_39",
+      "n_notes": 8,
+      "clamped": 0,
+      "distinct_pitches": 4,
+      "dur_fallback": 0,
+      "pitches": [
+        55,
+        52,
+        50,
+        48,
+        52,
+        50,
+        48
+      ],
+      "phrase_features": {
+        "token": "PHRASE_39",
+        "median_length_beats": 1.7151020408163404,
+        "median_num_notes": 7,
+        "median_density": 4.303224182871469,
+        "median_pitch_mean": 75.16666666666666,
+        "median_pitch_range": 6.0,
+        "median_rest_ratio": 0.12856894554850207,
+        "contour": "flat",
+        "starts_on_downbeat": false,
+        "final_chord_tone_rate": 0.5342465753424658
+      },
+      "generated_phrase_metrics": {
+        "contour": "descending",
+        "num_notes": 7,
+        "density": 0.875,
+        "rest_ratio": 0.18324022346368715,
+        "pitch_range": 7,
+        "final_pitch": 48
+      },
+      "phrase_shaping": true,
+      "section_rest_boost": 1.5142757821940083,
+      "phrase_diversity": true,
+      "phrase_diversity_remapped": false,
+      "phrase_before_diversity": null,
+      "rhythm_density_calibration": false,
+      "rhythm_density_calibration_adjusted": 0,
+      "register_continuity": true,
+      "register_continuity_adjusted": 0,
+      "bebop_approach_notes": true,
+      "bebop_approach_adjusted": 0,
+      "dominant_blues_colors": false,
+      "dominant_blues_color_adjusted": 0,
+      "dominant_blues_color_max_edits": null,
+      "bebop_enclosures": false,
+      "bebop_enclosure_adjusted": 0,
+      "bebop_enclosure_max_edits": null,
+      "section_cadence_enforcement": true,
+      "section_cadence_preserve_contour": false,
+      "section_cadence_target_contour": true,
+      "section_cadence_adjusted": false,
+      "phrase_remapped": false,
+      "phrase_original": null
+    },
+    {
+      "chord": "Cj7",
+      "model_chord": "Cj7",
+      "chord_condition": "normal",
+      "beats": 8,
+      "phrase": "PHRASE_07",
+      "n_notes": 28,
+      "clamped": 0,
+      "distinct_pitches": 13,
+      "dur_fallback": 0,
+      "pitches": [
+        55,
+        59,
+        60,
+        57,
+        55,
+        52,
+        50,
+        48,
+        55,
+        52,
+        53,
+        50,
+        55,
+        52,
+        48,
+        51,
+        50,
+        59,
+        64,
+        67,
+        62,
+        60,
+        61,
+        55,
+        50,
+        48,
+        52,
+        55
+      ],
+      "phrase_features": {
+        "token": "PHRASE_07",
+        "median_length_beats": 23.181814058956917,
+        "median_num_notes": 100,
+        "median_density": 4.161562103253669,
+        "median_pitch_mean": 67.78647619047618,
+        "median_pitch_range": 23.0,
+        "median_rest_ratio": 0.2079064553939112,
+        "contour": "descending",
+        "starts_on_downbeat": false,
+        "final_chord_tone_rate": 0.44
+      },
+      "generated_phrase_metrics": {
+        "contour": "flat",
+        "num_notes": 28,
+        "density": 3.5,
+        "rest_ratio": 0.0,
+        "pitch_range": 19,
+        "final_pitch": 55
+      },
+      "phrase_shaping": true,
+      "section_rest_boost": 1.8316258215756447,
+      "phrase_diversity": true,
+      "phrase_diversity_remapped": false,
+      "phrase_before_diversity": null,
+      "rhythm_density_calibration": false,
+      "rhythm_density_calibration_adjusted": 0,
+      "register_continuity": true,
+      "register_continuity_adjusted": 14,
+      "bebop_approach_notes": true,
+      "bebop_approach_adjusted": 0,
+      "dominant_blues_colors": false,
+      "dominant_blues_color_adjusted": 0,
+      "dominant_blues_color_max_edits": null,
+      "bebop_enclosures": false,
+      "bebop_enclosure_adjusted": 0,
+      "bebop_enclosure_max_edits": null,
+      "section_cadence_enforcement": true,
+      "section_cadence_preserve_contour": false,
+      "section_cadence_target_contour": true,
+      "section_cadence_adjusted": false,
+      "phrase_remapped": false,
+      "phrase_original": null
+    }
+  ]
+}

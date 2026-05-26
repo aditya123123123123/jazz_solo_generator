@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "C:\Users\adity\Documents\JazzMlProject\jazz_solo_generator\scripts\render_midi_dir_to_mp3.py", line 50, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\adity\Documents\JazzMlProject\jazz_solo_generator\scripts\render_midi_dir_to_mp3.py", line 44, in main
+    render_one(midi, mp3)
+  File "C:\Users\adity\Documents\JazzMlProject\jazz_solo_generator\scripts\render_midi_dir_to_mp3.py", line 26, in render_one
+    subprocess.run(
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 1538, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] The system cannot find the file specified

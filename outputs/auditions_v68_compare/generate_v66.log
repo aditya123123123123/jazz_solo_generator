@@ -1,0 +1,68 @@
+INFO __main__: note_executor checkpoint: current v6 (dur_vocab=18, tempo_embed=True)
+Loading models …
+Models loaded.
+
+============================================================
+  ii_V_I_C
+  File        : outputs\auditions_v68_compare\v66\ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_bebop_approach_section_cadence_target_contour.mid
+  Total notes : 43
+  Total dur   : 14.8s
+  Pitch range : 48 – 72 MIDI  (C3–C5)
+  Clamped     : 0 notes
+  Dur fallback: 0
+  Vocab       : all chords found
+
+  Chord      Beats  Phrase        Notes  Clamped  Distinct  DurFall  Plausible
+  --------------------------------------------------------------------------------
+  Dm7            4  PHRASE_22         8        0         6        0  ✓
+  G7             4  PHRASE_59        15        0        10        0  ✓
+  Cj7            8  PHRASE_59        15        0         7        0  ✓
+  Cj7            8  PHRASE_19         8        0         6        0  ✓
+
+============================================================
+  blues_F
+  File        : outputs\auditions_v68_compare\v66\blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_bebop_approach_section_cadence_target_contour.mid
+  Total notes : 135
+  Total dur   : 44.3s
+  Pitch range : 48 – 75 MIDI  (C3–D#5)
+  Clamped     : 0 notes
+  Dur fallback: 0
+  Vocab       : all chords found
+
+  Chord      Beats  Phrase        Notes  Clamped  Distinct  DurFall  Plausible
+  --------------------------------------------------------------------------------
+  F7             4  PHRASE_14         8        0         2        0  ✗ (only 2 distinct pitches)
+  Bb7            4  PHRASE_53         8        0         6        0  ✓
+  F7             4  PHRASE_53         8        0         7        0  ✓
+  F7             4  PHRASE_43        20        0         9        0  ✓
+  Bb7            4  PHRASE_53         8        0         6        0  ✓
+  Bb7            4  PHRASE_42         9        0         6        0  ✓
+  F7             4  PHRASE_24        11        0         6        0  ✓
+  D7             4  PHRASE_42         9        0         7        0  ✓
+  Gm7            4  PHRASE_42         9        0         6        0  ✓
+  C7             4  PHRASE_40        18        0         9        0  ✓
+  F7             4  PHRASE_26        18        0        13        0  ✓
+  C7             4  PHRASE_43        20        0        14        0  ✓
+
+============================================================
+  autumn_leaves
+  File        : outputs\auditions_v68_compare\v66\autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_bebop_approach_section_cadence_target_contour.mid
+  Total notes : 112
+  Total dur   : 45.9s
+  Pitch range : 48 – 84 MIDI  (C3–C6)
+  Clamped     : 0 notes
+  Dur fallback: 0
+  Vocab       : all chords found
+
+  Chord      Beats  Phrase        Notes  Clamped  Distinct  DurFall  Plausible
+  --------------------------------------------------------------------------------
+  Cm7            4  PHRASE_41         8        0         6        0  ✓
+  F7             4  PHRASE_41         8        0         7        0  ✓
+  Bbj7           4  PHRASE_33        27        0        15        0  ✓
+  Ebj7           4  PHRASE_33        27        0        10        0  ✓
+  Am7b5          4  PHRASE_22         8        0         6        0  ✓
+  D7             4  PHRASE_57        12        0         9        0  ✓
+  Gm7            8  PHRASE_59        15        0        11        0  ✓
+  Gm7            8  PHRASE_33        27        0         9        0  ✓
+
+Files saved to: outputs\auditions_v68_compare\v66/

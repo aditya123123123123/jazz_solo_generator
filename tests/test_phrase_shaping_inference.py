@@ -3,6 +3,28 @@ from tests.test_whole_progression_phrase_planning import make_common
 from src.generation import generate_solo as gen
 
 
+def test_dominant_blues_colors_blues_only_cli_flag_parses_with_budget():
+    args = gen.parse_args([
+        "--dominant-blues-colors",
+        "--dominant-blues-color-max-edits", "2",
+        "--dominant-blues-colors-blues-only",
+    ])
+
+    assert args.dominant_blues_colors is True
+    assert args.dominant_blues_color_max_edits == 2
+    assert args.dominant_blues_colors_blues_only is True
+
+
+def test_bebop_enclosure_max_edits_cli_flag_parses():
+    args = gen.parse_args([
+        "--bebop-enclosures",
+        "--bebop-enclosure-max-edits", "2",
+    ])
+
+    assert args.bebop_enclosures is True
+    assert args.bebop_enclosure_max_edits == 2
+
+
 def test_phrase_shaping_uses_cluster_note_count_and_rest_ratio():
     common = make_common((13, 14))  # PHRASE_10, PHRASE_11
     features = {
@@ -208,6 +230,158 @@ def test_bebop_approach_notes_keep_rests_and_cadence_final_pitch_safe():
     ]
     assert summaries[0]["bebop_approach_adjusted"] == 0
     assert summaries[0]["section_cadence_adjusted"] is True
+
+
+def test_bebop_enclosures_rewrite_two_weak_pickups_into_guide_tone():
+    common = make_common((13,))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (60, 6, 0),  # C on beat 0.00
+        (62, 6, 0),  # D on beat 0.25
+        (67, 6, 0),  # G on beat 0.50; should become lower enclosure B-1
+        (64, 6, 0),  # E on beat 0.75; should become upper enclosure B+1
+        (71, 6, 0),  # B on beat 1.00, guide-tone target for Cj7
+    ]
+    common["decode_dur"] = lambda _token, _tempo: 0.125
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Cj7", 4)],
+        bebop_enclosures=True,
+        **common,
+    )
+
+    assert notes == [
+        (60, 0.125, False),
+        (62, 0.125, False),
+        (70, 0.125, False),
+        (72, 0.125, False),
+        (71, 0.125, False),
+    ]
+    assert summaries[0]["bebop_enclosures"] is True
+    assert summaries[0]["bebop_enclosure_adjusted"] == 2
+
+
+def test_bebop_enclosures_do_not_change_rests_or_target_note():
+    common = make_common((13,))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (60, 4, 0),
+        (62, 4, 1),  # rest cannot be part of an enclosure
+        (63, 4, 0),
+        (64, 4, 0),  # guide tone, but only one previous sounding weak pickup
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Cj7", 4)],
+        bebop_enclosures=True,
+        **common,
+    )
+
+    assert notes == [
+        (60, 0.25, False),
+        (62, 0.25, True),
+        (63, 0.25, False),
+        (64, 0.25, False),
+    ]
+    assert summaries[0]["bebop_enclosure_adjusted"] == 0
+
+
+def test_bebop_enclosures_can_be_capped_per_solo():
+    common = make_common((13, 13))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (60, 6, 0),
+        (62, 6, 0),
+        (67, 6, 0),
+        (64, 6, 0),
+        (71, 6, 0),
+    ]
+    common["decode_dur"] = lambda _token, _tempo: 0.125
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Cj7", 4), ("Cj7", 4)],
+        bebop_enclosures=True,
+        bebop_enclosure_max_edits=2,
+        **common,
+    )
+
+    sounding_pitches = [p for p, _d, is_rest in notes if not is_rest]
+    assert sounding_pitches[:5] == [60, 62, 70, 72, 71]
+    assert sounding_pitches[5:10] == [60, 62, 67, 64, 71]
+    assert summaries[0]["bebop_enclosure_adjusted"] == 2
+    assert summaries[1]["bebop_enclosure_adjusted"] == 0
+    assert summaries[0]["bebop_enclosure_max_edits"] == 2
+
+
+def test_dominant_blues_colors_rewrite_weak_beat_3rd_and_5th_when_resolving():
+    common = make_common((13,))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (69, 4, 0),  # A, strong-beat F7 third; unchanged
+        (69, 4, 0),  # A, weak-beat third; should become Ab blue 3rd
+        (72, 4, 0),  # C, chord-tone resolution
+        (72, 4, 0),  # C, weak-beat fifth; should become B blue 5th
+        (75, 4, 0),  # Eb, chord-tone resolution
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("F7", 4)],
+        dominant_blues_colors=True,
+        **common,
+    )
+
+    assert notes == [
+        (69, 0.25, False),
+        (68, 0.25, False),
+        (72, 0.25, False),
+        (71, 0.25, False),
+        (75, 0.25, False),
+    ]
+    assert summaries[0]["dominant_blues_colors"] is True
+    assert summaries[0]["dominant_blues_color_adjusted"] == 2
+
+
+def test_dominant_blues_colors_can_be_capped_per_solo():
+    common = make_common((13, 13))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (69, 4, 0),  # strong-beat F7 third; unchanged
+        (69, 4, 0),  # eligible weak-beat third
+        (72, 4, 0),  # chord-tone resolution
+        (72, 4, 0),  # eligible weak-beat fifth
+        (75, 4, 0),  # chord-tone resolution
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("F7", 4), ("F7", 4)],
+        dominant_blues_colors=True,
+        dominant_blues_color_max_edits=2,
+        **common,
+    )
+
+    sounding_pitches = [p for p, _d, is_rest in notes if not is_rest]
+    assert sounding_pitches[:5] == [69, 68, 72, 71, 75]
+    assert sounding_pitches[5:10] == [69, 69, 72, 72, 75]
+    assert summaries[0]["dominant_blues_color_adjusted"] == 2
+    assert summaries[1]["dominant_blues_color_adjusted"] == 0
+    assert summaries[0]["dominant_blues_color_max_edits"] == 2
+
+
+def test_dominant_blues_colors_are_dominant_only_and_preserve_rests():
+    common = make_common((13,))
+
+    common["executor"].generate = lambda *_args, **_kwargs: [
+        (64, 4, 0),
+        (67, 4, 1),  # rest must not be rewritten
+        (67, 4, 0),
+    ]
+    notes, summaries, _unknowns = gen.generate_solo(
+        [("Cj7", 4)],
+        dominant_blues_colors=True,
+        **common,
+    )
+
+    assert notes == [
+        (64, 0.25, False),
+        (67, 0.25, True),
+        (67, 0.25, False),
+    ]
+    assert summaries[0]["dominant_blues_color_adjusted"] == 0
 
 
 def test_section_cadence_enforcement_is_opt_in():

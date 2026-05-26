@@ -598,3 +598,265 @@ WANDB_MODE=online PYTHONPATH=. python src/training/train_v6.py \
 ```
 
 Evaluate by generating the usual Blues F / Autumn Leaves / ii-V-I probes from the raw v6.6 checkpoint first, then compare against Exp 10 before enabling post-processing. Acceptance requires the raw model to show more intentional chromatic approaches/blues language while preserving Exp 10-level cadence/harmony after the existing safe inference settings are applied.
+
+### Experiment 11: constrained two-note guide-tone enclosures
+
+Hypothesis: If Exp 10's accepted weak-beat chromatic approach layer is expanded by rewriting two existing pickup notes into chromatic enclosures around strong-beat guide tones (3rds/7ths), then the solos will sound more idiomatic/jazzy while preserving Exp 10's cadence, phrase plan, note count, rhythm, register continuity, and accompaniment behavior.
+
+Primary variable changed: a narrow post-process behind `--bebop-enclosures`, added on top of Exp 10. It only rewrites two already-sounding weak-position pickup notes immediately before an integer-beat guide-tone target. It preserves durations, rests, note count, phrase plan, target notes, model checkpoint, training data, and cadence enforcement. No retraining was launched.
+
+Focused tests:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_phrase_shaping_inference.py tests/test_phrase_diversity.py tests/test_register_continuity.py tests/test_rhythm_section.py tests/test_phrase_plan_trace.py tests/test_phrase_position_embed.py -q
+# 34 passed
+
+PYTHONPATH=. .venv/bin/python -m pytest tests/ -q
+# 77 passed
+```
+
+Generated artifacts:
+
+- JSON/MIDI: `outputs/solos_v6.5_exp11_bebop_enclosures_probe/`
+- MP3: `outputs/mp3_v65_exp11_bebop_enclosures/`
+- MP3 ZIP: `outputs/v65_exp11_bebop_enclosures_mp3s.zip`
+- Metrics: `outputs/musicality_metrics_v65_exp11_bebop_enclosures.json`
+- Phrase faithfulness: `outputs/phrase_faithfulness_v65_exp11_bebop_enclosures.json`
+- Rhythm verification: `outputs/rhythm_section_verification_v65_exp11_bebop_enclosures.json`
+
+Exp 10 accepted jazz-vocabulary baseline -> Exp 11 objective comparison:
+
+- Cadence resolution stayed perfect: 100.0% -> 100.0%.
+- Contour match stayed unchanged: 41.7% -> 41.7%.
+- Density, note-count, rest-ratio, and pitch-range errors stayed unchanged: density 1.100, note-count 1.875, rest-ratio 0.0799, pitch-range 3.79.
+- Register continuity stayed controlled: octave+ leaps remain 0 on all probes; max leap stayed <= 10.
+- Phrase repetition stayed controlled: Blues max repeated phrase remains 3/12.
+- Added vocabulary edits: Autumn 4 enclosure pitch edits, Blues 1, ii-V-I 0; existing approach edits remained Autumn 5, Blues 3, ii-V-I 0.
+- Controlled chromaticism increased modestly where enclosure notes were added:
+  - Autumn outside 8.8% -> 9.6%; pure chord tones 73.5% -> 72.1%.
+  - Blues outside 8.6% -> 9.4%; pure chord tones 79.7% -> 78.9%.
+  - ii-V-I unchanged: outside 4.3%, pure chord tones 82.6%.
+
+Accompaniment verification on generated rhythm-section MIDI:
+
+- Autumn Leaves tracks: Solo 136, Piano 180, Bass 120, Drums 330; bass boundaries 24/24; piano bad tones 0/180.
+- Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
+- ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
+
+Result: ready for human listening; not promoted over Exp 10 yet. Objectively it preserved every correctness/shape guardrail and only increased outside notes by the intended controlled chromatic enclosure edits. The open question is musical: do the added enclosure notes sound more bebop/jazzy, or do they sound forced on this model's generated lines?
+
+Interpretation: if Aditya prefers Exp 11 by ear, promote `--bebop-enclosures` into the current best listening baseline. If not, keep Exp 10 and move to the v6.6 vocabulary-aware training/fine-tuning path or a narrower dominant-only enclosure version.
+
+### Experiment 12: dominant blues-color weak-beat rewrites
+
+Hypothesis: If Exp 10's accepted chromatic-approach layer is expanded with a conservative dominant-only blues-color rewrite, changing existing weak-beat dominant 3rds/5ths into blue 3rds/blue 5ths only when the next sounding note resolves to a chord tone, then Blues F should sound more idiomatic without damaging the correctness guardrails.
+
+Primary variable changed: a new post-process behind `--dominant-blues-colors`, tested on top of Exp 10 (`--bebop-approach-notes`) and the Exp 9 correctness controls. It preserves durations, rests, note count, phrase plan, strong-beat notes, model checkpoint, training data, and cadence enforcement. No retraining was launched. Exp 11 enclosures were not included in this probe, so this is a one-variable comparison against the accepted Exp 10 baseline.
+
+Focused tests:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_phrase_shaping_inference.py -q
+# 14 passed
+
+PYTHONPATH=. .venv/bin/python -m pytest tests/ -q
+# 79 passed
+```
+
+Generated artifacts:
+
+- JSON/MIDI: `outputs/solos_v6.5_exp12_dominant_blues_colors_probe/`
+- MP3: `outputs/mp3_v65_exp12_dominant_blues_colors/`
+- MP3 ZIP: `outputs/v65_exp12_dominant_blues_colors_mp3s.zip`
+- Metrics: `outputs/musicality_metrics_v65_exp12_dominant_blues_colors.json`
+- Phrase faithfulness: `outputs/phrase_faithfulness_v65_exp12_dominant_blues_colors.json`
+- Rhythm verification: `outputs/rhythm_section_verification_v65_exp12_dominant_blues_colors.json`
+
+Exp 10 accepted jazz-vocabulary baseline -> Exp 12 objective comparison:
+
+- Cadence resolution stayed perfect: 100.0% -> 100.0%.
+- Contour/density/note-count/rest-ratio stayed effectively unchanged because the rewrite preserves timing and note count.
+- Register continuity stayed controlled: octave+ leaps remain 0 on all probes; max leap stayed <= 10 except ii-V-I rose slightly 5 -> 6.
+- Phrase repetition stayed controlled: Blues max repeated phrase remains 3/12.
+- Dominant blues-color edits added: Autumn 4, Blues 21, ii-V-I 3.
+- Harmony guardrails regressed too much:
+  - Autumn outside 8.8% -> 11.8%; pure chord tones 73.5% -> 70.6%.
+  - Blues outside 8.6% -> 25.0%; pure chord tones 79.7% -> 63.3%.
+  - ii-V-I outside 4.3% -> 10.9%; pure chord tones 82.6% -> 76.1%.
+
+Accompaniment verification on generated rhythm-section MIDI:
+
+- Autumn Leaves tracks: Solo 136, Piano 180, Bass 120, Drums 330; bass boundaries 24/24; piano bad tones 0/180.
+- Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
+- ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
+- No WAV files were produced in the Exp 12 artifact directories; MP3s were rendered from the rhythm-section MIDI.
+
+Result: rejected. The blue-note rewrite was musically plausible in concept but far too broad in practice, especially on Blues F: 21 altered notes converted a guarded 8.6% outside rate into 25.0%, which violates the core goal of staying within/clearly resolving through the chords. Keep Exp 10 as the accepted musical baseline while Exp 11 remains pending human listening.
+
+Interpretation: dominant/blues vocabulary needs either a much lower edit budget (for example max 1-2 blue-note rewrites per chorus, preferably Blues F only) or, better, the v6.6 vocabulary-aware training path so the model learns where these colors belong instead of stamping them onto every eligible weak beat.
+
+### Experiment 13: sparse dominant blues-color edit budget
+
+Hypothesis: If the rejected Exp 12 dominant/blues-color rewrite is capped to only two total blue-note rewrites per generated solo, then it may add a small amount of blues idiom while staying within the Exp 10 correctness guardrails.
+
+Primary variable changed: edit budget for the existing `--dominant-blues-colors` vocabulary layer only, via new `--dominant-blues-color-max-edits 2`. The rewrite remains opt-in and preserves durations, rests, note count, phrase plan, strong-beat notes, checkpoint, training data, and cadence enforcement. No retraining was launched.
+
+Code/test changes:
+
+- Added optional total-solo budget parameter `dominant_blues_color_max_edits` and CLI flag `--dominant-blues-color-max-edits`.
+- Added regression coverage that a max-edits budget is consumed across sections and stops later rewrites.
+
+Focused tests:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_phrase_shaping_inference.py -q
+# 15 passed
+
+PYTHONPATH=. .venv/bin/python -m pytest tests/ -q
+# 80 passed
+```
+
+Generated artifacts:
+
+- JSON/MIDI: `outputs/solos_v6.5_exp13_sparse_dominant_blues_colors_probe/`
+- MP3: `outputs/mp3_v65_exp13_sparse_dominant_blues_colors/`
+- MP3 ZIP: `outputs/v65_exp13_sparse_dominant_blues_colors_mp3s.zip`
+- Metrics: `outputs/musicality_metrics_v65_exp13_sparse_dominant_blues_colors.json`
+- Phrase faithfulness: `outputs/phrase_faithfulness_v65_exp13_sparse_dominant_blues_colors.json`
+- Rhythm verification: `outputs/rhythm_section_verification_v65_exp13_sparse_dominant_blues_colors.json`
+
+Exp 10 accepted jazz-vocabulary baseline -> Exp 13 sparse blue-note budget objective comparison:
+
+- Cadence resolution stayed perfect: 100.0% -> 100.0%.
+- Contour match stayed unchanged: 41.7% -> 41.7%.
+- Density, note-count, and rest-ratio errors stayed unchanged: density 1.100, note-count 1.875, rest-ratio 0.0799.
+- Pitch-range error regressed slightly: 3.79 -> 3.96.
+- Register continuity stayed controlled: octave+ leaps remain 0 on all probes; max leap stayed <= 10 except ii-V-I rose 5 -> 6.
+- Phrase repetition stayed controlled: Blues max repeated phrase remains 3/12.
+- Dominant blues-color edits were capped as intended: Autumn 2, Blues 2, ii-V-I 2, versus Exp 12's Autumn 4, Blues 21, ii-V-I 3.
+- Harmony guardrails still regressed:
+  - Autumn outside 8.8% -> 10.3%; pure chord tones 73.5% -> 72.1%.
+  - Blues outside 8.6% -> 10.2%; pure chord tones 79.7% -> 78.1%.
+  - ii-V-I outside 4.3% -> 8.7%; pure chord tones 82.6% -> 78.3%.
+
+Accompaniment verification on generated rhythm-section MIDI:
+
+- Autumn Leaves tracks: Solo 136, Piano 180, Bass 120, Drums 330; bass boundaries 24/24; piano bad tones 0/180.
+- Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
+- ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
+- No WAV files were produced in `outputs/`; MP3s were rendered from the rhythm-section MIDI.
+
+Result: rejected as a default listening baseline. The budget cap fixed Exp 12's over-stamping failure, but even two blue-note rewrites per solo still hurt the ii-V-I harmonic safety too much. Keep Exp 10 as the accepted musical baseline while Exp 11 remains pending human listening.
+
+Interpretation: the blue-note device should not be a global dominant-chord post-process. If continuing inference-time vocabulary, the next one-variable probe should be explicitly blues-form-only or human-approved-Blues-F-only, with zero edits on ii-V-I and Autumn. Otherwise, proceed to v6.6 vocabulary-aware fine-tuning so the model learns where blue notes belong instead of applying a hand rule to every dominant chord.
+
+### Experiment 14: blues-form-only sparse dominant blues colors
+
+Hypothesis: If the sparse blue-note device from rejected Exp 13 is scoped only to the named Blues F probe, then it can add a small amount of blues idiom where stylistically appropriate while keeping ii-V-I and Autumn Leaves exactly at the accepted Exp 10 harmony/correctness baseline.
+
+Primary variable changed: scope gate for the existing `--dominant-blues-colors` layer only, via new CLI flag `--dominant-blues-colors-blues-only`; with this flag, the blue-note rewrite is applied only to named blues-form probes (`blues_F`) and not to `ii_V_I_C` or `autumn_leaves`. The edit budget remained `--dominant-blues-color-max-edits 2`. No checkpoint, phrase plan, phrase diversity, cadence enforcement, rhythm, dataset, or training changed.
+
+Code/test changes:
+
+- Added `--dominant-blues-colors-blues-only` to direct generation.
+- When enabled, non-blues probe filenames and JSON summaries remain at the Exp 10 vocabulary setting; only Blues F receives the sparse dominant blue-note layer.
+- Added parser regression coverage for the new scope flag plus edit budget.
+
+Focused tests:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_phrase_shaping_inference.py -q
+# 16 passed
+
+PYTHONPATH=. .venv/bin/python -m pytest tests/ -q
+# 81 passed
+```
+
+Generated artifacts:
+
+- JSON/MIDI: `outputs/solos_v6.5_exp14_blues_only_dominant_blues_colors_probe/`
+- MP3: `outputs/mp3_v65_exp14_blues_only_dominant_blues_colors/`
+- MP3 ZIP: `outputs/v65_exp14_blues_only_dominant_blues_colors_mp3s.zip`
+- Metrics: `outputs/musicality_metrics_v65_exp14_blues_only_dominant_blues_colors.json`
+- Phrase faithfulness: `outputs/phrase_faithfulness_v65_exp14_blues_only_dominant_blues_colors.json`
+- Rhythm verification: `outputs/rhythm_section_verification_v65_exp14_blues_only_dominant_blues_colors.json`
+
+Exp 10 accepted jazz-vocabulary baseline -> Exp 14 blues-only blue-note scope objective comparison:
+
+- The scope gate worked: dominant blues-color edits were Autumn 0, Blues 2, ii-V-I 0. Existing bebop approach edits remained Autumn 5, Blues 3, ii-V-I 0.
+- Autumn Leaves and ii-V-I metrics were identical to Exp 10, as intended:
+  - Autumn outside 8.8%, pure chord tones 73.5%, octave+ leaps 0, max leap 10.
+  - ii-V-I outside 4.3%, pure chord tones 82.6%, octave+ leaps 0, max leap 5.
+- Blues F changed only by the two intended blue-note edits:
+  - Outside 8.6% -> 10.2%.
+  - Pure chord tones 79.7% -> 78.1%.
+  - Mean leap 3.09 -> 3.17; max leap stayed 10; octave+ leaps stayed 0.
+  - Phrase repetition stayed controlled: max repeated phrase 3/12.
+- Weighted aggregate harmony moved slightly away from Exp 10 because Blues outside rose: outside 8.05% -> 8.71%, pure chord tones 77.41% -> 76.75%.
+- Phrase-faithfulness/correctness mostly held: aggregate cadence 100.0%, contour 41.7%, density error 1.100, note-count error 1.875, rest-ratio error 0.0799. Pitch-range error moved 3.79 -> 4.00 because of the Blues edits.
+
+Accompaniment verification on generated rhythm-section MIDI:
+
+- Autumn Leaves tracks: Solo 136, Piano 180, Bass 120, Drums 330; bass boundaries 24/24; piano bad tones 0/180.
+- Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
+- ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
+- No Exp 14 WAV files were produced; MP3s were rendered from the rhythm-section MIDI.
+
+Result: objective result is safe-but-not-promoted. The scope fix succeeded and eliminated the unacceptable ii-V-I/Autumn regressions from Exp 13, but the only measurable change is Blues outside rising by +1.6 percentage points for two blue-note edits. This may be acceptable or even desirable by ear in a blues context, but without human listening it is not enough to replace Exp 10 as the default baseline. Keep Exp 10 as the accepted current musical baseline; Exp 14 is a listening candidate specifically for Blues F color.
+
+Interpretation: the hand-authored blue-note layer is now technically safe when restricted to blues form, but whether it is musically useful is subjective. If Aditya likes the Blues F MP3 better than Exp 10, promote `--dominant-blues-colors --dominant-blues-color-max-edits 2 --dominant-blues-colors-blues-only` as a Blues-form-only option, not a global default. If not, stop pursuing blue-note post-processing and move to v6.6 vocabulary-aware fine-tuning or await human preference on Exp 11 enclosures.
+
+### Experiment 15: sparse bebop enclosure edit budget
+
+Hypothesis: If the pending Exp 11 guide-tone enclosure layer is capped to at most two changed pickup pitches per generated solo, then it may keep the idiomatic enclosure benefit while reducing the harmonic cost and avoiding enclosure over-stamping.
+
+Primary variable changed: edit budget for `--bebop-enclosures` only, via new `--bebop-enclosure-max-edits 2`, tested on top of the accepted Exp 10 bebop-approach/cadence/register/phrase-diversity baseline. The layer still rewrites only existing weak pickup notes into a strong-beat 3rd/7th target and preserves durations, rests, note count, target notes, phrase plan, checkpoint, training data, and rhythm-section generation. No retraining was launched.
+
+Code/test changes:
+
+- Added optional total-solo budget parameter `bebop_enclosure_max_edits` and CLI flag `--bebop-enclosure-max-edits`.
+- Added parser coverage and a regression test that the enclosure budget is consumed across sections and prevents later enclosure rewrites.
+
+Focused tests:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m pytest tests/test_phrase_shaping_inference.py -q
+# 18 passed
+
+PYTHONPATH=. .venv/bin/python -m pytest tests/ -q
+# 83 passed
+```
+
+Generated artifacts:
+
+- JSON/MIDI: `outputs/solos_v6.5_exp15_sparse_bebop_enclosures_probe/`
+- MP3: `outputs/mp3_v65_exp15_sparse_bebop_enclosures/`
+- MP3 ZIP: `outputs/v65_exp15_sparse_bebop_enclosures_mp3s.zip`
+- Metrics: `outputs/musicality_metrics_v65_exp15_sparse_bebop_enclosures.json`
+- Phrase faithfulness: `outputs/phrase_faithfulness_v65_exp15_sparse_bebop_enclosures.json`
+- Rhythm verification: `outputs/rhythm_section_verification_v65_exp15_sparse_bebop_enclosures.json`
+
+Exp 10 accepted jazz-vocabulary baseline -> Exp 15 sparse enclosure budget objective comparison:
+
+- Enclosure edits were capped as intended: Autumn 2 changed pickup pitches, Blues 1, ii-V-I 0; existing bebop approach edits remained Autumn 5, Blues 3, ii-V-I 0.
+- Cadence resolution stayed perfect: 100.0% -> 100.0%.
+- Contour match stayed unchanged: 41.7% -> 41.7%.
+- Density, note-count, rest-ratio, and pitch-range errors stayed unchanged: density 1.100, note-count 1.875, rest-ratio 0.0799, pitch-range 3.79.
+- Register continuity stayed controlled: octave+ leaps remain 0 on all probes; max leap stayed <= 10.
+- Phrase repetition stayed controlled: Blues max repeated phrase remains 3/12.
+- Harmony cost was smaller than full Exp 11 but still measurable where enclosure notes were added:
+  - Autumn outside 8.8% -> 9.6%; pure chord tones 73.5% -> 72.8%.
+  - Blues outside 8.6% -> 9.4%; pure chord tones 79.7% -> 78.9%.
+  - ii-V-I unchanged: outside 4.3%, pure chord tones 82.6%.
+
+Accompaniment verification on generated rhythm-section MIDI:
+
+- Autumn Leaves tracks: Solo 136, Piano 180, Bass 120, Drums 330; bass boundaries 24/24; piano bad tones 0/180.
+- Blues F tracks: Solo 128, Piano 144, Bass 96, Drums 264; bass boundaries 24/24; piano bad tones 0/144.
+- ii-V-I C tracks: Solo 46, Piano 72, Bass 48, Drums 132; bass boundaries 8/8; piano bad tones 0/72.
+- MP3s were rendered from the rhythm-section MIDI; no WAV delivery artifacts were produced.
+
+Result: ready for human listening; not promoted over Exp 10 yet. Objectively this is safer than full Exp 11 and preserves every correctness/shape guardrail, but it still buys enclosure vocabulary by increasing controlled outside notes on Autumn and Blues. The deciding variable is subjective: whether those few enclosure pickups sound more bebop/jazzy or merely more chromatic.
+
+Interpretation: if Aditya prefers Exp 15 by ear, promote `--bebop-enclosures --bebop-enclosure-max-edits 2` into the current listening baseline after Exp 10. If not, stop adding hand-authored vocabulary layers and move to the v6.6 vocabulary-aware fine-tuning path, because post-processing has likely reached the point where more rules need listening supervision or learned placement.
+
