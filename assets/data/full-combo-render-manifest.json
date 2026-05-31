@@ -1,0 +1,259 @@
+{
+  "renderer": "FluidSynth + TimGM6mb.sf2",
+  "render_note": "All embedded MIDI-backed website outputs rendered as Tenor Sax Solo + Comping Piano + Walking Bass + Jazz Drum Kit. Generated notes unchanged.",
+  "items": [
+    {
+      "version": "Exp 9",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.5_exp9_target_contour_section_cadence_probe/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/exp9/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 46,
+        "Piano": 72,
+        "Bass": 48,
+        "Drums": 132
+      }
+    },
+    {
+      "version": "Exp 10",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.5_exp10_bebop_approach_probe/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 46,
+        "Piano": 72,
+        "Bass": 48,
+        "Drums": 132
+      }
+    },
+    {
+      "version": "v6.6 raw",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.6_exp17_final_raw_safety_probe/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v66-raw/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 45,
+        "Piano": 72,
+        "Bass": 48,
+        "Drums": 132
+      }
+    },
+    {
+      "version": "v6.6 + Exp10",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.6_exp17_final_exp10_vocab_probe/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v66-exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 45,
+        "Piano": 72,
+        "Bass": 48,
+        "Drums": 132
+      }
+    },
+    {
+      "version": "Exp 9",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.5_exp9_target_contour_section_cadence_probe/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/exp9/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 128,
+        "Piano": 144,
+        "Bass": 96,
+        "Drums": 264
+      }
+    },
+    {
+      "version": "Exp 10",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.5_exp10_bebop_approach_probe/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 128,
+        "Piano": 144,
+        "Bass": 96,
+        "Drums": 264
+      }
+    },
+    {
+      "version": "v6.6 raw",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.6_exp17_final_raw_safety_probe/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v66-raw/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 125,
+        "Piano": 144,
+        "Bass": 96,
+        "Drums": 264
+      }
+    },
+    {
+      "version": "v6.6 + Exp10",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.6_exp17_final_exp10_vocab_probe/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v66-exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 125,
+        "Piano": 144,
+        "Bass": 96,
+        "Drums": 264
+      }
+    },
+    {
+      "version": "Exp 9",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.5_exp9_target_contour_section_cadence_probe/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/exp9/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 136,
+        "Piano": 180,
+        "Bass": 120,
+        "Drums": 330
+      }
+    },
+    {
+      "version": "Exp 10",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.5_exp10_bebop_approach_probe/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 136,
+        "Piano": 180,
+        "Bass": 120,
+        "Drums": 330
+      }
+    },
+    {
+      "version": "v6.6 raw",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.6_exp17_final_raw_safety_probe/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v66-raw/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 136,
+        "Piano": 180,
+        "Bass": 120,
+        "Drums": 330
+      }
+    },
+    {
+      "version": "v6.6 + Exp10",
+      "source_midi": "/Users/openclaw/Documents/JazzMLProject/jazz_solo_generator/outputs/solos_v6.6_exp17_final_exp10_vocab_probe/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v66-exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav",
+      "notes_by_track": {
+        "Solo": 136,
+        "Piano": 180,
+        "Bass": 120,
+        "Drums": 330
+      }
+    },
+    {
+      "version": "v6.8.1 selected",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v681_selected/auditions_v681_selected/midi_json/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v681-selected/ii_V_I_C.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 55,
+        "Comping Piano": 72,
+        "Walking Bass": 48,
+        "Jazz Drum Kit": 132
+      }
+    },
+    {
+      "version": "v6.8.1 selected",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v681_selected/auditions_v681_selected/midi_json/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v681-selected/blues_F.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 106,
+        "Comping Piano": 144,
+        "Walking Bass": 96,
+        "Jazz Drum Kit": 264
+      }
+    },
+    {
+      "version": "v6.8.1 selected",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v681_selected/auditions_v681_selected/midi_json/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v681-selected/autumn_leaves.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 97,
+        "Comping Piano": 120,
+        "Walking Bass": 80,
+        "Jazz Drum Kit": 220
+      }
+    },
+    {
+      "version": "v6.8 expanded",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v68_expanded/auditions_v68_expanded_songs_selected/midi_json/all_the_things_you_are_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v68-expanded/all_the_things_you_are.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 266,
+        "Comping Piano": 192,
+        "Walking Bass": 128,
+        "Jazz Drum Kit": 352
+      }
+    },
+    {
+      "version": "v6.8 expanded",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v68_expanded/auditions_v68_expanded_songs_selected/midi_json/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v68-expanded/autumn_leaves.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 97,
+        "Comping Piano": 120,
+        "Walking Bass": 80,
+        "Jazz Drum Kit": 220
+      }
+    },
+    {
+      "version": "v6.8 expanded",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v68_expanded/auditions_v68_expanded_songs_selected/midi_json/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v68-expanded/blues_F.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 106,
+        "Comping Piano": 144,
+        "Walking Bass": 96,
+        "Jazz Drum Kit": 264
+      }
+    },
+    {
+      "version": "v6.8 expanded",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v68_expanded/auditions_v68_expanded_songs_selected/midi_json/giant_steps_cycle_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v68-expanded/giant_steps_cycle.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 226,
+        "Comping Piano": 288,
+        "Walking Bass": 192,
+        "Jazz Drum Kit": 528
+      }
+    },
+    {
+      "version": "v6.8 expanded",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v68_expanded/auditions_v68_expanded_songs_selected/midi_json/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v68-expanded/ii_V_I_C.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 55,
+        "Comping Piano": 72,
+        "Walking Bass": 48,
+        "Jazz Drum Kit": 132
+      }
+    },
+    {
+      "version": "v6.8 expanded",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v68_expanded/auditions_v68_expanded_songs_selected/midi_json/minor_blues_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v68-expanded/minor_blues_C.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 105,
+        "Comping Piano": 144,
+        "Walking Bass": 96,
+        "Jazz Drum Kit": 264
+      }
+    },
+    {
+      "version": "v6.8 expanded",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v68_expanded/auditions_v68_expanded_songs_selected/midi_json/modal_so_what_Dm_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v68-expanded/modal_so_what_Dm.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 137,
+        "Comping Piano": 192,
+        "Walking Bass": 128,
+        "Jazz Drum Kit": 352
+      }
+    },
+    {
+      "version": "v6.8 expanded",
+      "source_midi": "/tmp/jazzml_full_combo_rerender/extract-v68_expanded/auditions_v68_expanded_songs_selected/midi_json/rhythm_changes_Bb_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_cadence_preserved_rhythm_calibrated_bebop_approach_section_cadence_target_contour.mid",
+      "site_audio": "assets/audio/v68-expanded/rhythm_changes_Bb.combo.wav",
+      "notes_by_track": {
+        "Tenor Sax Solo": 291,
+        "Comping Piano": 288,
+        "Walking Bass": 192,
+        "Jazz Drum Kit": 528
+      }
+    }
+  ]
+}

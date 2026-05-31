@@ -2,37 +2,37 @@
   "compare": [
     {
       "tune": "ii_V_I_C",
-      "label": "ii\u2013V\u2013I in C",
+      "label": "ii–V–I in C",
       "players": [
         {
           "name": "Exp 9",
           "subtitle": "Correctness baseline",
           "desc": "Cadence + contour repaired; still stiff.",
-          "src": "assets/audio/exp9/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp9/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "Exp 10",
           "subtitle": "Bebop vocabulary breakthrough",
           "desc": "Weak-beat chromatic approaches; first clear subjective jazz win.",
-          "src": "assets/audio/exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.6 raw",
           "subtitle": "Safer/blander checkpoint",
           "desc": "Inside the changes, but loses color.",
-          "src": "assets/audio/v66-raw/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-raw/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.6 + Exp10",
           "subtitle": "Safety plus vocabulary layer",
           "desc": "A hybrid, still not promoted over Exp 10.",
-          "src": "assets/audio/v66-exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.8.1 selected",
           "subtitle": "Current 3-tune candidate",
           "desc": "Inference-control candidate awaiting final listening verdict.",
-          "src": "assets/audio/v681-selected/ii_V_I_C.wav"
+          "src": "assets/audio/v681-selected/ii_V_I_C.combo.wav"
         }
       ]
     },
@@ -44,31 +44,31 @@
           "name": "Exp 9",
           "subtitle": "Correctness baseline",
           "desc": "Cadence + contour repaired; still stiff.",
-          "src": "assets/audio/exp9/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp9/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "Exp 10",
           "subtitle": "Bebop vocabulary breakthrough",
           "desc": "Weak-beat chromatic approaches; first clear subjective jazz win.",
-          "src": "assets/audio/exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.6 raw",
           "subtitle": "Safer/blander checkpoint",
           "desc": "Inside the changes, but loses color.",
-          "src": "assets/audio/v66-raw/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-raw/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.6 + Exp10",
           "subtitle": "Safety plus vocabulary layer",
           "desc": "A hybrid, still not promoted over Exp 10.",
-          "src": "assets/audio/v66-exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.8.1 selected",
           "subtitle": "Current 3-tune candidate",
           "desc": "Inference-control candidate awaiting final listening verdict.",
-          "src": "assets/audio/v681-selected/blues_F.wav"
+          "src": "assets/audio/v681-selected/blues_F.combo.wav"
         }
       ]
     },
@@ -80,31 +80,31 @@
           "name": "Exp 9",
           "subtitle": "Correctness baseline",
           "desc": "Cadence + contour repaired; still stiff.",
-          "src": "assets/audio/exp9/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp9/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "Exp 10",
           "subtitle": "Bebop vocabulary breakthrough",
           "desc": "Weak-beat chromatic approaches; first clear subjective jazz win.",
-          "src": "assets/audio/exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.6 raw",
           "subtitle": "Safer/blander checkpoint",
           "desc": "Inside the changes, but loses color.",
-          "src": "assets/audio/v66-raw/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-raw/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.6 + Exp10",
           "subtitle": "Safety plus vocabulary layer",
           "desc": "A hybrid, still not promoted over Exp 10.",
-          "src": "assets/audio/v66-exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "name": "v6.8.1 selected",
           "subtitle": "Current 3-tune candidate",
           "desc": "Inference-control candidate awaiting final listening verdict.",
-          "src": "assets/audio/v681-selected/autumn_leaves.wav"
+          "src": "assets/audio/v681-selected/autumn_leaves.combo.wav"
         }
       ]
     }
@@ -112,35 +112,35 @@
   "expanded": [
     {
       "name": "All The Things You Are",
-      "src": "assets/audio/v68-expanded/all_the_things_you_are.wav"
+      "src": "assets/audio/v68-expanded/all_the_things_you_are.combo.wav"
     },
     {
       "name": "Autumn Leaves",
-      "src": "assets/audio/v68-expanded/autumn_leaves.wav"
+      "src": "assets/audio/v68-expanded/autumn_leaves.combo.wav"
     },
     {
       "name": "Blues F",
-      "src": "assets/audio/v68-expanded/blues_F.wav"
+      "src": "assets/audio/v68-expanded/blues_F.combo.wav"
     },
     {
       "name": "Giant Steps Cycle",
-      "src": "assets/audio/v68-expanded/giant_steps_cycle.wav"
+      "src": "assets/audio/v68-expanded/giant_steps_cycle.combo.wav"
     },
     {
-      "name": "ii\u2013V\u2013I C",
-      "src": "assets/audio/v68-expanded/ii_V_I_C.wav"
+      "name": "ii–V–I C",
+      "src": "assets/audio/v68-expanded/ii_V_I_C.combo.wav"
     },
     {
       "name": "Minor Blues C",
-      "src": "assets/audio/v68-expanded/minor_blues_C.wav"
+      "src": "assets/audio/v68-expanded/minor_blues_C.combo.wav"
     },
     {
       "name": "Modal So What Dm",
-      "src": "assets/audio/v68-expanded/modal_so_what_Dm.wav"
+      "src": "assets/audio/v68-expanded/modal_so_what_Dm.combo.wav"
     },
     {
       "name": "Rhythm Changes Bb",
-      "src": "assets/audio/v68-expanded/rhythm_changes_Bb.wav"
+      "src": "assets/audio/v68-expanded/rhythm_changes_Bb.combo.wav"
     }
   ],
   "versionChanges": [
@@ -153,16 +153,16 @@
       "decision": "Kept as the musical-shape baseline, not the final sound.",
       "audio": [
         {
-          "tune": "ii\u2013V\u2013I in C",
-          "src": "assets/audio/exp9/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "tune": "ii–V–I in C",
+          "src": "assets/audio/exp9/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "tune": "F Blues",
-          "src": "assets/audio/exp9/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp9/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "tune": "Autumn Leaves",
-          "src": "assets/audio/exp9/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp9/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         }
       ]
     },
@@ -175,16 +175,16 @@
       "decision": "Accepted as the first real jazz-language improvement.",
       "audio": [
         {
-          "tune": "ii\u2013V\u2013I in C",
-          "src": "assets/audio/exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "tune": "ii–V–I in C",
+          "src": "assets/audio/exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "tune": "F Blues",
-          "src": "assets/audio/exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "tune": "Autumn Leaves",
-          "src": "assets/audio/exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         }
       ]
     },
@@ -197,16 +197,16 @@
       "decision": "Documented as the safety-vs-color trap; not promoted over Exp 10.",
       "audio": [
         {
-          "tune": "ii\u2013V\u2013I in C",
-          "src": "assets/audio/v66-raw/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "tune": "ii–V–I in C",
+          "src": "assets/audio/v66-raw/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "tune": "F Blues",
-          "src": "assets/audio/v66-raw/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-raw/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         },
         {
           "tune": "Autumn Leaves",
-          "src": "assets/audio/v66-raw/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-raw/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.combo.wav"
         }
       ]
     },
@@ -219,16 +219,16 @@
       "decision": "Used for comparison; not the new default.",
       "audio": [
         {
-          "tune": "ii\u2013V\u2013I in C",
-          "src": "assets/audio/v66-exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "tune": "ii–V–I in C",
+          "src": "assets/audio/v66-exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "tune": "F Blues",
-          "src": "assets/audio/v66-exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         },
         {
           "tune": "Autumn Leaves",
-          "src": "assets/audio/v66-exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+          "src": "assets/audio/v66-exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.combo.wav"
         }
       ]
     },
@@ -241,23 +241,24 @@
       "decision": "Current branch to listen to; not called final or best yet.",
       "audio": [
         {
-          "tune": "ii\u2013V\u2013I in C",
-          "src": "assets/audio/v681-selected/ii_V_I_C.wav"
+          "tune": "ii–V–I in C",
+          "src": "assets/audio/v681-selected/ii_V_I_C.combo.wav"
         },
         {
           "tune": "F Blues",
-          "src": "assets/audio/v681-selected/blues_F.wav"
+          "src": "assets/audio/v681-selected/blues_F.combo.wav"
         },
         {
           "tune": "Autumn Leaves",
-          "src": "assets/audio/v681-selected/autumn_leaves.wav"
+          "src": "assets/audio/v681-selected/autumn_leaves.combo.wav"
         }
       ]
     }
   ],
   "rendering": {
-    "current_note": "v6.8/v6.8.1 MIDI-backed WAV outputs have been re-rendered with a tenor-sax lead, comping piano, walking bass, jazz drums, light humanization, room ambience, compression, and loudness normalization. Legacy MP3-only bundles were remastered; their source MIDI was not present in the published artifacts, so those are production cleanups rather than full re-instrumentations.",
+    "current_note": "All embedded test/listening outputs now use MIDI-backed full-combo WAV renders: tenor sax lead, comping piano, walking bass, and jazz drum kit. Generated notes are unchanged.",
     "improved_render_manifest": "assets/data/improved-render-manifest.json",
-    "legacy_mp3_remaster_manifest": "assets/data/legacy-mp3-remaster-manifest.json"
+    "legacy_mp3_remaster_manifest": "assets/data/full-combo-render-manifest.json",
+    "full_combo_render_manifest": "assets/data/full-combo-render-manifest.json"
   }
 }
