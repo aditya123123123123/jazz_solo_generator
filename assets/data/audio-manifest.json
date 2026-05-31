@@ -142,5 +142,117 @@
       "name": "Rhythm Changes Bb",
       "src": "assets/audio/v68-expanded/rhythm_changes_Bb.wav"
     }
+  ],
+  "versionChanges": [
+    {
+      "version": "Exp 9 / v6.5",
+      "short": "Correctness baseline",
+      "status": "baseline",
+      "changed": "Added section-cadence targeting and target-contour control on top of register, repetition, and phrase-diversity fixes.",
+      "output": "The solos became much more mechanically controlled: clearer cadences, fewer register jumps, better shape. The tradeoff: still sounded too stiff and not idiomatically jazzy enough.",
+      "decision": "Kept as the musical-shape baseline, not the final sound.",
+      "audio": [
+        {
+          "tune": "ii\u2013V\u2013I in C",
+          "src": "assets/audio/exp9/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+        },
+        {
+          "tune": "F Blues",
+          "src": "assets/audio/exp9/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+        },
+        {
+          "tune": "Autumn Leaves",
+          "src": "assets/audio/exp9/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+        }
+      ]
+    },
+    {
+      "version": "Exp 10 / v6.5",
+      "short": "Bebop vocabulary breakthrough",
+      "status": "accepted musical win",
+      "changed": "Added controlled weak-beat chromatic approach notes resolving into strong-beat chord tones.",
+      "output": "The same tunes gained more jazz language and forward motion. This was the first version that clearly sounded better by ear, not just by metrics.",
+      "decision": "Accepted as the first real jazz-language improvement.",
+      "audio": [
+        {
+          "tune": "ii\u2013V\u2013I in C",
+          "src": "assets/audio/exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+        },
+        {
+          "tune": "F Blues",
+          "src": "assets/audio/exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+        },
+        {
+          "tune": "Autumn Leaves",
+          "src": "assets/audio/exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+        }
+      ]
+    },
+    {
+      "version": "v6.6 raw",
+      "short": "Safer learned checkpoint",
+      "status": "not promoted",
+      "changed": "Fine-tuned from v6.3.2 with expanded jazz-vocabulary cache and stronger harmonic safety pressure.",
+      "output": "The model became more inside and less wrong, but also safer/blander. Harmonic correctness improved at the cost of color and personality.",
+      "decision": "Documented as the safety-vs-color trap; not promoted over Exp 10.",
+      "audio": [
+        {
+          "tune": "ii\u2013V\u2013I in C",
+          "src": "assets/audio/v66-raw/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+        },
+        {
+          "tune": "F Blues",
+          "src": "assets/audio/v66-raw/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+        },
+        {
+          "tune": "Autumn Leaves",
+          "src": "assets/audio/v66-raw/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3"
+        }
+      ]
+    },
+    {
+      "version": "v6.6 + Exp10 layer",
+      "short": "Safety plus vocabulary post-processing",
+      "status": "comparison branch",
+      "changed": "Applied the accepted Exp 10 bebop-approach vocabulary layer to the v6.6 safety checkpoint outputs.",
+      "output": "A useful A/B branch: some vocabulary returns, but the underlying checkpoint still does not clearly beat the earlier Exp 10 musical baseline.",
+      "decision": "Used for comparison; not the new default.",
+      "audio": [
+        {
+          "tune": "ii\u2013V\u2013I in C",
+          "src": "assets/audio/v66-exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+        },
+        {
+          "tune": "F Blues",
+          "src": "assets/audio/v66-exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+        },
+        {
+          "tune": "Autumn Leaves",
+          "src": "assets/audio/v66-exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+        }
+      ]
+    },
+    {
+      "version": "v6.8.1 selected",
+      "short": "Current inference-control candidate",
+      "status": "under audition",
+      "changed": "Added timing-aware harmony constraints and inference-control settings; selected iivi_s1p5_np0p25 for the current audition package.",
+      "output": "The public output set is broader and more harmonically guarded. It is promising, but still labeled as a candidate until the expanded audition is judged by listening.",
+      "decision": "Current branch to listen to; not called final or best yet.",
+      "audio": [
+        {
+          "tune": "ii\u2013V\u2013I in C",
+          "src": "assets/audio/v681-selected/ii_V_I_C.wav"
+        },
+        {
+          "tune": "F Blues",
+          "src": "assets/audio/v681-selected/blues_F.wav"
+        },
+        {
+          "tune": "Autumn Leaves",
+          "src": "assets/audio/v681-selected/autumn_leaves.wav"
+        }
+      ]
+    }
   ]
 }
