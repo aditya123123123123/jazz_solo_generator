@@ -1,0 +1,17 @@
+{
+  "render_note": "Legacy MP3-only artifacts remastered with EQ/room/compression/loudness; source MIDI unavailable for full re-instrumentation.",
+  "items": [
+    "assets/audio/exp9/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3",
+    "assets/audio/exp9/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3",
+    "assets/audio/exp9/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3",
+    "assets/audio/exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3",
+    "assets/audio/exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3",
+    "assets/audio/exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3",
+    "assets/audio/v66-raw/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3",
+    "assets/audio/v66-raw/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3",
+    "assets/audio/v66-raw/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_section_cadence_target_contour.mp3",
+    "assets/audio/v66-exp10/autumn_leaves_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3",
+    "assets/audio/v66-exp10/blues_F_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3",
+    "assets/audio/v66-exp10/ii_V_I_C_rhythm_swing_phrase_shaped_register_continuity_phrase_diverse3_bebop_approach_section_cadence_target_contour.mp3"
+  ]
+}

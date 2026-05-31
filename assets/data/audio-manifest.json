@@ -254,5 +254,10 @@
         }
       ]
     }
-  ]
+  ],
+  "rendering": {
+    "current_note": "v6.8/v6.8.1 MIDI-backed WAV outputs have been re-rendered with a tenor-sax lead, comping piano, walking bass, jazz drums, light humanization, room ambience, compression, and loudness normalization. Legacy MP3-only bundles were remastered; their source MIDI was not present in the published artifacts, so those are production cleanups rather than full re-instrumentations.",
+    "improved_render_manifest": "assets/data/improved-render-manifest.json",
+    "legacy_mp3_remaster_manifest": "assets/data/legacy-mp3-remaster-manifest.json"
+  }
 }

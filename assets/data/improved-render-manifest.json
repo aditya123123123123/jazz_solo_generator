@@ -1,0 +1,127 @@
+{
+  "renderer": "FluidSynth + TimGM6mb.sf2",
+  "render_note": "Production/rendering upgrade only: tenor sax solo program, comping piano, walking bass, jazz drum kit, light humanization, compression/reverb/loudness normalization. Model outputs unchanged.",
+  "items": [
+    {
+      "bundle": "v68_expanded_songs_audition.zip",
+      "tune": "all_the_things_you_are",
+      "site": "assets/audio/v68-expanded/all_the_things_you_are.wav",
+      "notes_by_track": {
+        "Solo": 266,
+        "Piano": 192,
+        "Bass": 128,
+        "Drums": 352
+      }
+    },
+    {
+      "bundle": "v68_expanded_songs_audition.zip",
+      "tune": "autumn_leaves",
+      "site": "assets/audio/v68-expanded/autumn_leaves.wav",
+      "notes_by_track": {
+        "Solo": 97,
+        "Piano": 120,
+        "Bass": 80,
+        "Drums": 220
+      }
+    },
+    {
+      "bundle": "v68_expanded_songs_audition.zip",
+      "tune": "blues_F",
+      "site": "assets/audio/v68-expanded/blues_F.wav",
+      "notes_by_track": {
+        "Solo": 106,
+        "Piano": 144,
+        "Bass": 96,
+        "Drums": 264
+      }
+    },
+    {
+      "bundle": "v68_expanded_songs_audition.zip",
+      "tune": "giant_steps_cycle",
+      "site": "assets/audio/v68-expanded/giant_steps_cycle.wav",
+      "notes_by_track": {
+        "Solo": 226,
+        "Piano": 288,
+        "Bass": 192,
+        "Drums": 528
+      }
+    },
+    {
+      "bundle": "v68_expanded_songs_audition.zip",
+      "tune": "ii_V_I_C",
+      "site": "assets/audio/v68-expanded/ii_V_I_C.wav",
+      "notes_by_track": {
+        "Solo": 55,
+        "Piano": 72,
+        "Bass": 48,
+        "Drums": 132
+      }
+    },
+    {
+      "bundle": "v68_expanded_songs_audition.zip",
+      "tune": "minor_blues_C",
+      "site": "assets/audio/v68-expanded/minor_blues_C.wav",
+      "notes_by_track": {
+        "Solo": 105,
+        "Piano": 144,
+        "Bass": 96,
+        "Drums": 264
+      }
+    },
+    {
+      "bundle": "v68_expanded_songs_audition.zip",
+      "tune": "modal_so_what_Dm",
+      "site": "assets/audio/v68-expanded/modal_so_what_Dm.wav",
+      "notes_by_track": {
+        "Solo": 137,
+        "Piano": 192,
+        "Bass": 128,
+        "Drums": 352
+      }
+    },
+    {
+      "bundle": "v68_expanded_songs_audition.zip",
+      "tune": "rhythm_changes_Bb",
+      "site": "assets/audio/v68-expanded/rhythm_changes_Bb.wav",
+      "notes_by_track": {
+        "Solo": 291,
+        "Piano": 288,
+        "Bass": 192,
+        "Drums": 528
+      }
+    },
+    {
+      "bundle": "v681_selected_audition.zip",
+      "tune": "autumn_leaves",
+      "site": "assets/audio/v681-selected/autumn_leaves.wav",
+      "notes_by_track": {
+        "Solo": 97,
+        "Piano": 120,
+        "Bass": 80,
+        "Drums": 220
+      }
+    },
+    {
+      "bundle": "v681_selected_audition.zip",
+      "tune": "blues_F",
+      "site": "assets/audio/v681-selected/blues_F.wav",
+      "notes_by_track": {
+        "Solo": 106,
+        "Piano": 144,
+        "Bass": 96,
+        "Drums": 264
+      }
+    },
+    {
+      "bundle": "v681_selected_audition.zip",
+      "tune": "ii_V_I_C",
+      "site": "assets/audio/v681-selected/ii_V_I_C.wav",
+      "notes_by_track": {
+        "Solo": 55,
+        "Piano": 72,
+        "Bass": 48,
+        "Drums": 132
+      }
+    }
+  ]
+}
